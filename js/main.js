@@ -1,40 +1,53 @@
-/* الموقع التعريفي — حسن يونا السعود
-   ثلاث وظائف بس: تبديل اللغة، ظهور تدريجي للأقسام، وحالة الهيدر عند النزول. */
+/* الموقع التعريفي — حسن عيون السود
+   تبديل اللغة، تحويل الأرقام، ظهور تدريجي، وحالة الهيدر. */
 
 (function () {
   "use strict";
 
-  /* ===== تبديل اللغة =====
-     كل عنصر بيحمل data-ar و data-en. التبديل بيبدّل النص، واتجاه الصفحة،
-     وبيحفظ الاختيار عشان يضل ثابت لما يرجع الزائر. */
-
   var LANG_KEY = "site-lang";
-  var htmlEl = document.documentElement;
+  var html = document.documentElement;
   var langBtn = document.getElementById("langBtn");
+
+  var AR_DIGITS = "٠١٢٣٤٥٦٧٨٩";
+
+  /* الأرقام مكتوبة بالعربي بالـHTML. بالإنجليزي لازم تتحول لأرقام لاتينية،
+     وإلا بتطلع «١٥٠k» — نص إنجليزي وأرقام عربية بنفس السطر. */
+  function convertDigits(root, toArabic) {
+    var walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT, null);
+    var node;
+    while ((node = walker.nextNode())) {
+      node.nodeValue = node.nodeValue.replace(/[0-9٠-٩]/g, function (d) {
+        var i = AR_DIGITS.indexOf(d);
+        if (toArabic) return i >= 0 ? d : AR_DIGITS[+d];
+        return i >= 0 ? String(i) : d;
+      });
+    }
+  }
 
   function applyLang(lang) {
     var isAr = lang === "ar";
 
-    htmlEl.lang = isAr ? "ar" : "en";
-    htmlEl.dir = isAr ? "rtl" : "ltr";
+    html.lang = isAr ? "ar" : "en";
+    html.dir = isAr ? "rtl" : "ltr";
 
     var nodes = document.querySelectorAll("[data-ar][data-en]");
     for (var i = 0; i < nodes.length; i++) {
       var el = nodes[i];
       var text = isAr ? el.getAttribute("data-ar") : el.getAttribute("data-en");
-
-      // الميتا ما إلها نص ظاهر — بتتعدّل بخاصية content
       if (el.tagName === "META") el.setAttribute("content", text);
       else el.textContent = text;
     }
 
+    // بعد ما ينتبدّل النص — الأرقام اللي مش جوّا data-ar/data-en
+    var numeric = document.querySelectorAll(".num, .when, .fig .cap, .time p, .store p, #lessons p, .clips .n, #year");
+    for (var j = 0; j < numeric.length; j++) convertDigits(numeric[j], isAr);
+
     if (langBtn) {
-      // الزر بيعرض اللغة اللي رايح إلها، مش اللغة الحالية
       langBtn.textContent = isAr ? "EN" : "عربي";
       langBtn.setAttribute("aria-label", isAr ? "Switch to English" : "التبديل للعربية");
     }
 
-    try { localStorage.setItem(LANG_KEY, lang); } catch (e) { /* وضع التصفح الخاص */ }
+    try { localStorage.setItem(LANG_KEY, lang); } catch (e) { /* تصفح خاص */ }
   }
 
   var saved = null;
@@ -43,22 +56,16 @@
 
   if (langBtn) {
     langBtn.addEventListener("click", function () {
-      applyLang(htmlEl.lang === "ar" ? "en" : "ar");
+      applyLang(html.lang === "ar" ? "en" : "ar");
     });
   }
 
   /* ===== ظهور تدريجي =====
-     IntersectionObserver مش موجود بالمتصفحات القديمة — بهاي الحالة
-     بنعرض كل شي على طول بدل ما يضل الموقع فاضي. */
-
+     بدون IntersectionObserver بنعرض كل شي على طول بدل ما تضل الصفحة فاضية. */
   var reveals = document.querySelectorAll(".reveal");
 
-  function showAll() {
-    for (var i = 0; i < reveals.length; i++) reveals[i].classList.add("shown");
-  }
-
   if (!("IntersectionObserver" in window)) {
-    showAll();
+    for (var k = 0; k < reveals.length; k++) reveals[k].classList.add("shown");
   } else {
     var io = new IntersectionObserver(function (entries) {
       entries.forEach(function (entry) {
@@ -66,13 +73,58 @@
         entry.target.classList.add("shown");
         io.unobserve(entry.target);
       });
-    }, { rootMargin: "0px 0px -12% 0px", threshold: 0.08 });
+    }, { rootMargin: "0px 0px -10% 0px", threshold: 0.05 });
 
-    for (var j = 0; j < reveals.length; j++) io.observe(reveals[j]);
+    for (var m = 0; m < reveals.length; m++) io.observe(reveals[m]);
   }
 
-  /* ===== حالة الهيدر عند النزول ===== */
 
+  /* ===== عدّ الأرقام =====
+     الأرقام هي أقوى إشي بالصفحة، فبتعدّ لما توصلها بدل ما تكون ثابتة.
+     بتشتغل مرة وحدة لكل رقم، وبتحترم تقليل الحركة. */
+  var slow = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  function toDigits(n, arabic) {
+    var t = String(n);
+    return arabic ? t.replace(/[0-9]/g, function (d) { return AR_DIGITS[+d]; }) : t;
+  }
+
+  function countUp(el) {
+    // النص الظاهر ممكن يكون عربي أو لاتيني — بناخد الرقم من النسخة اللاتينية
+    var raw = el.firstChild && el.firstChild.nodeValue ? el.firstChild.nodeValue.trim() : "";
+    var latin = raw.replace(/[٠-٩]/g, function (d) { return String(AR_DIGITS.indexOf(d)); });
+    var target = parseInt(latin, 10);
+    if (!target || slow) return;
+
+    var start = null;
+    var dur = 1100;
+
+    function step(ts) {
+      if (start === null) start = ts;
+      var t = Math.min((ts - start) / dur, 1);
+      var eased = 1 - Math.pow(1 - t, 3);          // بيبطّئ بالآخر
+      var val = Math.round(target * eased);
+      if (el.firstChild) el.firstChild.nodeValue = toDigits(val, html.lang === "ar");
+      if (t < 1) window.requestAnimationFrame(step);
+    }
+
+    if (el.firstChild) el.firstChild.nodeValue = toDigits(0, html.lang === "ar");
+    window.requestAnimationFrame(step);
+  }
+
+  var figures = document.querySelectorAll(".num");
+  if ("IntersectionObserver" in window) {
+    var numObs = new IntersectionObserver(function (entries) {
+      entries.forEach(function (e) {
+        if (!e.isIntersecting) return;
+        countUp(e.target);
+        numObs.unobserve(e.target);
+      });
+    }, { threshold: 0.6 });
+    for (var f = 0; f < figures.length; f++) numObs.observe(figures[f]);
+  }
+
+  /* ===== حالة الهيدر ===== */
   var nav = document.getElementById("nav");
   if (nav) {
     var ticking = false;
@@ -80,7 +132,7 @@
       if (ticking) return;
       ticking = true;
       window.requestAnimationFrame(function () {
-        nav.classList.toggle("scrolled", window.scrollY > 8);
+        nav.classList.toggle("scrolled", window.scrollY > 6);
         ticking = false;
       });
     };
@@ -89,7 +141,9 @@
   }
 
   /* ===== سنة الفوتر ===== */
-
   var year = document.getElementById("year");
-  if (year) year.textContent = String(new Date().getFullYear());
+  if (year) {
+    var y = String(new Date().getFullYear());
+    year.textContent = html.lang === "ar" ? y.replace(/[0-9]/g, function (d) { return AR_DIGITS[+d]; }) : y;
+  }
 })();

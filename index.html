@@ -3,260 +3,493 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-<title>حسن يونا السعود</title>
+<title>حسن عيون السود</title>
 
-<meta name="description" data-ar="الموقع التعريفي لحسن يونا السعود — تشغيل وتطوير أنظمة داخلية بسيطة تحل مشاكل حقيقية."
-      data-en="Personal site of Hasan Youna Alsoud — building simple internal systems that solve real operational problems."
-      content="الموقع التعريفي لحسن يونا السعود — تشغيل وتطوير أنظمة داخلية بسيطة تحل مشاكل حقيقية." />
-<meta name="theme-color" content="#4C6EF5" />
+<meta name="description" data-ar="حسن عيون السود — تسويق ومحتوى وتشغيل متاجر إلكترونية. جدة، السعودية."
+      data-en="Hasan Oyoun AlSoud — marketing, content and e-commerce operations. Jeddah, Saudi Arabia."
+      content="حسن عيون السود — تسويق ومحتوى وتشغيل متاجر إلكترونية. جدة، السعودية." />
+<meta name="theme-color" content="#0B6E62" />
 <link rel="icon" href="assets/logo.svg" type="image/svg+xml" />
 
-<meta property="og:title" content="حسن يونا السعود" />
-<meta property="og:description" content="تشغيل وتطوير أنظمة داخلية بسيطة تحل مشاكل حقيقية." />
+<meta property="og:title" content="حسن عيون السود" />
+<meta property="og:description" content="تسويق ومحتوى وتشغيل متاجر إلكترونية" />
 <meta property="og:image" content="assets/logo.svg" />
-<meta property="og:type" content="website" />
+<meta property="og:type" content="profile" />
 
 <link rel="preload" href="assets/fonts/tajawal-800-ar.woff2" as="font" type="font/woff2" crossorigin />
 <link rel="preload" href="assets/fonts/tajawal-400-ar.woff2" as="font" type="font/woff2" crossorigin />
 
 <!-- ?v= على CSS/JS: GitHub Pages بيخلي المتصفح يخزّن الملفات ١٠ دقايق.
      زوّد الرقم مع كل نشر وإلا ممكن يفتح HTML جديد مع CSS قديم. -->
-<link rel="stylesheet" href="css/style.css?v=2" />
+<link rel="stylesheet" href="css/style.css?v=5" />
 </head>
 <body>
 
-<a class="skip-link" href="#main" data-ar="تخطَّ إلى المحتوى" data-en="Skip to content">تخطَّ إلى المحتوى</a>
+<a class="skip" href="#main" data-ar="تخطَّ إلى المحتوى" data-en="Skip to content">تخطَّ إلى المحتوى</a>
 
 <header class="nav" id="nav">
-  <div class="wrap nav-inner">
-    <a class="nav-brand" href="#top">
-      <img src="assets/logo.svg" alt="" width="34" height="34" draggable="false" />
-      <span data-ar="حسن يونا السعود" data-en="Hasan Youna Alsoud">حسن يونا السعود</span>
+  <div class="wrap nav-in">
+    <a class="brand" href="#top">
+      <img src="assets/logo.svg" alt="" width="30" height="30" />
+      <span data-ar="حسن عيون السود" data-en="Hasan Oyoun AlSoud">حسن عيون السود</span>
     </a>
-
-    <nav class="nav-links" aria-label="التنقل">
-      <a href="#about"    data-ar="عني"      data-en="About">عني</a>
-      <a href="#services" data-ar="شو بعمل"  data-en="What I do">شو بعمل</a>
-      <a href="#work"     data-ar="أعمالي"   data-en="Work">أعمالي</a>
-      <a href="#contact"  data-ar="تواصل"    data-en="Contact">تواصل</a>
+    <nav class="links" aria-label="التنقل">
+      <a href="#work"    data-ar="الأعمال"  data-en="Work">الأعمال</a>
+      <a href="#systems" data-ar="الأنظمة"  data-en="Systems">الأنظمة</a>
+      <a href="#stores"  data-ar="المتاجر"  data-en="Stores">المتاجر</a>
+      <a href="#path"    data-ar="المسيرة"  data-en="Path">المسيرة</a>
+      <a href="#contact" data-ar="تواصل"    data-en="Contact">تواصل</a>
     </nav>
-
-    <button class="lang-btn" id="langBtn" type="button" aria-label="تبديل اللغة">EN</button>
+    <button class="lang" id="langBtn" type="button" aria-label="تبديل اللغة">EN</button>
   </div>
 </header>
 
 <main id="main">
 
-  <!-- ===== Hero ===== -->
+  <!-- ===== الواجهة ===== -->
   <section class="hero" id="top">
-    <div class="wrap hero-inner">
-      <p class="eyebrow reveal" data-ar="التشغيل وأنظمة الفروع الداخلية" data-en="Operations &amp; internal systems">التشغيل وأنظمة الفروع الداخلية</p>
+    <div class="wrap">
+      <p class="status reveal">
+        <span class="dot" aria-hidden="true"></span>
+        <span data-ar="مفتوح لفرص جديدة" data-en="Open to new opportunities">مفتوح لفرص جديدة</span>
+      </p>
 
-      <h1 class="reveal" data-ar="حسن يونا السعود" data-en="Hasan Youna Alsoud">حسن يونا السعود</h1>
+      <h1 class="reveal" data-ar="حسن عيون السود" data-en="Hasan Oyoun AlSoud">حسن عيون السود</h1>
+
+      <p class="role reveal"
+         data-ar="تسويق ومحتوى وتشغيل متاجر إلكترونية"
+         data-en="Marketing, content &amp; e-commerce operations">
+        تسويق ومحتوى وتشغيل متاجر إلكترونية
+      </p>
 
       <p class="lede reveal"
-         data-ar="بشتغل على الجهة اللي ما حدا بيشوفها: الأنظمة الداخلية اللي بتخلي فرع كامل يمشي بدون فوضى. بحوّل الورق والاجتهادات اليدوية لأدوات بسيطة، سريعة، وما بتنكسر لما النت يفصل."
-         data-en="I work on the part nobody sees: the internal systems that keep a whole branch running without chaos. I turn paper and manual guesswork into tools that are simple, fast, and don't break when the network drops.">
-        بشتغل على الجهة اللي ما حدا بيشوفها: الأنظمة الداخلية اللي بتخلي فرع كامل يمشي بدون فوضى.
-        بحوّل الورق والاجتهادات اليدوية لأدوات بسيطة، سريعة، وما بتنكسر لما النت يفصل.
+         data-ar="عمري ٢٠ سنة، من جدة. بشتغل من ٢٠٢١ — بلّشت بخدمة العملاء وتجهيز الطلبات، وهلق ببني متاجر إلكترونية، بصوّر محتوى إعلاني، وبشرف على تشغيل ٣ فروع. أغلب اللي بعرفه تعلمته بالممارسة."
+         data-en="I'm 20, based in Jeddah. I've been working since 2021 — I started in customer service and order fulfilment, and today I build online stores, shoot ad content, and help run three branches. Most of what I know I learned by doing.">
+        عمري ٢٠ سنة، من جدة. بشتغل من ٢٠٢١ — بلّشت بخدمة العملاء وتجهيز الطلبات، وهلق ببني
+        متاجر إلكترونية، بصوّر محتوى إعلاني، وبشرف على تشغيل ٣ فروع. أغلب اللي بعرفه تعلمته بالممارسة.
       </p>
 
-      <div class="hero-cta reveal">
-        <a class="btn btn-primary" href="#work"    data-ar="شوف أعمالي" data-en="See my work">شوف أعمالي</a>
-        <a class="btn btn-ghost"   href="#contact" data-ar="تواصل معي"  data-en="Get in touch">تواصل معي</a>
-      </div>
-    </div>
-
-    <div class="hero-glow" aria-hidden="true"></div>
-  </section>
-
-  <!-- ===== About ===== -->
-  <section class="section" id="about">
-    <div class="wrap">
-      <h2 class="reveal"><span class="mark" data-ar="عني" data-en="About">عني</span></h2>
-
-      <div class="about-grid">
-        <div class="reveal">
-          <p data-ar="اسمي حسن، وشغلي اليومي حوالين التشغيل: كيف الفرع يفضل ماشي، وكيف الوقت والناس والمهام تتنظّم بدون ما حدا يضطر يفتح ملف إكسل ويعبّيه بإيده."
-             data-en="My name is Hasan, and my day-to-day is operations: keeping the branch running, and organising time, people and tasks without anyone having to open a spreadsheet and fill it in by hand.">
-            اسمي حسن، وشغلي اليومي حوالين التشغيل: كيف الفرع يفضل ماشي، وكيف الوقت والناس والمهام
-            تتنظّم بدون ما حدا يضطر يفتح ملف إكسل ويعبّيه بإيده.
-          </p>
-          <p data-ar="لما بواجه مشكلة بتتكرر كل يوم، ما بحلها مرة وحدة — ببني إلها أداة. أغلب اللي بنيته طلع من احتياج حقيقي بأرض الشغل، مش من فكرة على ورق."
-             data-en="When I hit a problem that repeats every single day, I don't solve it once — I build a tool for it. Most of what I've built came out of a real need on the floor, not an idea on paper.">
-            لما بواجه مشكلة بتتكرر كل يوم، ما بحلها مرة وحدة — ببني إلها أداة. أغلب اللي بنيته طلع
-            من احتياج حقيقي بأرض الشغل، مش من فكرة على ورق.
-          </p>
-          <p data-ar="فلسفتي بالبناء بسيطة: الأداة اللي بدها شرح، فاشلة. لازم الموظف يفتحها ويعرف شو يعمل بأول ثانية، حتى لو ما عمره فتح جهاز كمبيوتر."
-             data-en="My build philosophy is simple: a tool that needs explaining has already failed. Someone should open it and know what to do in the first second — even if they've never used a computer.">
-            فلسفتي بالبناء بسيطة: الأداة اللي بدها شرح، فاشلة. لازم الموظف يفتحها ويعرف شو يعمل
-            بأول ثانية، حتى لو ما عمره فتح جهاز كمبيوتر.
-          </p>
-        </div>
-
-        <ul class="facts reveal">
-          <li>
-            <strong data-ar="المجال" data-en="Field">المجال</strong>
-            <span data-ar="التجزئة والتشغيل" data-en="Retail &amp; operations">التجزئة والتشغيل</span>
-          </li>
-          <li>
-            <strong data-ar="التركيز" data-en="Focus">التركيز</strong>
-            <span data-ar="أنظمة الفروع الداخلية" data-en="Internal branch systems">أنظمة الفروع الداخلية</span>
-          </li>
-          <li>
-            <strong data-ar="الطريقة" data-en="Approach">الطريقة</strong>
-            <span data-ar="أبسط حل بيشتغل — وبيضل شغّال" data-en="The simplest thing that works — and keeps working">أبسط حل بيشتغل — وبيضل شغّال</span>
-          </li>
-          <li>
-            <strong data-ar="اللغات" data-en="Languages">اللغات</strong>
-            <span data-ar="العربية · الإنجليزية" data-en="Arabic · English">العربية · الإنجليزية</span>
-          </li>
-        </ul>
+      <div class="cta reveal">
+        <a class="btn solid" href="#contact" data-ar="تواصل معي" data-en="Get in touch">تواصل معي</a>
+        <a class="btn line"  href="#work"    data-ar="شوف الشغل" data-en="See the work">شوف الشغل</a>
       </div>
     </div>
   </section>
 
-  <!-- ===== Services ===== -->
-  <section class="section section-alt" id="services">
+  <!-- ===== الأرقام ===== -->
+  <section class="figures">
     <div class="wrap">
-      <h2 class="reveal"><span class="mark" data-ar="شو بعمل" data-en="What I do">شو بعمل</span></h2>
+      <ul class="fig-grid">
+        <li class="fig reveal">
+          <span class="num">١٥٠<span class="unit" data-ar="ألف" data-en="k">ألف</span></span>
+          <span class="cap" data-ar="ريال مبيعات شهرية لأميزنج كار — بعد ما كانت ٣٠ ألف، خلال أقل من ٣ شهور"
+                data-en="SAR monthly sales at Amazing Car — up from 30k, in under three months">ريال مبيعات شهرية لأميزنج كار — بعد ما كانت ٣٠ ألف، خلال أقل من ٣ شهور</span>
+        </li>
+        <li class="fig reveal">
+          <span class="num">٣٣<span class="unit" data-ar="ألف" data-en="k">ألف</span></span>
+          <span class="cap" data-ar="متابع على تيك توك وانستقرام، من أقل من ٢٥ مقطع"
+                data-en="followers on TikTok and Instagram, from fewer than 25 videos">متابع على تيك توك وانستقرام، من أقل من ٢٥ مقطع</span>
+        </li>
+        <li class="fig reveal">
+          <span class="num">١٠٠<span class="unit">+</span></span>
+          <span class="cap" data-ar="مقطع إعلاني UGC لأكثر من ١٠ متاجر و٣ مطاعم"
+                data-en="UGC ad videos for 10+ stores and 3 restaurants">مقطع إعلاني UGC لأكثر من ١٠ متاجر و٣ مطاعم</span>
+        </li>
+        <li class="fig reveal">
+          <span class="num">٥</span>
+          <span class="cap" data-ar="متاجر إلكترونية بنيتها من الصفر — اثنين منها لمشاريعي"
+                data-en="online stores built from scratch — two of them my own">متاجر إلكترونية بنيتها من الصفر — اثنين منها لمشاريعي</span>
+        </li>
+        <li class="fig reveal">
+          <span class="num">٢٠٠<span class="unit">+</span></span>
+          <span class="cap" data-ar="طلب باليوم كنت أجهّزها بمتجر مودي شيك"
+                data-en="orders a day I fulfilled at ModiChic">طلب باليوم كنت أجهّزها بمتجر مودي شيك</span>
+        </li>
+        <li class="fig reveal">
+          <span class="num">٣</span>
+          <span class="cap" data-ar="فروع بشرف على تشغيلها اليوم بمطعم برو هاوس"
+                data-en="branches I help run today at Pro House">فروع بشرف على تشغيلها اليوم بمطعم برو هاوس</span>
+        </li>
+      </ul>
+    </div>
+  </section>
 
-      <div class="cards">
-        <article class="card reveal">
-          <div class="card-ico" aria-hidden="true">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">
-              <circle cx="12" cy="12" r="9"/><path d="M12 7v5l3.2 2"/>
-            </svg>
-          </div>
-          <h3 data-ar="أنظمة وقت وحضور" data-en="Time &amp; attendance systems">أنظمة وقت وحضور</h3>
-          <p data-ar="تسجيل الخروج والعودة من ساعة السيرفر، مش من ورقة. الوقت بينحسب لحظة الضغط — فما في مجال للتلاعب ولا للنقاش."
-             data-en="Clock-out and clock-in stamped by the server, not written on paper. Time is recorded the moment the button is pressed — no room for tampering, no room for argument.">
-            تسجيل الخروج والعودة من ساعة السيرفر، مش من ورقة. الوقت بينحسب لحظة الضغط — فما في
-            مجال للتلاعب ولا للنقاش.
+  <!-- ===== شو بعمل ===== -->
+  <section class="sec" id="do">
+    <div class="wrap">
+      <h2 class="reveal" data-ar="شو بعمل" data-en="What I do">شو بعمل</h2>
+
+      <div class="do-grid">
+        <article class="do reveal">
+          <h3 data-ar="محتوى إعلاني" data-en="Ad content">محتوى إعلاني</h3>
+          <p data-ar="بكتب وبصوّر وبمنتج مقاطع UGC للمتاجر والمطاعم. اشتغلت مع ٧ علامات بـ٦ قطاعات مختلفة — سيارات، ذهب، تمور، كاميرات، أكل، ووكالة تسويق."
+             data-en="I write, shoot and edit UGC videos for stores and restaurants. I've worked with 7 brands across 6 unrelated sectors — cars, gold, dates, cameras, food, and a marketing agency.">
+            بكتب وبصوّر وبمنتج مقاطع UGC للمتاجر والمطاعم. اشتغلت مع ٧ علامات بـ٦ قطاعات مختلفة —
+            سيارات، ذهب، تمور، كاميرات، أكل، ووكالة تسويق.
           </p>
         </article>
 
-        <article class="card reveal">
-          <div class="card-ico" aria-hidden="true">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M3 3v18h18"/><path d="M7 15l3.5-4 3 2.4L20 7"/>
-            </svg>
-          </div>
-          <h3 data-ar="تقارير تنفع تُقرأ" data-en="Reports people actually read">تقارير تنفع تُقرأ</h3>
-          <p data-ar="لوحات إدارة بتجاوب على سؤال واحد بسرعة: مين برا الآن؟ مين تجاوز؟ شو صار امبارح؟ بدون تصدير ولا فلترة ولا وجع راس."
-             data-en="Admin dashboards that answer one question fast: who's out right now? who went over? what happened yesterday? No exporting, no filtering, no headache.">
-            لوحات إدارة بتجاوب على سؤال واحد بسرعة: مين برا الآن؟ مين تجاوز؟ شو صار امبارح؟
-            بدون تصدير ولا فلترة ولا وجع راس.
+        <article class="do reveal">
+          <h3 data-ar="بناء متاجر إلكترونية" data-en="Building online stores">بناء متاجر إلكترونية</h3>
+          <p data-ar="بنيت ٥ متاجر. أربعة منها على منصة سلة، وعندي تجربة على زد. وموقع برو هاوس بنيته بالكود من الصفر بدون أي منصة، واشتريت الدومين وربطته بـSearch Console وAnalytics."
+             data-en="I've built 5 stores. Four on Salla, plus one on Zid. The Pro House site I coded from scratch with no platform — bought the domain myself and connected Search Console and Analytics.">
+            بنيت ٥ متاجر. أربعة منها على منصة سلة، وعندي تجربة على زد. وموقع برو هاوس بنيته بالكود
+            من الصفر بدون أي منصة، واشتريت الدومين وربطته بـSearch Console وAnalytics.
           </p>
         </article>
 
-        <article class="card reveal">
-          <div class="card-ico" aria-hidden="true">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M5 12.5a5 5 0 0 1 8.6-3.5"/><path d="M19 11.5a5 5 0 0 1-4.4 7.5H8a4.5 4.5 0 0 1-1-8.9"/>
-              <path d="M3 3l18 18"/>
-            </svg>
-          </div>
-          <h3 data-ar="يشتغل بدون نت" data-en="Works offline">يشتغل بدون نت</h3>
-          <p data-ar="النت بالفرع بيفصل — وهاي مش عذر. الأدوات اللي ببنيها بتحفظ محليًا وبتزامن لحالها لما يرجع، بدون ما الموظف ينتبه ولا يخسر تسجيلة."
-             data-en="Branch internet drops — that's not an excuse. What I build saves locally and syncs itself when the connection returns, without the user noticing or losing a single record.">
-            النت بالفرع بيفصل — وهاي مش عذر. الأدوات اللي ببنيها بتحفظ محليًا وبتزامن لحالها لما
-            يرجع، بدون ما الموظف ينتبه ولا يخسر تسجيلة.
+        <article class="do reveal">
+          <h3 data-ar="تشغيل" data-en="Operations">تشغيل</h3>
+          <p data-ar="تجهيز طلبات، إدارة مستودع، إشراف على فروع وموظفين، ومتابعة تطبيقات التوصيل وتطبيق الاشتراكات. بلّشت من أرض الشغل مش من المكتب."
+             data-en="Order fulfilment, warehouse management, supervising branches and staff, and running the delivery apps and the subscription app. I started on the floor, not behind a desk.">
+            تجهيز طلبات، إدارة مستودع، إشراف على فروع وموظفين، ومتابعة تطبيقات التوصيل وتطبيق
+            الاشتراكات. بلّشت من أرض الشغل مش من المكتب.
           </p>
         </article>
 
-        <article class="card reveal">
-          <div class="card-ico" aria-hidden="true">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">
-              <rect x="6" y="2.5" width="12" height="19" rx="2.6"/><path d="M10.6 18.6h2.8"/>
-            </svg>
-          </div>
-          <h3 data-ar="من الجوال ومن الكاشير" data-en="Phone and counter alike">من الجوال ومن الكاشير</h3>
-          <p data-ar="نفس الشاشة بتشتغل على جهاز الكاشير وعلى جوال الموظف. ما في نسخة ثانية تنسى تتحدّث، وما في تدريب منفصل."
-             data-en="The same screen runs on the counter terminal and on a phone. No second version that falls behind, no separate training.">
-            نفس الشاشة بتشتغل على جهاز الكاشير وعلى جوال الموظف. ما في نسخة ثانية تنسى تتحدّث،
-            وما في تدريب منفصل.
+        <article class="do reveal">
+          <h3 data-ar="أرقام وتقارير" data-en="Numbers &amp; reporting">أرقام وتقارير</h3>
+          <p data-ar="بحلل بيانات المبيعات والمنتجات وبطلّع تقارير دورية، وبضع أهداف تسويقية مبنية عليها. وبنيت نظام حضور داخلي بنفسي عشان يوقف التلاعب بالوقت."
+             data-en="I analyse sales and product data, produce regular reports, and set marketing targets from them. I also built an internal attendance system myself to stop time tampering.">
+            بحلل بيانات المبيعات والمنتجات وبطلّع تقارير دورية، وبضع أهداف تسويقية مبنية عليها.
+            وبنيت نظام حضور داخلي بنفسي عشان يوقف التلاعب بالوقت.
           </p>
         </article>
       </div>
     </div>
   </section>
 
-  <!-- ===== Work ===== -->
-  <section class="section" id="work">
+  <!-- ===== العلامات ===== -->
+  <section class="sec alt" id="work">
     <div class="wrap">
-      <h2 class="reveal"><span class="mark" data-ar="أعمالي" data-en="Work">أعمالي</span></h2>
+      <h2 class="reveal" data-ar="علامات اشتغلت معها" data-en="Brands I've worked with">علامات اشتغلت معها</h2>
+      <p class="sub reveal" data-ar="سبع علامات، ستة قطاعات ما بينها أي رابط."
+         data-en="Seven brands, six sectors with nothing in common.">سبع علامات، ستة قطاعات ما بينها أي رابط.</p>
 
-      <article class="project reveal">
-        <div class="project-body">
-          <span class="tag" data-ar="نظام داخلي · شغّال حاليًا" data-en="Internal system · live">نظام داخلي · شغّال حاليًا</span>
-          <h3 data-ar="نظام متابعة بريكات الموظفين" data-en="Employee break-tracking system">نظام متابعة بريكات الموظفين</h3>
-          <p data-ar="كشك بيسجّل خروج وعودة الموظفين للبريكات، شغّال على جهاز الكاشير وعلى الجوال. الهدف الأساسي منع التلاعب بالوقت: الوقت بينتسجّل من ساعة السيرفر لحظة الضغط، مش من ورقة يكتب فيها الموظف الوقت بنفسه."
-             data-en="A kiosk that records employees leaving for and returning from breaks, running on the counter terminal and on phones. The core goal is preventing time tampering: the time is stamped by the server the moment the button is pressed, not written by hand on a sheet.">
-            كشك بيسجّل خروج وعودة الموظفين للبريكات، شغّال على جهاز الكاشير وعلى الجوال.
-            الهدف الأساسي منع التلاعب بالوقت: الوقت بينتسجّل من ساعة السيرفر لحظة الضغط،
-            مش من ورقة يكتب فيها الموظف الوقت بنفسه.
+      <ul class="brands">
+        <li class="brand reveal">
+          <span class="bname" data-ar="برو هاوس" data-en="Pro House">برو هاوس</span>
+          <span class="bcat" data-ar="وجبات صحية واشتراكات" data-en="Healthy meals &amp; subscriptions">وجبات صحية واشتراكات</span>
+          <a href="https://www.instagram.com/prohouse.sa/" target="_blank" rel="noopener">@prohouse.sa</a>
+        </li>
+        <li class="brand reveal">
+          <span class="bname" data-ar="أميزنج كار" data-en="Amazing Car">أميزنج كار</span>
+          <span class="bcat" data-ar="مستلزمات سيارات" data-en="Car accessories">مستلزمات سيارات</span>
+          <a href="https://www.tiktok.com/@amazingcar.1" target="_blank" rel="noopener">@amazingcar.1</a>
+        </li>
+        <li class="brand reveal">
+          <span class="bname" data-ar="مجوهرات روبي" data-en="Ruby Jewelry">مجوهرات روبي</span>
+          <span class="bcat" data-ar="سبائك ذهب ومجوهرات" data-en="Gold &amp; jewellery">سبائك ذهب ومجوهرات</span>
+          <a href="https://www.instagram.com/rubyjewelry2/" target="_blank" rel="noopener">@rubyjewelry2</a>
+        </li>
+        <li class="brand reveal">
+          <span class="bname" data-ar="ريونيك" data-en="Reunique">ريونيك</span>
+          <span class="bcat" data-ar="عناية بالسيارات" data-en="Car care">عناية بالسيارات</span>
+          <a href="https://www.instagram.com/reunique.co/" target="_blank" rel="noopener">@reunique.co</a>
+        </li>
+        <li class="brand reveal">
+          <span class="bname" data-ar="تمور شموخ" data-en="Shumukh Dates">تمور شموخ</span>
+          <span class="bcat" data-ar="تمور فاخرة" data-en="Premium dates">تمور فاخرة</span>
+          <a href="https://www.instagram.com/shumukhdates/" target="_blank" rel="noopener">@shumukhdates</a>
+        </li>
+        <li class="brand reveal">
+          <span class="bname" data-ar="سمارت ديجيتال" data-en="Smart Digital">سمارت ديجيتال</span>
+          <span class="bcat" data-ar="كاميرات وحلول أمنية" data-en="Cameras &amp; security">كاميرات وحلول أمنية</span>
+          <a href="https://www.tiktok.com/@smartdigitalksa" target="_blank" rel="noopener">@smartdigitalksa</a>
+        </li>
+        <li class="brand reveal">
+          <span class="bname" data-ar="وكالة بي هايف" data-en="Beehive Agency">وكالة بي هايف</span>
+          <span class="bcat" data-ar="تسويق وصناعة محتوى" data-en="Marketing &amp; content agency">تسويق وصناعة محتوى</span>
+          <a href="https://www.instagram.com/beehiveagency.sa/" target="_blank" rel="noopener">@beehiveagency.sa</a>
+        </li>
+      </ul>
+
+      <h3 class="mini reveal" data-ar="مقاطع من الشغل" data-en="Selected videos">مقاطع من الشغل</h3>
+      <ul class="clips">
+        <li class="reveal"><a href="https://www.instagram.com/reel/Db5kVq7szo5/" target="_blank" rel="noopener"><span class="pf">Instagram</span><span class="n" data-ar="١" data-en="1">١</span></a></li>
+        <li class="reveal"><a href="https://www.instagram.com/reel/DYwgbGDMkTh/" target="_blank" rel="noopener"><span class="pf">Instagram</span><span class="n" data-ar="٢" data-en="2">٢</span></a></li>
+        <li class="reveal"><a href="https://www.instagram.com/reel/DbqM7Qyq9qD/" target="_blank" rel="noopener"><span class="pf">Instagram</span><span class="n" data-ar="٣" data-en="3">٣</span></a></li>
+        <li class="reveal"><a href="https://www.instagram.com/reel/DbDfI3KktZW/" target="_blank" rel="noopener"><span class="pf">Instagram</span><span class="n" data-ar="٤" data-en="4">٤</span></a></li>
+        <li class="reveal"><a href="https://www.instagram.com/reel/DRuAwAFCIZ6/" target="_blank" rel="noopener"><span class="pf">Instagram</span><span class="n" data-ar="٥" data-en="5">٥</span></a></li>
+        <li class="reveal"><a href="https://www.instagram.com/reel/DUjFb5Zgu13/" target="_blank" rel="noopener"><span class="pf">Instagram</span><span class="n" data-ar="٦" data-en="6">٦</span></a></li>
+        <li class="reveal"><a href="https://www.instagram.com/reel/DUdgS5TleHq/" target="_blank" rel="noopener"><span class="pf">Instagram</span><span class="n" data-ar="٧" data-en="7">٧</span></a></li>
+        <li class="reveal"><a href="https://vt.tiktok.com/ZSVYtKB4f/" target="_blank" rel="noopener"><span class="pf">TikTok</span><span class="n" data-ar="٨" data-en="8">٨</span></a></li>
+        <li class="reveal"><a href="https://vt.tiktok.com/ZSVYnyByX/" target="_blank" rel="noopener"><span class="pf">TikTok</span><span class="n" data-ar="٩" data-en="9">٩</span></a></li>
+        <li class="reveal"><a href="https://vt.tiktok.com/ZSVYnkpuUR/" target="_blank" rel="noopener"><span class="pf">TikTok</span><span class="n" data-ar="١٠" data-en="10">١٠</span></a></li>
+        <li class="reveal"><a href="https://vt.tiktok.com/ZSVYn6uGY/" target="_blank" rel="noopener"><span class="pf">TikTok</span><span class="n" data-ar="١١" data-en="11">١١</span></a></li>
+        <li class="reveal"><a href="https://vt.tiktok.com/ZSVYnBbA1/" target="_blank" rel="noopener"><span class="pf">TikTok</span><span class="n" data-ar="١٢" data-en="12">١٢</span></a></li>
+        <li class="reveal"><a href="https://vt.tiktok.com/ZSVYnLGvW/" target="_blank" rel="noopener"><span class="pf">TikTok</span><span class="n" data-ar="١٣" data-en="13">١٣</span></a></li>
+        <li class="reveal"><a href="https://vt.tiktok.com/ZSVYnhn9s/" target="_blank" rel="noopener"><span class="pf">TikTok</span><span class="n" data-ar="١٤" data-en="14">١٤</span></a></li>
+        <li class="reveal"><a href="https://vt.tiktok.com/ZSVYnXiLo/" target="_blank" rel="noopener"><span class="pf">TikTok</span><span class="n" data-ar="١٥" data-en="15">١٥</span></a></li>
+        <li class="reveal"><a href="https://vt.tiktok.com/ZSVYnnKYr/" target="_blank" rel="noopener"><span class="pf">TikTok</span><span class="n" data-ar="١٦" data-en="16">١٦</span></a></li>
+      </ul>
+    </div>
+  </section>
+
+
+  <!-- ===== أنظمة ===== -->
+  <section class="sec" id="systems">
+    <div class="wrap">
+      <h2 class="reveal" data-ar="أنظمة بنيتها" data-en="Systems I built">أنظمة بنيتها</h2>
+      <p class="sub reveal" data-ar="مش مواقع تعريفية — أنظمة بيشتغل عليها ناس كل يوم."
+         data-en="Not brochure sites — systems people use every day.">مش مواقع تعريفية — أنظمة بيشتغل عليها ناس كل يوم.</p>
+
+      <ul class="stores">
+        <li class="store reveal">
+          <div class="shead">
+            <span class="sname" data-ar="نظام تشغيل برو هاوس" data-en="Pro House operations system">نظام تشغيل برو هاوس</span>
+            <span class="tag hot" data-ar="شغّال على ٣ فروع" data-en="Running across 3 branches">شغّال على ٣ فروع</span>
+          </div>
+          <p data-ar="نظام بيدير الدورة اليومية كاملة لثلاثة فروع: افتتاح الفرع بقائمة فحص، استلام الإنتاج من المطبخ المركزي بالوزن الفعلي مقابل المطلوب، الجرد والمتبقي آخر اليوم، تسجيل الهدر بأسبابه، طلبية الغد، وإقفال اليوم."
+             data-en="A system running the full daily cycle for three branches: opening checklist, receiving production from the central kitchen by actual weight against what was requested, end-of-day stocktake and leftovers, waste logged by reason, tomorrow's order, and day closing.">
+            نظام بيدير الدورة اليومية كاملة لثلاثة فروع: افتتاح الفرع بقائمة فحص، استلام الإنتاج من
+            المطبخ المركزي بالوزن الفعلي مقابل المطلوب، الجرد والمتبقي آخر اليوم، تسجيل الهدر
+            بأسبابه، طلبية الغد، وإقفال اليوم.
           </p>
-
-          <ul class="bullets">
-            <li data-ar="لوحة إدارة: مين برا الآن، تقرير يومي، تعديل المدد، وحدود للبريك الواحد وللمجموع اليومي"
-                data-en="Admin panel: who's out now, daily report, duration edits, plus per-break and daily-total limits">
-              لوحة إدارة: مين برا الآن، تقرير يومي، تعديل المدد، وحدود للبريك الواحد وللمجموع اليومي</li>
-            <li data-ar="بيشتغل أوفلاين بالكامل — التسجيلات بتنحفظ بالجهاز وبتتزامن بصمت لما يرجع النت"
-                data-en="Fully offline-capable — records are stored on the device and sync silently once the network returns">
-              بيشتغل أوفلاين بالكامل — التسجيلات بتنحفظ بالجهاز وبتتزامن بصمت لما يرجع النت</li>
-            <li data-ar="أي سجل معدّل يدويًا بينعلّم بعلامة واضحة — عشان يضل الأثر مكشوف"
-                data-en="Any manually edited record is flagged with a visible marker — so the trail stays honest">
-              أي سجل معدّل يدويًا بينعلّم بعلامة واضحة — عشان يضل الأثر مكشوف</li>
-            <li data-ar="فترة سماح قابلة للضبط لكل سبب خروج، من اللوحة وبدون كود"
-                data-en="A configurable grace period per reason, set from the panel with no code changes">
-              فترة سماح قابلة للضبط لكل سبب خروج، من اللوحة وبدون كود</li>
+          <ul class="feats">
+            <li data-ar="أربعة أدوار بصلاحيات مختلفة — مالك، مدير فرع، شيف، موظف — مع دخول برقم سري وتحكم بالوصول لكل فرع"
+                data-en="Four roles with different permissions — owner, branch manager, chef, employee — with PIN login and per-branch access control">أربعة أدوار بصلاحيات مختلفة — مالك، مدير فرع، شيف، موظف — مع دخول برقم سري وتحكم بالوصول لكل فرع</li>
+            <li data-ar="سحب آلي ليلي للمبيعات من نظام الكاشير"
+                data-en="Automated nightly sales pull from the POS">سحب آلي ليلي للمبيعات من نظام الكاشير</li>
+            <li data-ar="حساب انحراف المتبقي: المتوقع مقابل الفعلي، بأعتاب تنبيه قابلة للضبط بدون كود"
+                data-en="Leftover variance: expected against actual, with alert thresholds adjustable without code">حساب انحراف المتبقي: المتوقع مقابل الفعلي، بأعتاب تنبيه قابلة للضبط بدون كود</li>
+            <li data-ar="نسخ احتياطي يومي، وتصدير البيانات للتحليل"
+                data-en="Daily backups, and a data export for analysis">نسخ احتياطي يومي، وتصدير البيانات للتحليل</li>
           </ul>
-
           <div class="stack">
             <span>HTML</span><span>CSS</span><span>JavaScript</span>
-            <span>Service Worker</span><span>Google Apps Script</span><span>Google Sheets</span>
+            <span>Google Apps Script</span><span>Google Sheets</span><span>PWA</span>
           </div>
-        </div>
-      </article>
+          <a href="https://prohouse-official.github.io/prohouse/" target="_blank" rel="noopener">prohouse-official.github.io/prohouse</a>
+        </li>
 
-      <p class="note reveal"
-         data-ar="في أعمال ثانية قيد الترتيب — بتنضاف هون أول بأول."
-         data-en="More work is being lined up — it'll be added here as it goes live.">
-        في أعمال ثانية قيد الترتيب — بتنضاف هون أول بأول.
+        <li class="store reveal">
+          <div class="shead">
+            <span class="sname" data-ar="نظام تسجيل الدخول والخروج" data-en="Clock-in / clock-out system">نظام تسجيل الدخول والخروج</span>
+            <span class="tag" data-ar="شغّال" data-en="Live">شغّال</span>
+          </div>
+          <p data-ar="كشك بيسجّل خروج وعودة الموظفين للبريكات على جهاز الكاشير وعلى الجوال. الوقت بينتسجّل من ساعة السيرفر لحظة الضغط مش من ورقة، وبيشتغل بدون نت وبيزامن لحاله لما يرجع."
+             data-en="A kiosk that records staff leaving for and returning from breaks, on the counter terminal and on phones. Time is stamped by the server the moment the button is pressed — not written on paper — and it works offline, syncing itself when the connection returns.">
+            كشك بيسجّل خروج وعودة الموظفين للبريكات على جهاز الكاشير وعلى الجوال. الوقت بينتسجّل من
+            ساعة السيرفر لحظة الضغط مش من ورقة، وبيشتغل بدون نت وبيزامن لحاله لما يرجع.
+          </p>
+          <div class="stack">
+            <span>JavaScript</span><span>Service Worker</span><span>Google Apps Script</span>
+          </div>
+        </li>
+
+        <li class="store reveal">
+          <div class="shead">
+            <span class="sname" data-ar="موقع نادي فينكس" data-en="Phoenix MMA site">موقع نادي فينكس</span>
+            <span class="tag" data-ar="قيد التطوير" data-en="In progress">قيد التطوير</span>
+          </div>
+          <p data-ar="موقع لنادي فنون قتالية بجدة. بنيته على بحث موثّق: كل معلومة عن النادي والمدربين مربوطة بمصدر، وأي إشي ما تأكد منه النادي ما بينشر. لسا ما اكتمل."
+             data-en="A site for a martial-arts club in Jeddah. Built on documented research: every fact about the club and its coaches is tied to a source, and anything the club hasn't confirmed doesn't get published. Still in progress.">
+            موقع لنادي فنون قتالية بجدة. بنيته على بحث موثّق: كل معلومة عن النادي والمدربين مربوطة
+            بمصدر، وأي إشي ما تأكد منه النادي ما بينشر. لسا ما اكتمل.
+          </p>
+          <a href="https://hasanoyounalsoud-stack.github.io/phoenix-mma-ksa/" target="_blank" rel="noopener">phoenix-mma-ksa</a>
+        </li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- ===== المتاجر ===== -->
+  <section class="sec alt" id="stores">
+    <div class="wrap">
+      <h2 class="reveal" data-ar="متاجر بنيتها" data-en="Stores I built">متاجر بنيتها</h2>
+
+      <ul class="stores">
+        <li class="store reveal">
+          <div class="shead">
+            <span class="sname" data-ar="برو هاوس" data-en="Pro House">برو هاوس</span>
+            <span class="tag hot" data-ar="كود من الصفر" data-en="Coded from scratch">كود من الصفر</span>
+          </div>
+          <p data-ar="بنيته بالكود بدون أي منصة جاهزة، اشتريت الدومين، وربطته بـGoogle Search Console وAnalytics. ولسا أنا المسؤول عن كل الجانب الرقمي فيه."
+             data-en="Coded with no platform, bought the domain, connected Google Search Console and Analytics. I still run its entire digital side.">
+            بنيته بالكود بدون أي منصة جاهزة، اشتريت الدومين، وربطته بـGoogle Search Console
+            وAnalytics. ولسا أنا المسؤول عن كل الجانب الرقمي فيه.
+          </p>
+          <a href="https://prohouse.sa/" target="_blank" rel="noopener">prohouse.sa</a>
+        </li>
+
+        <li class="store reveal">
+          <div class="shead">
+            <span class="sname" data-ar="أميزنج كار" data-en="Amazing Car">أميزنج كار</span>
+            <span class="tag">سلة</span>
+          </div>
+          <p data-ar="بنيت المتجر واشتغلت على تسويقه. المبيعات ارتفعت من ٣٠ ألف لـ١٥٠ ألف ريال شهريًا خلال أقل من ٣ شهور."
+             data-en="Built the store and ran its marketing. Monthly sales went from 30k to 150k SAR in under three months.">
+            بنيت المتجر واشتغلت على تسويقه. المبيعات ارتفعت من ٣٠ ألف لـ١٥٠ ألف ريال شهريًا
+            خلال أقل من ٣ شهور.
+          </p>
+        </li>
+
+        <li class="store reveal">
+          <div class="shead">
+            <span class="sname" data-ar="تمور شموخ" data-en="Shumukh Dates">تمور شموخ</span>
+            <span class="tag">سلة</span>
+          </div>
+          <p data-ar="بنيت المتجر واشتغلت معهم فترة قصيرة."
+             data-en="Built the store and worked with them for a short period.">
+            بنيت المتجر واشتغلت معهم فترة قصيرة.
+          </p>
+        </li>
+
+        <li class="store reveal">
+          <div class="shead">
+            <span class="sname" data-ar="سرفايف" data-en="Survive">سرفايف</span>
+            <span class="tag own" data-ar="مشروعي" data-en="My own">مشروعي</span>
+          </div>
+          <p data-ar="مشروع وجبات صحية من البيت. جهّزت منيو كامل من ٤٨ صنف محسوبة السعرات — ١٨ دجاج، ٦ لحم، ٦ سمك، ١٢ فطور، ٦ حلويات — وجمعت أكثر من ٢٠ مشترك."
+             data-en="A healthy meal-prep business run from home. I built a full 48-item calorie-counted menu — 18 chicken, 6 beef, 6 fish, 12 breakfasts, 6 desserts — and signed up 20+ subscribers.">
+            مشروع وجبات صحية من البيت. جهّزت منيو كامل من ٤٨ صنف محسوبة السعرات — ١٨ دجاج،
+            ٦ لحم، ٦ سمك، ١٢ فطور، ٦ حلويات — وجمعت أكثر من ٢٠ مشترك.
+          </p>
+        </li>
+
+        <li class="store reveal">
+          <div class="shead">
+            <span class="sname" data-ar="تريند زون" data-en="Trend Zone">تريند زون</span>
+            <span class="tag own" data-ar="مشروعي" data-en="My own">مشروعي</span>
+          </div>
+          <p data-ar="متجر منتجات منزلية. بنيته وشغّلته، وبعدين وقف."
+             data-en="A home-products store. I built it and ran it, then it shut down.">
+            متجر منتجات منزلية. بنيته وشغّلته، وبعدين وقف.
+          </p>
+        </li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- ===== المسيرة ===== -->
+  <section class="sec alt" id="path">
+    <div class="wrap">
+      <h2 class="reveal" data-ar="المسيرة" data-en="Path">المسيرة</h2>
+      <p class="sub reveal" data-ar="بلّشت وعمري ١٥."
+         data-en="I started at 15.">بلّشت وعمري ١٥.</p>
+
+      <ol class="time">
+        <li class="reveal">
+          <span class="when">٢٠٢١</span>
+          <div>
+            <strong data-ar="مودي شيك · عالم الأوائل" data-en="ModiChic · Alam AlAwael">مودي شيك · عالم الأوائل</strong>
+            <p data-ar="خدمة عملاء من البيت، وبعدها تجهيز أكثر من ٢٠٠ طلب باليوم."
+               data-en="Customer service from home, then fulfilling 200+ orders a day.">خدمة عملاء من البيت، وبعدها تجهيز أكثر من ٢٠٠ طلب باليوم.</p>
+          </div>
+        </li>
+        <li class="reveal">
+          <span class="when">٢٠٢١</span>
+          <div>
+            <strong data-ar="رويال ستيم" data-en="Royal Steam">رويال ستيم</strong>
+            <p data-ar="غسيل وتلميع سيارات، وبعدها خدمة عملاء وإشراف على موظفين."
+               data-en="Car washing and detailing, then customer service and supervising staff.">غسيل وتلميع سيارات، وبعدها خدمة عملاء وإشراف على موظفين.</p>
+          </div>
+        </li>
+        <li class="reveal">
+          <span class="when">٢٠٢٢</span>
+          <div>
+            <strong data-ar="سميت طرابزون" data-en="Simit Trabzon">سميت طرابزون</strong>
+            <p data-ar="خبز المخبوزات وخدمة الزباين."
+               data-en="Baking and customer service.">خبز المخبوزات وخدمة الزباين.</p>
+          </div>
+        </li>
+        <li class="reveal">
+          <span class="when">٢٠٢٤</span>
+          <div>
+            <strong data-ar="سرفايف — مشروعي" data-en="Survive — my own">سرفايف — مشروعي</strong>
+            <p data-ar="وجبات صحية من البيت: منيو ٤٨ صنف بسعرات محسوبة، وأكثر من ٢٠ مشترك."
+               data-en="Healthy meal prep from home: a 48-item calorie-counted menu and 20+ subscribers.">وجبات صحية من البيت: منيو ٤٨ صنف بسعرات محسوبة، وأكثر من ٢٠ مشترك.</p>
+          </div>
+        </li>
+        <li class="reveal">
+          <span class="when">٢٠٢٤ – ٢٠٢٥</span>
+          <div>
+            <strong data-ar="أميزنج كار" data-en="Amazing Car">أميزنج كار</strong>
+            <p data-ar="بنيت المتجر وشغّلت تسويقه. المبيعات من ٣٠ ألف لـ١٥٠ ألف ريال شهريًا."
+               data-en="Built the store and ran its marketing. Sales from 30k to 150k SAR a month.">بنيت المتجر وشغّلت تسويقه. المبيعات من ٣٠ ألف لـ١٥٠ ألف ريال شهريًا.</p>
+          </div>
+        </li>
+        <li class="reveal">
+          <span class="when">٢٠٢٤ – ٢٠٢٥</span>
+          <div>
+            <strong data-ar="أورنج بيد آند باث" data-en="Orange Bed &amp; Bath">أورنج بيد آند باث</strong>
+            <p data-ar="بلّشت بالمستودع بتجهيز طلبات الموقع، وبعدها بالمكتب الرئيسي: تشغيل وتتبع الطلبات والإشراف على قسم الميديا."
+               data-en="Started in the warehouse fulfilling web orders, then moved to head office: running and tracking orders and overseeing the media section.">بلّشت بالمستودع بتجهيز طلبات الموقع، وبعدها بالمكتب الرئيسي: تشغيل وتتبع الطلبات والإشراف على قسم الميديا.</p>
+          </div>
+        </li>
+        <li class="reveal">
+          <span class="when">٢٠٢٥</span>
+          <div>
+            <strong data-ar="محتوى UGC" data-en="UGC content">محتوى UGC</strong>
+            <p data-ar="أكثر من ١٠٠ مقطع إعلاني لأكثر من ١٠ متاجر و٣ مطاعم، وجمعت ٣٣ ألف متابع على حساباتي من أقل من ٢٥ مقطع."
+               data-en="100+ ad videos for 10+ stores and 3 restaurants, and 33k followers on my own accounts from fewer than 25 videos.">أكثر من ١٠٠ مقطع إعلاني لأكثر من ١٠ متاجر و٣ مطاعم، وجمعت ٣٣ ألف متابع على حساباتي من أقل من ٢٥ مقطع.</p>
+          </div>
+        </li>
+        <li class="reveal now">
+          <span class="when" data-ar="٢٠٢٥ – الآن" data-en="2025 – now">٢٠٢٥ – الآن</span>
+          <div>
+            <strong data-ar="برو هاوس — مساعد مشرف عام" data-en="Pro House — assistant general supervisor">برو هاوس — مساعد مشرف عام</strong>
+            <p data-ar="٣ فروع. بنيت الموقع، وبدير تطبيقات التوصيل وتطبيق الاشتراكات، وبشتغل على المحتوى والحملات والتقارير، وبشرف على التشغيل."
+               data-en="Three branches. I built the site, run the delivery apps and the subscription app, handle content, campaigns and reporting, and supervise operations.">٣ فروع. بنيت الموقع، وبدير تطبيقات التوصيل وتطبيق الاشتراكات، وبشتغل على المحتوى والحملات والتقارير، وبشرف على التشغيل.</p>
+          </div>
+        </li>
+      </ol>
+    </div>
+  </section>
+
+  <!-- ===== الدروس ===== -->
+  <section class="sec" id="lessons">
+    <div class="wrap narrow">
+      <h2 class="reveal" data-ar="وإشي ما نجح" data-en="And what didn't work">وإشي ما نجح</h2>
+
+      <p class="reveal"
+         data-ar="بشهر رمضان ٢٠٢٥ فتحت مشروع ألعاب موسمية. المبيعات تجاوزت ٣٥ ألف ريال بأقل من أسبوعين — وخسرت المبلغ كامل، لأني ما تأكدت من جودة المنتج قبل ما أطلبه."
+         data-en="In Ramadan 2025 I ran a seasonal toy business. Sales passed 35,000 SAR in under two weeks — and I lost all of it, because I didn't verify the product quality before ordering.">
+        بشهر رمضان ٢٠٢٥ فتحت مشروع ألعاب موسمية. المبيعات تجاوزت ٣٥ ألف ريال بأقل من أسبوعين —
+        وخسرت المبلغ كامل، لأني ما تأكدت من جودة المنتج قبل ما أطلبه.
+      </p>
+      <p class="reveal"
+         data-ar="وتريند زون، متجر المنتجات المنزلية، وقف كمان. المشروعين علموني إشي ما بتعلمه من كتاب: إنك تبيع بسرعة مش نجاح لحاله، والمنتج نفسه لازم يستحمل. صرت من يومها أفحص قبل ما أصرف."
+         data-en="Trend Zone, my home-products store, also shut down. Both taught me something no book does: selling fast isn't success on its own, and the product itself has to hold up. Since then I check before I spend.">
+        وتريند زون، متجر المنتجات المنزلية، وقف كمان. المشروعين علموني إشي ما بتعلمه من كتاب:
+        إنك تبيع بسرعة مش نجاح لحاله، والمنتج نفسه لازم يستحمل. صرت من يومها أفحص قبل ما أصرف.
       </p>
     </div>
   </section>
 
-  <!-- ===== Contact ===== -->
-  <section class="section section-dark" id="contact">
-    <div class="wrap contact-inner">
-      <h2 class="reveal"><span data-ar="تواصل معي" data-en="Get in touch">تواصل معي</span></h2>
-
+  <!-- ===== تواصل ===== -->
+  <section class="sec contact" id="contact">
+    <div class="wrap narrow">
+      <h2 class="reveal" data-ar="تواصل معي" data-en="Get in touch">تواصل معي</h2>
       <p class="reveal"
-         data-ar="عندك مشكلة تشغيلية بتتكرر كل يوم وحاسس إنها لازم تنحل مرة وحدة؟ احكيلي."
-         data-en="Got an operational problem that repeats every day and should have been solved once and for all? Tell me about it.">
-        عندك مشكلة تشغيلية بتتكرر كل يوم وحاسس إنها لازم تنحل مرة وحدة؟ احكيلي.
+         data-ar="بدوّر على مكان أتعلم فيه وأطوّر حالي، وأشتغل مع ناس أستفيد منهم. لو عندك إشي مناسب، احكيلي."
+         data-en="I'm looking for somewhere I can learn, grow, and work with people I can learn from. If you have something that fits, get in touch.">
+        بدوّر على مكان أتعلم فيه وأطوّر حالي، وأشتغل مع ناس أستفيد منهم. لو عندك إشي مناسب، احكيلي.
       </p>
 
-      <!-- ✏️ عدّل روابط التواصل من هون -->
-      <div class="contact-links reveal">
-        <a class="btn btn-primary" href="mailto:hasanoyounalsoud@gmail.com">hasanoyounalsoud@gmail.com</a>
+      <div class="ways reveal">
+        <a class="btn solid" href="mailto:hasanoyouna@gmail.com">hasanoyouna@gmail.com</a>
+        <a class="btn line" href="https://wa.me/966545205548" target="_blank" rel="noopener"
+           data-ar="واتساب" data-en="WhatsApp">واتساب</a>
+      </div>
+
+      <div class="social reveal">
+        <a href="https://www.instagram.com/hsnoals/" target="_blank" rel="noopener">Instagram</a>
+        <a href="https://www.tiktok.com/@hsnoals" target="_blank" rel="noopener">TikTok</a>
       </div>
     </div>
   </section>
 
 </main>
 
-<footer class="footer">
-  <div class="wrap footer-inner">
-    <img src="assets/logo.svg" alt="" width="26" height="26" draggable="false" />
-    <span data-ar="© حسن يونا السعود" data-en="© Hasan Youna Alsoud">© حسن يونا السعود</span>
-    <span class="dot" aria-hidden="true">·</span>
+<footer class="foot">
+  <div class="wrap foot-in">
+    <span data-ar="حسن عيون السود — جدة، السعودية" data-en="Hasan Oyoun AlSoud — Jeddah, Saudi Arabia">حسن عيون السود — جدة، السعودية</span>
     <span id="year">—</span>
   </div>
 </footer>
 
-<script src="js/main.js?v=2"></script>
+<script src="js/main.js?v=5"></script>
 </body>
 </html>

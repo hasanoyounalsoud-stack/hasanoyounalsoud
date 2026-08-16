@@ -1,5 +1,7 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64" role="img" aria-label="H">
-  <rect x="2" y="2" width="60" height="60" rx="16" fill="#4C6EF5" stroke="#0A0A0A" stroke-width="4"/>
+  <!-- مونوجرام: حرف H مرسوم بمستطيلات مش بنص — عشان يطلع نفسه على أي جهاز
+       بدون ما يعتمد على وجود خط معيّن. -->
+  <rect x="2" y="2" width="60" height="60" rx="16" fill="#0B6E62" stroke="#0A0A0A" stroke-width="4"/>
   <g fill="#FFFFFF">
     <rect x="18" y="17" width="8"  height="30" rx="2.5"/>
     <rect x="38" y="17" width="8"  height="30" rx="2.5"/>
