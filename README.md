@@ -9,9 +9,9 @@
 
 ```
 index.html        كل محتوى الصفحة (عربي/إنجليزي بنفس الملف)
-css/style.css     كل التنسيق — هوية Pro House: أصفر #F7DC4E، أسود، أحمر #FF5151
+css/style.css     كل التنسيق — نيلي #4C6EF5، أسود، أبيض
 js/main.js        تبديل اللغة + الظهور التدريجي + حالة الهيدر
-assets/logo.png   شعار Pro House
+assets/logo.svg   المونوجرام (حرف H مرسوم بأشكال، مش نص)
 assets/fonts/     خط Tajawal محمّل محليًا (٦ ملفات، ~٥٨ كيلوبايت)
 .nojekyll         يمنع GitHub Pages من معالجة الملفات بـ Jekyll
 ```
