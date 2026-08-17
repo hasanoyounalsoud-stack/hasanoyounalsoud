@@ -3,25 +3,77 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-<title>حسن عيون السود</title>
+<title data-ar="حسن عيون السود — تسويق ومحتوى وتشغيل متاجر إلكترونية"
+       data-en="Hasan Oyoun AlSoud — Marketing, Content &amp; E-commerce Operations">حسن عيون السود — تسويق ومحتوى وتشغيل متاجر إلكترونية</title>
 
 <meta name="description" data-ar="حسن عيون السود — تسويق ومحتوى وتشغيل متاجر إلكترونية. جدة، السعودية."
       data-en="Hasan Oyoun AlSoud — marketing, content and e-commerce operations. Jeddah, Saudi Arabia."
       content="حسن عيون السود — تسويق ومحتوى وتشغيل متاجر إلكترونية. جدة، السعودية." />
-<meta name="theme-color" content="#0B6E62" />
-<link rel="icon" href="assets/logo.svg" type="image/svg+xml" />
 
-<meta property="og:title" content="حسن عيون السود" />
-<meta property="og:description" content="تسويق ومحتوى وتشغيل متاجر إلكترونية" />
-<meta property="og:image" content="assets/logo.svg" />
+<!-- theme-color لازم يطابق خلفية الواجهة الداكنة، مش لون عشوائي. الفاتح
+     والداكن بينفصلوا لأن الهيرو داكن بالحالتين بس باقي الصفحة بتتبدّل. -->
+<meta name="theme-color" content="#08302C" media="(prefers-color-scheme: light)" />
+<meta name="theme-color" content="#0B0F19" media="(prefers-color-scheme: dark)" />
+
+<link rel="icon" href="assets/logo.svg" type="image/svg+xml" />
+<link rel="canonical" href="https://hsnoals.com/" />
+
+<!-- معاينة الروابط: لازم رابط مطلق وصيغة PNG. واتساب وتويتر وفيسبوك
+     ما بيقرأوا SVG ولا مسار نسبي — بيطلع اللينك أصلع بدونها. -->
 <meta property="og:type" content="profile" />
+<meta property="og:url" content="https://hsnoals.com/" />
+<meta property="og:site_name" content="حسن عيون السود" />
+<meta property="og:locale" content="ar_SA" />
+<meta property="og:locale:alternate" content="en_US" />
+<meta property="og:title" content="حسن عيون السود — تسويق ومحتوى وتشغيل متاجر إلكترونية" />
+<meta property="og:description" content="بشتغل من ٢٠٢١: ببني متاجر إلكترونية وأنظمة تشغيل، بصوّر محتوى إعلاني، وبشرف على تشغيل ٣ فروع. جدة، السعودية." />
+<meta property="og:image" content="https://hsnoals.com/assets/og.png" />
+<meta property="og:image:width" content="1200" />
+<meta property="og:image:height" content="630" />
+<meta property="og:image:alt" content="حسن عيون السود — تسويق ومحتوى وتشغيل متاجر إلكترونية" />
+
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content="حسن عيون السود — تسويق ومحتوى وتشغيل متاجر إلكترونية" />
+<meta name="twitter:description" content="بشتغل من ٢٠٢١: ببني متاجر إلكترونية وأنظمة تشغيل، بصوّر محتوى إعلاني، وبشرف على تشغيل ٣ فروع." />
+<meta name="twitter:image" content="https://hsnoals.com/assets/og.png" />
 
 <link rel="preload" href="assets/fonts/tajawal-800-ar.woff2" as="font" type="font/woff2" crossorigin />
 <link rel="preload" href="assets/fonts/tajawal-400-ar.woff2" as="font" type="font/woff2" crossorigin />
 
 <!-- ?v= على CSS/JS: GitHub Pages بيخلي المتصفح يخزّن الملفات ١٠ دقايق.
      زوّد الرقم مع كل نشر وإلا ممكن يفتح HTML جديد مع CSS قديم. -->
-<link rel="stylesheet" href="css/style.css?v=5" />
+<link rel="stylesheet" href="css/style.css?v=6" />
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Person",
+  "name": "حسن عيون السود",
+  "alternateName": "Hasan Oyoun AlSoud",
+  "url": "https://hsnoals.com/",
+  "image": "https://hsnoals.com/assets/og.png",
+  "jobTitle": "مساعد مشرف عام",
+  "email": "mailto:hasanoyouna@gmail.com",
+  "knowsLanguage": ["ar", "en"],
+  "address": {
+    "@type": "PostalAddress",
+    "addressLocality": "جدة",
+    "addressCountry": "SA"
+  },
+  "worksFor": { "@type": "Organization", "name": "برو هاوس", "url": "https://prohouse.sa/" },
+  "knowsAbout": [
+    "التسويق الرقمي",
+    "صناعة المحتوى الإعلاني",
+    "بناء المتاجر الإلكترونية",
+    "تشغيل الفروع",
+    "تحليل المبيعات"
+  ],
+  "sameAs": [
+    "https://www.instagram.com/hsnoals/",
+    "https://www.tiktok.com/@hsnoals"
+  ]
+}
+</script>
 </head>
 <body>
 
@@ -33,7 +85,8 @@
       <img src="assets/logo.svg" alt="" width="30" height="30" />
       <span data-ar="حسن عيون السود" data-en="Hasan Oyoun AlSoud">حسن عيون السود</span>
     </a>
-    <nav class="links" aria-label="التنقل">
+    <nav class="links" aria-label="التنقل" data-ar-label="التنقل" data-en-label="Navigation">
+      <a href="#role"    data-ar="الدور"    data-en="Today">الدور</a>
       <a href="#work"    data-ar="الأعمال"  data-en="Work">الأعمال</a>
       <a href="#systems" data-ar="الأنظمة"  data-en="Systems">الأنظمة</a>
       <a href="#stores"  data-ar="المتاجر"  data-en="Stores">المتاجر</a>
@@ -63,54 +116,16 @@
       </p>
 
       <p class="lede reveal"
-         data-ar="عمري ٢٠ سنة، من جدة. بشتغل من ٢٠٢١ — بلّشت بخدمة العملاء وتجهيز الطلبات، وهلق ببني متاجر إلكترونية، بصوّر محتوى إعلاني، وبشرف على تشغيل ٣ فروع. أغلب اللي بعرفه تعلمته بالممارسة."
-         data-en="I'm 20, based in Jeddah. I've been working since 2021 — I started in customer service and order fulfilment, and today I build online stores, shoot ad content, and help run three branches. Most of what I know I learned by doing.">
-        عمري ٢٠ سنة، من جدة. بشتغل من ٢٠٢١ — بلّشت بخدمة العملاء وتجهيز الطلبات، وهلق ببني
-        متاجر إلكترونية، بصوّر محتوى إعلاني، وبشرف على تشغيل ٣ فروع. أغلب اللي بعرفه تعلمته بالممارسة.
+         data-ar="من جدة. بشتغل من ٢٠٢١ — بلّشت بخدمة العملاء وتجهيز الطلبات، وهلق ببني متاجر إلكترونية وأنظمة تشغيل، بصوّر محتوى إعلاني، وبشرف على تشغيل ٣ فروع. أغلب اللي بعرفه تعلمته بالممارسة."
+         data-en="Based in Jeddah. I've been working since 2021 — I started in customer service and order fulfilment, and today I build online stores and operations systems, shoot ad content, and help run three branches. Most of what I know I learned by doing.">
+        من جدة. بشتغل من ٢٠٢١ — بلّشت بخدمة العملاء وتجهيز الطلبات، وهلق ببني متاجر إلكترونية
+        وأنظمة تشغيل، بصوّر محتوى إعلاني، وبشرف على تشغيل ٣ فروع. أغلب اللي بعرفه تعلمته بالممارسة.
       </p>
 
       <div class="cta reveal">
         <a class="btn solid" href="#contact" data-ar="تواصل معي" data-en="Get in touch">تواصل معي</a>
         <a class="btn line"  href="#work"    data-ar="شوف الشغل" data-en="See the work">شوف الشغل</a>
       </div>
-    </div>
-  </section>
-
-  <!-- ===== الأرقام ===== -->
-  <section class="figures">
-    <div class="wrap">
-      <ul class="fig-grid">
-        <li class="fig reveal">
-          <span class="num">١٥٠<span class="unit" data-ar="ألف" data-en="k">ألف</span></span>
-          <span class="cap" data-ar="ريال مبيعات شهرية لأميزنج كار — بعد ما كانت ٣٠ ألف، خلال أقل من ٣ شهور"
-                data-en="SAR monthly sales at Amazing Car — up from 30k, in under three months">ريال مبيعات شهرية لأميزنج كار — بعد ما كانت ٣٠ ألف، خلال أقل من ٣ شهور</span>
-        </li>
-        <li class="fig reveal">
-          <span class="num">٣٣<span class="unit" data-ar="ألف" data-en="k">ألف</span></span>
-          <span class="cap" data-ar="متابع على تيك توك وانستقرام، من أقل من ٢٥ مقطع"
-                data-en="followers on TikTok and Instagram, from fewer than 25 videos">متابع على تيك توك وانستقرام، من أقل من ٢٥ مقطع</span>
-        </li>
-        <li class="fig reveal">
-          <span class="num">١٠٠<span class="unit">+</span></span>
-          <span class="cap" data-ar="مقطع إعلاني UGC لأكثر من ١٠ متاجر و٣ مطاعم"
-                data-en="UGC ad videos for 10+ stores and 3 restaurants">مقطع إعلاني UGC لأكثر من ١٠ متاجر و٣ مطاعم</span>
-        </li>
-        <li class="fig reveal">
-          <span class="num">٥</span>
-          <span class="cap" data-ar="متاجر إلكترونية بنيتها من الصفر — اثنين منها لمشاريعي"
-                data-en="online stores built from scratch — two of them my own">متاجر إلكترونية بنيتها من الصفر — اثنين منها لمشاريعي</span>
-        </li>
-        <li class="fig reveal">
-          <span class="num">٢٠٠<span class="unit">+</span></span>
-          <span class="cap" data-ar="طلب باليوم كنت أجهّزها بمتجر مودي شيك"
-                data-en="orders a day I fulfilled at ModiChic">طلب باليوم كنت أجهّزها بمتجر مودي شيك</span>
-        </li>
-        <li class="fig reveal">
-          <span class="num">٣</span>
-          <span class="cap" data-ar="فروع بشرف على تشغيلها اليوم بمطعم برو هاوس"
-                data-en="branches I help run today at Pro House">فروع بشرف على تشغيلها اليوم بمطعم برو هاوس</span>
-        </li>
-      </ul>
     </div>
   </section>
 
@@ -159,45 +174,92 @@
     </div>
   </section>
 
+  <!-- ===== الدور الحالي ===== -->
+  <section class="sec alt" id="role">
+    <div class="wrap">
+      <h2 class="reveal" data-ar="الدور الحالي" data-en="What I do today">الدور الحالي</h2>
+      <p class="sub reveal"
+         data-ar="مساعد مشرف عام — مطعم برو هاوس. ٣ فروع: عبداللطيف جميل، الروضة، والشاطئ."
+         data-en="Assistant general supervisor — Pro House. Three branches: Abdul Latif Jameel, Al-Rawdah and Al-Shati.">مساعد مشرف عام — مطعم برو هاوس. ٣ فروع: عبداللطيف جميل، الروضة، والشاطئ.</p>
+
+      <ul class="duties">
+        <li class="duty reveal">
+          <h3 data-ar="الموقع والجانب الرقمي" data-en="The site and the digital side">الموقع والجانب الرقمي</h3>
+          <p data-ar="بنيت موقع المطعم بالكود من الصفر بدون منصة، واشتريت الدومين وربطته بـSearch Console وAnalytics. ولسا أنا المسؤول عنه."
+             data-en="I coded the restaurant's site from scratch with no platform, bought the domain and connected Search Console and Analytics. I still own it.">بنيت موقع المطعم بالكود من الصفر بدون منصة، واشتريت الدومين وربطته بـSearch Console وAnalytics. ولسا أنا المسؤول عنه.</p>
+        </li>
+        <li class="duty reveal">
+          <h3 data-ar="تطبيقات التوصيل" data-en="Delivery platforms">تطبيقات التوصيل</h3>
+          <p data-ar="مسؤول عن كل منصات التوصيل اللي المطعم شغال معها — المنيو والأسعار والعروض والعمولات والتقييمات. وهاي قناة إيراد رئيسية."
+             data-en="I run every delivery platform the restaurant works with — menu, pricing, offers, commissions and ratings. It's a main revenue channel.">مسؤول عن كل منصات التوصيل اللي المطعم شغال معها — المنيو والأسعار والعروض والعمولات والتقييمات. وهاي قناة إيراد رئيسية.</p>
+        </li>
+        <li class="duty reveal">
+          <h3 data-ar="تطبيق تكرار — الاشتراكات" data-en="Takrar — the subscriptions app">تطبيق تكرار — الاشتراكات</h3>
+          <p data-ar="التطبيق الرسمي لإدارة اشتراكات المطعم وتطبيقه العام. هو المنتج اللي بيجيب الإيراد المتكرر، وأنا اللي بديره."
+             data-en="The official app for the restaurant's subscriptions and its public app. It's the product that brings in recurring revenue, and I run it.">التطبيق الرسمي لإدارة اشتراكات المطعم وتطبيقه العام. هو المنتج اللي بيجيب الإيراد المتكرر، وأنا اللي بديره.</p>
+        </li>
+        <li class="duty reveal">
+          <h3 data-ar="التسويق" data-en="Marketing">التسويق</h3>
+          <p data-ar="المحتوى والتصوير والحملات — واتساب وتيك توك وسناب شات."
+             data-en="Content, shooting and campaigns — WhatsApp, TikTok and Snapchat.">المحتوى والتصوير والحملات — واتساب وتيك توك وسناب شات.</p>
+        </li>
+        <li class="duty reveal">
+          <h3 data-ar="البيانات والتقارير" data-en="Data and reporting">البيانات والتقارير</h3>
+          <p data-ar="تحليل المبيعات والمنتجات، وتقارير دورية بتوصل للإدارة."
+             data-en="Sales and product analysis, and regular reporting that goes to management.">تحليل المبيعات والمنتجات، وتقارير دورية بتوصل للإدارة.</p>
+        </li>
+        <li class="duty reveal">
+          <h3 data-ar="الإشراف ونظام الحضور" data-en="Supervision and the attendance system">الإشراف ونظام الحضور</h3>
+          <p data-ar="إشراف على الفروع الثلاثة، ونظام الحضور الداخلي بنيته بنفسي بدل الورق."
+             data-en="Supervising the three branches, plus the internal attendance system I built myself to replace paper.">إشراف على الفروع الثلاثة، ونظام الحضور الداخلي بنيته بنفسي بدل الورق.</p>
+        </li>
+      </ul>
+
+      <p class="note reveal"
+         data-ar="الدوام: ٦:٣٠ صباحًا – ٥ مساءً، ٦ أيام بالأسبوع. توصيل موظفين، طلبيات، فتح وإقفال، وتقارير — والتسويق بين المهام."
+         data-en="Hours: 6:30am – 5pm, six days a week. Staff transport, orders, opening and closing, and reporting — with the marketing fitted in between.">الدوام: ٦:٣٠ صباحًا – ٥ مساءً، ٦ أيام بالأسبوع. توصيل موظفين، طلبيات، فتح وإقفال، وتقارير — والتسويق بين المهام.</p>
+    </div>
+  </section>
+
   <!-- ===== العلامات ===== -->
-  <section class="sec alt" id="work">
+  <section class="sec" id="work">
     <div class="wrap">
       <h2 class="reveal" data-ar="علامات اشتغلت معها" data-en="Brands I've worked with">علامات اشتغلت معها</h2>
       <p class="sub reveal" data-ar="سبع علامات، ستة قطاعات ما بينها أي رابط."
          data-en="Seven brands, six sectors with nothing in common.">سبع علامات، ستة قطاعات ما بينها أي رابط.</p>
 
       <ul class="brands">
-        <li class="brand reveal">
+        <li class="bitem reveal">
           <span class="bname" data-ar="برو هاوس" data-en="Pro House">برو هاوس</span>
           <span class="bcat" data-ar="وجبات صحية واشتراكات" data-en="Healthy meals &amp; subscriptions">وجبات صحية واشتراكات</span>
           <a href="https://www.instagram.com/prohouse.sa/" target="_blank" rel="noopener">@prohouse.sa</a>
         </li>
-        <li class="brand reveal">
+        <li class="bitem reveal">
           <span class="bname" data-ar="أميزنج كار" data-en="Amazing Car">أميزنج كار</span>
           <span class="bcat" data-ar="مستلزمات سيارات" data-en="Car accessories">مستلزمات سيارات</span>
           <a href="https://www.tiktok.com/@amazingcar.1" target="_blank" rel="noopener">@amazingcar.1</a>
         </li>
-        <li class="brand reveal">
+        <li class="bitem reveal">
           <span class="bname" data-ar="مجوهرات روبي" data-en="Ruby Jewelry">مجوهرات روبي</span>
           <span class="bcat" data-ar="سبائك ذهب ومجوهرات" data-en="Gold &amp; jewellery">سبائك ذهب ومجوهرات</span>
           <a href="https://www.instagram.com/rubyjewelry2/" target="_blank" rel="noopener">@rubyjewelry2</a>
         </li>
-        <li class="brand reveal">
+        <li class="bitem reveal">
           <span class="bname" data-ar="ريونيك" data-en="Reunique">ريونيك</span>
           <span class="bcat" data-ar="عناية بالسيارات" data-en="Car care">عناية بالسيارات</span>
           <a href="https://www.instagram.com/reunique.co/" target="_blank" rel="noopener">@reunique.co</a>
         </li>
-        <li class="brand reveal">
+        <li class="bitem reveal">
           <span class="bname" data-ar="تمور شموخ" data-en="Shumukh Dates">تمور شموخ</span>
           <span class="bcat" data-ar="تمور فاخرة" data-en="Premium dates">تمور فاخرة</span>
           <a href="https://www.instagram.com/shumukhdates/" target="_blank" rel="noopener">@shumukhdates</a>
         </li>
-        <li class="brand reveal">
+        <li class="bitem reveal">
           <span class="bname" data-ar="سمارت ديجيتال" data-en="Smart Digital">سمارت ديجيتال</span>
           <span class="bcat" data-ar="كاميرات وحلول أمنية" data-en="Cameras &amp; security">كاميرات وحلول أمنية</span>
           <a href="https://www.tiktok.com/@smartdigitalksa" target="_blank" rel="noopener">@smartdigitalksa</a>
         </li>
-        <li class="brand reveal">
+        <li class="bitem reveal">
           <span class="bname" data-ar="وكالة بي هايف" data-en="Beehive Agency">وكالة بي هايف</span>
           <span class="bcat" data-ar="تسويق وصناعة محتوى" data-en="Marketing &amp; content agency">تسويق وصناعة محتوى</span>
           <a href="https://www.instagram.com/beehiveagency.sa/" target="_blank" rel="noopener">@beehiveagency.sa</a>
@@ -228,7 +290,7 @@
 
 
   <!-- ===== أنظمة ===== -->
-  <section class="sec" id="systems">
+  <section class="sec alt" id="systems">
     <div class="wrap">
       <h2 class="reveal" data-ar="أنظمة بنيتها" data-en="Systems I built">أنظمة بنيتها</h2>
       <p class="sub reveal" data-ar="مش مواقع تعريفية — أنظمة بيشتغل عليها ناس كل يوم."
@@ -295,7 +357,7 @@
   </section>
 
   <!-- ===== المتاجر ===== -->
-  <section class="sec alt" id="stores">
+  <section class="sec" id="stores">
     <div class="wrap">
       <h2 class="reveal" data-ar="متاجر بنيتها" data-en="Stores I built">متاجر بنيتها</h2>
 
@@ -316,7 +378,7 @@
         <li class="store reveal">
           <div class="shead">
             <span class="sname" data-ar="أميزنج كار" data-en="Amazing Car">أميزنج كار</span>
-            <span class="tag">سلة</span>
+            <span class="tag" data-ar="سلة" data-en="Salla">سلة</span>
           </div>
           <p data-ar="بنيت المتجر واشتغلت على تسويقه. المبيعات ارتفعت من ٣٠ ألف لـ١٥٠ ألف ريال شهريًا خلال أقل من ٣ شهور."
              data-en="Built the store and ran its marketing. Monthly sales went from 30k to 150k SAR in under three months.">
@@ -328,7 +390,7 @@
         <li class="store reveal">
           <div class="shead">
             <span class="sname" data-ar="تمور شموخ" data-en="Shumukh Dates">تمور شموخ</span>
-            <span class="tag">سلة</span>
+            <span class="tag" data-ar="سلة" data-en="Salla">سلة</span>
           </div>
           <p data-ar="بنيت المتجر واشتغلت معهم فترة قصيرة."
              data-en="Built the store and worked with them for a short period.">
@@ -450,10 +512,11 @@
         وخسرت المبلغ كامل، لأني ما تأكدت من جودة المنتج قبل ما أطلبه.
       </p>
       <p class="reveal"
-         data-ar="وتريند زون، متجر المنتجات المنزلية، وقف كمان. المشروعين علموني إشي ما بتعلمه من كتاب: إنك تبيع بسرعة مش نجاح لحاله، والمنتج نفسه لازم يستحمل. صرت من يومها أفحص قبل ما أصرف."
-         data-en="Trend Zone, my home-products store, also shut down. Both taught me something no book does: selling fast isn't success on its own, and the product itself has to hold up. Since then I check before I spend.">
+         data-ar="وتريند زون، متجر المنتجات المنزلية، وقف كمان. المشروعين علموني إشي ما بتعلمه من كتاب: إنك تبيع بسرعة مش نجاح لحاله، والمنتج نفسه لازم يستحمل. صرت من يومها أفحص المورّد وأطلب عيّنة قبل ما أصرف ريال على تسويق."
+         data-en="Trend Zone, my home-products store, also shut down. Both taught me something no book does: selling fast isn't success on its own, and the product itself has to hold up. Since then I vet the supplier and get a sample before I spend a riyal on marketing.">
         وتريند زون، متجر المنتجات المنزلية، وقف كمان. المشروعين علموني إشي ما بتعلمه من كتاب:
-        إنك تبيع بسرعة مش نجاح لحاله، والمنتج نفسه لازم يستحمل. صرت من يومها أفحص قبل ما أصرف.
+        إنك تبيع بسرعة مش نجاح لحاله، والمنتج نفسه لازم يستحمل. صرت من يومها أفحص المورّد
+        وأطلب عيّنة قبل ما أصرف ريال على تسويق.
       </p>
     </div>
   </section>
@@ -463,9 +526,10 @@
     <div class="wrap narrow">
       <h2 class="reveal" data-ar="تواصل معي" data-en="Get in touch">تواصل معي</h2>
       <p class="reveal"
-         data-ar="بدوّر على مكان أتعلم فيه وأطوّر حالي، وأشتغل مع ناس أستفيد منهم. لو عندك إشي مناسب، احكيلي."
-         data-en="I'm looking for somewhere I can learn, grow, and work with people I can learn from. If you have something that fits, get in touch.">
-        بدوّر على مكان أتعلم فيه وأطوّر حالي، وأشتغل مع ناس أستفيد منهم. لو عندك إشي مناسب، احكيلي.
+         data-ar="التسويق والمتاجر والتشغيل مش تخصصات منفصلة عندي — شغّلتهم كلهم بنفس المكان وبنفس الوقت. بدوّر على مكان أكبر أعمل فيه نفس الإشي وأكمّل أطوّر حالي. لو عندك شغل من هالنوع، احكيلي."
+         data-en="Marketing, online stores and operations aren't separate specialities for me — I've run all three in the same place at the same time. I'm looking for somewhere bigger to do the same and keep growing. If you have work like that, get in touch.">
+        التسويق والمتاجر والتشغيل مش تخصصات منفصلة عندي — شغّلتهم كلهم بنفس المكان وبنفس الوقت.
+        بدوّر على مكان أكبر أعمل فيه نفس الإشي وأكمّل أطوّر حالي. لو عندك شغل من هالنوع، احكيلي.
       </p>
 
       <div class="ways reveal">
@@ -490,6 +554,6 @@
   </div>
 </footer>
 
-<script src="js/main.js?v=5"></script>
+<script src="js/main.js?v=6"></script>
 </body>
 </html>

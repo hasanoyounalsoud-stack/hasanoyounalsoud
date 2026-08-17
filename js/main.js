@@ -39,8 +39,16 @@
     }
 
     // بعد ما ينتبدّل النص — الأرقام اللي مش جوّا data-ar/data-en
-    var numeric = document.querySelectorAll(".num, .when, .fig .cap, .time p, .store p, #lessons p, .clips .n, #year");
+    var numeric = document.querySelectorAll(".when, .time p, .store p, .feats li, #lessons p, .clips .n, #year");
     for (var j = 0; j < numeric.length; j++) convertDigits(numeric[j], isAr);
+
+    /* التسميات المخفية للقارئ الصوتي — بتنتبدّل بخاصية مش بنص، فبتحتاج
+       معالجة لحالها. بدونها المكفوف بيسمع "التنقل" وهو بالوضع الإنجليزي. */
+    var labelled = document.querySelectorAll("[data-ar-label][data-en-label]");
+    for (var L = 0; L < labelled.length; L++) {
+      labelled[L].setAttribute("aria-label",
+        isAr ? labelled[L].getAttribute("data-ar-label") : labelled[L].getAttribute("data-en-label"));
+    }
 
     if (langBtn) {
       langBtn.textContent = isAr ? "EN" : "عربي";
@@ -78,51 +86,6 @@
     for (var m = 0; m < reveals.length; m++) io.observe(reveals[m]);
   }
 
-
-  /* ===== عدّ الأرقام =====
-     الأرقام هي أقوى إشي بالصفحة، فبتعدّ لما توصلها بدل ما تكون ثابتة.
-     بتشتغل مرة وحدة لكل رقم، وبتحترم تقليل الحركة. */
-  var slow = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-
-  function toDigits(n, arabic) {
-    var t = String(n);
-    return arabic ? t.replace(/[0-9]/g, function (d) { return AR_DIGITS[+d]; }) : t;
-  }
-
-  function countUp(el) {
-    // النص الظاهر ممكن يكون عربي أو لاتيني — بناخد الرقم من النسخة اللاتينية
-    var raw = el.firstChild && el.firstChild.nodeValue ? el.firstChild.nodeValue.trim() : "";
-    var latin = raw.replace(/[٠-٩]/g, function (d) { return String(AR_DIGITS.indexOf(d)); });
-    var target = parseInt(latin, 10);
-    if (!target || slow) return;
-
-    var start = null;
-    var dur = 1100;
-
-    function step(ts) {
-      if (start === null) start = ts;
-      var t = Math.min((ts - start) / dur, 1);
-      var eased = 1 - Math.pow(1 - t, 3);          // بيبطّئ بالآخر
-      var val = Math.round(target * eased);
-      if (el.firstChild) el.firstChild.nodeValue = toDigits(val, html.lang === "ar");
-      if (t < 1) window.requestAnimationFrame(step);
-    }
-
-    if (el.firstChild) el.firstChild.nodeValue = toDigits(0, html.lang === "ar");
-    window.requestAnimationFrame(step);
-  }
-
-  var figures = document.querySelectorAll(".num");
-  if ("IntersectionObserver" in window) {
-    var numObs = new IntersectionObserver(function (entries) {
-      entries.forEach(function (e) {
-        if (!e.isIntersecting) return;
-        countUp(e.target);
-        numObs.unobserve(e.target);
-      });
-    }, { threshold: 0.6 });
-    for (var f = 0; f < figures.length; f++) numObs.observe(figures[f]);
-  }
 
   /* ===== حالة الهيدر ===== */
   var nav = document.getElementById("nav");
