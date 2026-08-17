@@ -611,3 +611,48 @@ a { color: inherit; }
 @media (max-width: 800px) {
   .duties { grid-template-columns: 1fr; }
 }
+
+/* ===== بورتريه الواجهة ===== */
+.hero-wrap {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 240px);
+  gap: clamp(28px, 5vw, 60px);
+  align-items: center;
+}
+.hero-photo { margin: 0; }
+.hero-photo img {
+  display: block;
+  width: 100%; height: auto;
+  border-radius: 20px;
+  border: 1px solid rgba(226, 248, 239, .22);
+  box-shadow: 0 26px 50px -26px rgba(0, 0, 0, .6);
+}
+
+@media (max-width: 860px) {
+  .hero-wrap { grid-template-columns: 1fr; gap: 30px; }
+  .hero-photo { order: -1; max-width: 170px; }
+}
+
+/* ===== من أرض الشغل ===== */
+.field-wrap {
+  display: grid;
+  grid-template-columns: minmax(0, 260px) minmax(0, 1fr);
+  gap: clamp(28px, 5vw, 56px);
+  align-items: center;
+}
+.field-img { margin: 0; }
+.field-img img {
+  display: block;
+  width: 100%; height: auto;
+  border-radius: 16px;
+  border: 1px solid var(--line);
+  box-shadow: 0 20px 40px -24px rgba(0, 0, 0, .45);
+}
+.field-text h2 { margin-bottom: 20px; }
+.field-text p { margin: 0 0 16px; color: var(--muted); font-size: 16.5px; }
+.field-text p:last-child { margin-bottom: 0; }
+
+@media (max-width: 760px) {
+  .field-wrap { grid-template-columns: 1fr; gap: 26px; }
+  .field-img { max-width: 240px; margin-inline: auto; }
+}
