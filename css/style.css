@@ -505,7 +505,34 @@ a { color: inherit; }
 
 .cs-link-box { margin-top: 28px; text-align: center; }
 
-/* ===== أنظمة إضافية ===== */
+/* ===== أنظمة إضافية وتفعيل الإلغاء السريع ===== */
+.kiosk-system-toggleable.disabled { display: none !important; }
+
+.sys-img-thumb {
+  border-radius: 10px;
+  overflow: hidden;
+  border: 1px solid var(--line);
+  background: #000;
+  max-height: 160px;
+  margin-block: 4px;
+}
+.sys-thumb-img {
+  width: 100%;
+  height: 160px;
+  object-fit: cover;
+  object-position: center top;
+  display: block;
+  transition: transform .3s var(--ease);
+}
+.sys-card:hover .sys-thumb-img { transform: scale(1.03); }
+
+.tech-specs-list {
+  margin: 6px 0; padding: 0; list-style: none; display: grid; gap: 6px;
+}
+.tech-specs-list li {
+  font-size: 13.5px; color: var(--muted); font-weight: 600; line-height: 1.5;
+}
+
 .other-systems-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; }
 .sys-card {
   padding: 22px; border-radius: 14px; background: var(--surface); border: 1px solid var(--line);
