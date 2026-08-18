@@ -554,4 +554,27 @@ a { color: inherit; }
 .stack span {
   padding: 4px 11px; font-size: 12.5px; font-weight: 700;
   color: var(--muted); background: var(--raise); border-radius: 6px;
+  border: 1px solid var(--line);
+  transition: transform .2s var(--ease), color .2s var(--ease);
 }
+.stack span:hover {
+  transform: translateY(-1px);
+  color: var(--ink);
+  border-color: var(--accent);
+}
+
+/* ===== Toast Notification ===== */
+.toast-msg {
+  position: fixed; bottom: 24px; inset-inline-end: 24px; z-index: 1000;
+  background: var(--ink); color: var(--ground);
+  padding: 12px 20px; border-radius: 10px;
+  font-size: 14.5px; font-weight: 700;
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, .3);
+  opacity: 0; transform: translateY(12px);
+  transition: opacity .3s var(--ease), transform .3s var(--ease);
+  pointer-events: none;
+}
+.toast-msg.show {
+  opacity: 1; transform: translateY(0);
+}
+

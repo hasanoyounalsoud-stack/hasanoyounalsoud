@@ -146,4 +146,28 @@
     var y = String(new Date().getFullYear());
     year.textContent = html.lang === "ar" ? y.replace(/[0-9]/g, function (d) { return AR_DIGITS[+d]; }) : y;
   }
+
+  /* ===== نسخ البريد الإلكتروني بنقرة واحدة ===== */
+  var mailLinks = document.querySelectorAll('a[href^="mailto:"]');
+  for (var mIdx = 0; mIdx < mailLinks.length; mIdx++) {
+    mailLinks[mIdx].addEventListener("click", function (evt) {
+      var email = this.getAttribute("href").replace("mailto:", "");
+      if (navigator.clipboard) {
+        navigator.clipboard.writeText(email);
+        showToast(html.lang === "ar" ? "تم نسخ البريد الإلكتروني بنجاح!" : "Email copied to clipboard!");
+      }
+    });
+  }
+
+  function showToast(msg) {
+    var toast = document.createElement("div");
+    toast.className = "toast-msg";
+    toast.textContent = msg;
+    document.body.appendChild(toast);
+    setTimeout(function () { toast.classList.add("show"); }, 10);
+    setTimeout(function () {
+      toast.classList.remove("show");
+      setTimeout(function () { if (toast.parentNode) toast.parentNode.removeChild(toast); }, 300);
+    }, 2500);
+  }
 })();
