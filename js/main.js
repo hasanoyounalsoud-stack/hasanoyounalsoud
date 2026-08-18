@@ -117,6 +117,40 @@
     });
   }
 
+  /* ===== النافذة التفاعلية لاستعراض شاشات برو هاوس (SYSTEM LIGHTBOX MODAL) ===== */
+  var expandBtn = document.getElementById("expandSystemModalBtn");
+  var phModal = document.getElementById("phSystemModal");
+  var closePhModalBtn = document.getElementById("closePhModalBtn");
+  var phModalBody = document.getElementById("phModalBody");
+  var phShowcase = document.getElementById("prohouseSystemShowcase");
+
+  function openSystemModal() {
+    if (!phModal || !phShowcase) return;
+    if (phModalBody) {
+      phModalBody.innerHTML = phShowcase.outerHTML;
+      // remove expand button inside modal
+      var innerBtn = phModalBody.querySelector("#expandSystemModalBtn");
+      if (innerBtn) innerBtn.style.display = "none";
+    }
+    phModal.classList.remove("hidden");
+    document.body.style.overflow = "hidden";
+  }
+
+  function closeSystemModal() {
+    if (!phModal) return;
+    phModal.classList.add("hidden");
+    document.body.style.overflow = "";
+  }
+
+  if (expandBtn) expandBtn.addEventListener("click", openSystemModal);
+  if (closePhModalBtn) closePhModalBtn.addEventListener("click", closeSystemModal);
+
+  if (phModal) {
+    phModal.addEventListener("click", function (e) {
+      if (e.target === phModal) closeSystemModal();
+    });
+  }
+
   function showToast(msg) {
     var toast = document.createElement("div");
     toast.className = "toast-msg";
