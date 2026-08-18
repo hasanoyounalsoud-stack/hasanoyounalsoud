@@ -327,15 +327,21 @@ a { color: inherit; }
   border: 2px solid #3f3f46;
   background: #18181b;
   box-shadow: 0 8px 20px rgba(0, 0, 0, .4);
-  max-height: 270px;
+  padding: 24px 16px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .ph-real-img {
+  max-width: 320px;
   width: 100%;
-  max-height: 270px;
-  object-fit: cover;
-  object-position: center 35%;
+  height: auto;
+  max-height: 340px;
+  object-fit: contain;
   display: block;
+  margin: 0 auto;
+  filter: drop-shadow(0 10px 25px rgba(0, 0, 0, 0.5));
 }
 
 .ph-real-img-overlay {
