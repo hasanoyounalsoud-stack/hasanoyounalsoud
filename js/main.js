@@ -1,5 +1,5 @@
-/* الموقع التعريفي — حسن عيون السود
-   تبديل اللغة، تحويل الأرقام، ظهور تدريجي، وحالة الهيدر. */
+/* الموقع التخصفي لحسن عيون السود — تشغيل مطاعم وتطوير مشاريع
+   تبديل اللغة، ظهور تدريجي، نسخ البريد، تحميل السيرة الذاتية، وحالة الهيدر. */
 
 (function () {
   "use strict";
@@ -7,11 +7,8 @@
   var LANG_KEY = "site-lang";
   var html = document.documentElement;
   var langBtn = document.getElementById("langBtn");
-
   var AR_DIGITS = "٠١٢٣٤٥٦٧٨٩";
 
-  /* الأرقام مكتوبة بالعربي بالـHTML. بالإنجليزي لازم تتحول لأرقام لاتينية،
-     وإلا بتطلع «١٥٠k» — نص إنجليزي وأرقام عربية بنفس السطر. */
   function convertDigits(root, toArabic) {
     var walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT, null);
     var node;
@@ -35,11 +32,11 @@
       var el = nodes[i];
       var text = isAr ? el.getAttribute("data-ar") : el.getAttribute("data-en");
       if (el.tagName === "META") el.setAttribute("content", text);
+      else if (el.tagName === "TITLE") document.title = text;
       else el.textContent = text;
     }
 
-    // بعد ما ينتبدّل النص — الأرقام اللي مش جوّا data-ar/data-en
-    var numeric = document.querySelectorAll(".num, .when, .fig .cap, .time p, .store p, #lessons p, .clips .n, #year");
+    var numeric = document.querySelectorAll(".when, .time p, .store-card p, .sys-card p, #lessons p, .clips .n, #year");
     for (var j = 0; j < numeric.length; j++) convertDigits(numeric[j], isAr);
 
     if (langBtn) {
@@ -60,10 +57,8 @@
     });
   }
 
-  /* ===== ظهور تدريجي =====
-     بدون IntersectionObserver بنعرض كل شي على طول بدل ما تضل الصفحة فاضية. */
+  /* ===== ظهور تدريجي ===== */
   var reveals = document.querySelectorAll(".reveal");
-
   if (!("IntersectionObserver" in window)) {
     for (var k = 0; k < reveals.length; k++) reveals[k].classList.add("shown");
   } else {
@@ -73,55 +68,9 @@
         entry.target.classList.add("shown");
         io.unobserve(entry.target);
       });
-    }, { rootMargin: "0px 0px -10% 0px", threshold: 0.05 });
+    }, { rootMargin: "0px 0px -8% 0px", threshold: 0.05 });
 
     for (var m = 0; m < reveals.length; m++) io.observe(reveals[m]);
-  }
-
-
-  /* ===== عدّ الأرقام =====
-     الأرقام هي أقوى إشي بالصفحة، فبتعدّ لما توصلها بدل ما تكون ثابتة.
-     بتشتغل مرة وحدة لكل رقم، وبتحترم تقليل الحركة. */
-  var slow = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-
-  function toDigits(n, arabic) {
-    var t = String(n);
-    return arabic ? t.replace(/[0-9]/g, function (d) { return AR_DIGITS[+d]; }) : t;
-  }
-
-  function countUp(el) {
-    // النص الظاهر ممكن يكون عربي أو لاتيني — بناخد الرقم من النسخة اللاتينية
-    var raw = el.firstChild && el.firstChild.nodeValue ? el.firstChild.nodeValue.trim() : "";
-    var latin = raw.replace(/[٠-٩]/g, function (d) { return String(AR_DIGITS.indexOf(d)); });
-    var target = parseInt(latin, 10);
-    if (!target || slow) return;
-
-    var start = null;
-    var dur = 1100;
-
-    function step(ts) {
-      if (start === null) start = ts;
-      var t = Math.min((ts - start) / dur, 1);
-      var eased = 1 - Math.pow(1 - t, 3);          // بيبطّئ بالآخر
-      var val = Math.round(target * eased);
-      if (el.firstChild) el.firstChild.nodeValue = toDigits(val, html.lang === "ar");
-      if (t < 1) window.requestAnimationFrame(step);
-    }
-
-    if (el.firstChild) el.firstChild.nodeValue = toDigits(0, html.lang === "ar");
-    window.requestAnimationFrame(step);
-  }
-
-  var figures = document.querySelectorAll(".num");
-  if ("IntersectionObserver" in window) {
-    var numObs = new IntersectionObserver(function (entries) {
-      entries.forEach(function (e) {
-        if (!e.isIntersecting) return;
-        countUp(e.target);
-        numObs.unobserve(e.target);
-      });
-    }, { threshold: 0.6 });
-    for (var f = 0; f < figures.length; f++) numObs.observe(figures[f]);
   }
 
   /* ===== حالة الهيدر ===== */
@@ -132,7 +81,7 @@
       if (ticking) return;
       ticking = true;
       window.requestAnimationFrame(function () {
-        nav.classList.toggle("scrolled", window.scrollY > 6);
+        nav.classList.toggle("scrolled", window.scrollY > 10);
         ticking = false;
       });
     };
@@ -156,6 +105,15 @@
         navigator.clipboard.writeText(email);
         showToast(html.lang === "ar" ? "تم نسخ البريد الإلكتروني بنجاح!" : "Email copied to clipboard!");
       }
+    });
+  }
+
+  /* ===== زر تحميل السيرة الذاتية (CV Download) ===== */
+  var cvBtns = document.querySelectorAll('.cv-btn, .cv-cta, .cv-download-btn');
+  for (var cIdx = 0; cIdx < cvBtns.length; cIdx++) {
+    cvBtns[cIdx].addEventListener("click", function (evt) {
+      // إذا كان الملف غير مرفق محلياً، أظهر إشعار للمستخدم بالاستعداد للتواصل المباشر
+      showToast(html.lang === "ar" ? "جاري فتح السيرة الذاتية..." : "Downloading CV...");
     });
   }
 

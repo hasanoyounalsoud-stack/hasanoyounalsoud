@@ -3,444 +3,702 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-<title>حسن عيون السود</title>
+<title data-ar="حسن عيون السود — تشغيل مطاعم وتطوير مشاريع" data-en="Hassan Oyouna — Restaurant Operations & Project Development">حسن عيون السود — تشغيل مطاعم وتطوير مشاريع</title>
 
-<meta name="description" data-ar="حسن عيون السود — تسويق ومحتوى وتشغيل متاجر إلكترونية. جدة، السعودية."
-      data-en="Hasan Oyoun AlSoud — marketing, content and e-commerce operations. Jeddah, Saudi Arabia."
-      content="حسن عيون السود — تسويق ومحتوى وتشغيل متاجر إلكترونية. جدة، السعودية." />
+<meta name="description"
+      data-ar="حسن عيون السود — متخصص في تشغيل المطاعم، تحسين الإجراءات، بناء الأنظمة التشغيلية الداخلية، وتطوير المشاريع. جدة، السعودية."
+      data-en="Hassan Oyouna — Specialist in Restaurant Operations, Process Improvement, Internal Systems Development, and Project Operations. Jeddah, Saudi Arabia."
+      content="حسن عيون السود — متخصص في تشغيل المطاعم، تحسين الإجراءات، بناء الأنظمة التشغيلية الداخلية، وتطوير المشاريع. جدة، السعودية." />
 <meta name="theme-color" content="#0B6E62" />
 <link rel="icon" href="assets/logo.svg" type="image/svg+xml" />
 
-<meta property="og:title" content="حسن عيون السود" />
-<meta property="og:description" content="تسويق ومحتوى وتشغيل متاجر إلكترونية" />
+<!-- Open Graph / Social -->
+<meta property="og:title" data-ar="حسن عيون السود — تشغيل مطاعم وتطوير مشاريع" data-en="Hassan Oyouna — Restaurant Operations & Project Development" content="حسن عيون السود — تشغيل مطاعم وتطوير مشاريع" />
+<meta property="og:description" data-ar="إشراف وتشغيل مطاعم، أتمتة إجراءات المطبخ والمخزون والفروع، وبناء أنظمة تشغيلية داخلية." data-en="Restaurant operations supervision, central kitchen & inventory workflow automation, and internal systems development." content="إشراف وتشغيل مطاعم، أتمتة إجراءات المطبخ والمخزون والفروع، وبناء أنظمة تشغيلية داخلية." />
 <meta property="og:image" content="assets/logo.svg" />
 <meta property="og:type" content="profile" />
 
+<!-- Preload Fonts -->
 <link rel="preload" href="assets/fonts/tajawal-800-ar.woff2" as="font" type="font/woff2" crossorigin />
 <link rel="preload" href="assets/fonts/tajawal-400-ar.woff2" as="font" type="font/woff2" crossorigin />
 
-<!-- ?v= على CSS/JS: GitHub Pages بيخلي المتصفح يخزّن الملفات ١٠ دقايق.
-     زوّد الرقم مع كل نشر وإلا ممكن يفتح HTML جديد مع CSS قديم. -->
-<link rel="stylesheet" href="css/style.css?v=5" />
+<link rel="stylesheet" href="css/style.css?v=6" />
+
+<!-- Structured Data for SEO -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Person",
+  "name": "Hassan Oyouna",
+  "alternateName": "حسن عيون السود",
+  "jobTitle": "Restaurant Operations & Project Development",
+  "worksFor": {
+    "@type": "Organization",
+    "name": "Pro House Restaurant"
+  },
+  "address": {
+    "@type": "PostalAddress",
+    "addressLocality": "Jeddah",
+    "addressCountry": "Saudi Arabia"
+  },
+  "url": "https://hsnoals.com/",
+  "email": "mailto:Hasanoyouna@gmail.com",
+  "sameAs": [
+    "https://www.instagram.com/hsnoals/",
+    "https://www.tiktok.com/@hsnoals"
+  ]
+}
+</script>
 </head>
 <body>
 
 <a class="skip" href="#main" data-ar="تخطَّ إلى المحتوى" data-en="Skip to content">تخطَّ إلى المحتوى</a>
 
+<!-- ===== الهيدر والشريط العلوي ===== -->
 <header class="nav" id="nav">
   <div class="wrap nav-in">
     <a class="brand" href="#top">
       <img src="assets/logo.svg" alt="" width="30" height="30" />
-      <span data-ar="حسن عيون السود" data-en="Hasan Oyoun AlSoud">حسن عيون السود</span>
+      <span data-ar="حسن عيون السود" data-en="Hassan Oyouna">حسن عيون السود</span>
     </a>
-    <nav class="links" aria-label="التنقل">
-      <a href="#work"    data-ar="الأعمال"  data-en="Work">الأعمال</a>
-      <a href="#systems" data-ar="الأنظمة"  data-en="Systems">الأنظمة</a>
-      <a href="#stores"  data-ar="المتاجر"  data-en="Stores">المتاجر</a>
-      <a href="#path"    data-ar="المسيرة"  data-en="Path">المسيرة</a>
-      <a href="#contact" data-ar="تواصل"    data-en="Contact">تواصل</a>
+    <nav class="links" aria-label="التنقل الرئيسي">
+      <a href="#about"    data-ar="عنّي"       data-en="About">عنّي</a>
+      <a href="#prohouse" data-ar="برو هاوس"   data-en="Pro House">برو هاوس</a>
+      <a href="#systems"  data-ar="الأنظمة"   data-en="Systems">الأنظمة</a>
+      <a href="#approach" data-ar="منهج العمل" data-en="Approach">منهج العمل</a>
+      <a href="#skills"   data-ar="المهارات"   data-en="Skills">المهارات</a>
+      <a href="#path"     data-ar="المسيرة"    data-en="Timeline">المسيرة</a>
+      <a href="#contact"  data-ar="تواصل"      data-en="Contact">تواصل</a>
     </nav>
-    <button class="lang" id="langBtn" type="button" aria-label="تبديل اللغة">EN</button>
+    <div class="nav-actions">
+      <a href="assets/Hasan_Oyouna_CV.pdf" class="cv-btn" id="cvNavBtn" download data-ar="تحميل CV" data-en="Download CV">تحميل CV</a>
+      <button class="lang" id="langBtn" type="button" aria-label="تبديل اللغة">EN</button>
+    </div>
   </div>
 </header>
 
 <main id="main">
 
-  <!-- ===== الواجهة ===== -->
+  <!-- ===== 1. الواجهة الرئيسية (HERO SECTION) ===== -->
   <section class="hero" id="top">
     <div class="wrap">
       <div class="profile-header reveal">
-        <img src="assets/images/hasan.jpg" alt="حسن عيون السود" class="profile-avatar" />
+        <img src="assets/images/hasan.jpg" alt="حسن عيون السود — تشغيل مطاعم وتطوير مشاريع" class="profile-avatar" />
         <div class="profile-meta">
           <p class="status">
             <span class="dot" aria-hidden="true"></span>
-            <span data-ar="مفتوح لفرص جديدة" data-en="Open to new opportunities">مفتوح لفرص جديدة</span>
+            <span data-ar="مفتوح لفرص تشغيلية وتطوير مشاريع" data-en="Open to Operations & Project Development Roles">مفتوح لفرص تشغيلية وتطوير مشاريع</span>
           </p>
-          <h1 data-ar="حسن عيون السود" data-en="Hasan Oyoun AlSoud">حسن عيون السود</h1>
+          <h1 data-ar="حسن عيون السود" data-en="Hassan Oyouna">حسن عيون السود</h1>
+          <p class="role-badge"
+             data-ar="تشغيل مطاعم وتطوير مشاريع"
+             data-en="Restaurant Operations & Project Development">
+            تشغيل مطاعم وتطوير مشاريع
+          </p>
         </div>
       </div>
 
-      <p class="role reveal"
-         data-ar="تسويق ومحتوى وتشغيل متاجر إلكترونية"
-         data-en="Marketing, content &amp; e-commerce operations">
-        تسويق ومحتوى وتشغيل متاجر إلكترونية
-      </p>
-
       <p class="lede reveal"
-         data-ar="من جدة. بشتغل بالتجارة الإلكترونية والتسويق — بلّشت بخدمة العملاء وتجهيز الطلبات، واليوم ببني متاجر إلكترونية، بصوّر محتوى إعلاني، وبشرف على تشغيل العمليات والفروع. أغلب اللي بعرفه تعلمته بالممارسة."
-         data-en="Based in Jeddah. Working in e-commerce and marketing — I started in customer service and order fulfilment, and today I build online stores, shoot ad content, and help manage store operations and branches. Most of what I know I learned by doing.">
-        من جدة. بشتغل بالتجارة الإلكترونية والتسويق — بلّشت بخدمة العملاء وتجهيز الطلبات، واليوم ببني
-        متاجر إلكترونية، بصوّر محتوى إعلاني، وبشرف على تشغيل العمليات والفروع. أغلب اللي بعرفه تعلمته بالممارسة.
+         data-ar="متخصص في إشراف وتطوير تشغيل المطاعم، تحسين الإجراءات اليومية، وأتمتة دورات العمل وأنظمة المطبخ والمخزون والفروع. أربط بين التشغيل الميداني والحلول التقنية المبتكرة لرفع كفاءة العمليات وتدفق البيانات."
+         data-en="Specialized in restaurant operations supervision, process improvement, and internal workflow automation across central kitchens, inventory, and branches. I bridge real-world physical operations with custom digital systems to streamline workflows and data tracking.">
+        متخصص في إشراف وتطوير تشغيل المطاعم، تحسين الإجراءات اليومية، وأتمتة دورات العمل وأنظمة المطبخ والمخزون والفروع. أربط بين التشغيل الميداني والحلول التقنية المبتكرة لرفع كفاءة العمليات وتدفق البيانات.
       </p>
 
       <div class="cta reveal">
-        <a class="btn solid" href="#contact" data-ar="تواصل معي" data-en="Get in touch">تواصل معي</a>
-        <a class="btn line"  href="#work"    data-ar="شوف الشغل" data-en="See the work">شوف الشغل</a>
+        <a class="btn solid" href="#contact" data-ar="تواصل معي" data-en="Get in Touch">تواصل معي</a>
+        <a class="btn line"  href="#prohouse" data-ar="استعراض مشروع برو هاوس" data-en="View Pro House Case Study">استعراض مشروع برو هاوس</a>
+        <a class="btn line cv-cta" href="assets/Hasan_Oyouna_CV.pdf" download id="cvHeroBtn" data-ar="تحميل السيرة الذاتية PDF" data-en="Download CV (PDF)">تحميل السيرة الذاتية PDF</a>
       </div>
     </div>
   </section>
 
 
-  <!-- ===== شو بعمل ===== -->
-  <section class="sec" id="do">
+  <!-- ===== 2. عنّي والمسار المهني (ABOUT SECTION) ===== -->
+  <section class="sec alt" id="about">
     <div class="wrap">
-      <h2 class="reveal" data-ar="شو بعمل" data-en="What I do">شو بعمل</h2>
-
-      <div class="do-grid">
-        <article class="do reveal">
-          <h3 data-ar="محتوى إعلاني" data-en="Ad content">محتوى إعلاني</h3>
-          <p data-ar="بكتب وبصوّر وبمنتج مقاطع UGC للمتاجر والمطاعم. اشتغلت مع عدة علامات بقطاعات مختلفة — سيارات، ذهب، تمور، كاميرات، أكل، ووكالة تسويق."
-             data-en="I write, shoot and edit UGC ad videos for stores and restaurants. I've worked with multiple brands across various sectors — cars, gold, dates, cameras, food, and a marketing agency.">
-            بكتب وبصوّر وبمنتج مقاطع UGC للمتاجر والمطاعم. اشتغلت مع عدة علامات بقطاعات مختلفة —
-            سيارات، ذهب، تمور، كاميرات، أكل، ووكالة تسويق.
+      <h2 class="reveal" data-ar="عنّي والمسار المهني" data-en="About & Journey">عنّي والمسار المهني</h2>
+      <div class="about-grid">
+        <div class="about-card reveal">
+          <h3 data-ar="فهم التشغيل من أرض الميدان" data-en="Grounded Field Operations Experience">فهم التشغيل من أرض الميدان</h3>
+          <p data-ar="بدأت العمل المهني من المهام الميدانية المباشرة (خدمة العملاء، تجهيز الطلبات، المستودعات، وإشراف الفروع). مكنني هذا من فهم التحديات اليومية التي تواجه طاقم العمل والعملاء من الداخل، والتعامل مع التفاصيل التشغيلية بمرونة وعملية."
+             data-en="I built my foundation on hands-on operational roles (customer service, order fulfillment, warehouse control, and floor supervision). This gave me an inside understanding of daily team challenges, customer interactions, and practical execution.">
+            بدأت العمل المهني من المهام الميدانية المباشرة (خدمة العملاء، تجهيز الطلبات، المستودعات، وإشراف الفروع). مكنني هذا من فهم التحديات اليومية التي تواجه طاقم العمل والعملاء من الداخل، والتعامل مع التفاصيل التشغيلية بمرونة وعملية.
           </p>
-        </article>
+        </div>
 
-        <article class="do reveal">
-          <h3 data-ar="بناء متاجر إلكترونية" data-en="Building online stores">بناء متاجر إلكترونية</h3>
-          <p data-ar="بنيت عدة متاجر إلكترونية على منصة سلة، وعندي تجربة على زد. وموقع برو هاوس بنيته بالكود من الصفر بدون أي منصة، وربطته بـSearch Console وAnalytics."
-             data-en="I've built several online stores across platforms like Salla and Zid. The Pro House site I coded from scratch with no platform — connected Search Console and Analytics.">
-            بنيت عدة متاجر إلكترونية على منصة سلة، وعندي تجربة على زد. وموقع برو هاوس بنيته بالكود
-            من الصفر بدون أي منصة، وربطته بـSearch Console وAnalytics.
+        <div class="about-card reveal">
+          <h3 data-ar="التكامل بين التقنية والتطبيق الميداني" data-en="Bridging Technology & Real Operations">التكامل بين التقنية والتطبيق الميداني</h3>
+          <p data-ar="ميزتي الأساسية تتلخص في عدم الاكتفاء بتحديد الخلل التشغيلي؛ بل تصميم وبناء الأداة أو النظام البرمجي الداخلي الذي يحل الخلل مباشرة. أعمل على تحويل العمليات اليدوية أو الورقية إلى إجراءات مؤتمتة وسريعة تخدم إدارة المطعم والفروع."
+             data-en="My core differentiator is going beyond identifying operational gaps to building the actual digital tool or automated internal workflow needed to solve them. I turn paper or manual tasks into streamlined digital systems that serve branch teams and management.">
+            ميزتي الأساسية تتلخص في عدم الاكتفاء بتحديد الخلل التشغيلي؛ بل تصميم وبناء الأداة أو النظام البرمجي الداخلي الذي يحل الخلل مباشرة. أعمل على تحويل العمليات اليدوية أو الورقية إلى إجراءات مؤتمتة وسريعة تخدم إدارة المطعم والفروع.
           </p>
-        </article>
-
-        <article class="do reveal">
-          <h3 data-ar="تشغيل" data-en="Operations">تشغيل</h3>
-          <p data-ar="تجهيز طلبات، إدارة مستودع، إشراف على فروع وموظفين، ومتابعة تطبيقات التوصيل وتطبيق الاشتراكات. بلّشت من أرض الشغل مش من المكتب."
-             data-en="Order fulfilment, warehouse management, supervising branches and staff, and running the delivery apps and the subscription app. I started on the floor, not behind a desk.">
-            تجهيز طلبات، إدارة مستودع، إشراف على فروع وموظفين، ومتابعة تطبيقات التوصيل وتطبيق
-            الاشتراكات. بلّشت من أرض الشغل مش من المكتب.
-          </p>
-        </article>
-
-        <article class="do reveal">
-          <h3 data-ar="أرقام وتقارير" data-en="Numbers &amp; reporting">أرقام وتقارير</h3>
-          <p data-ar="بحلل بيانات المبيعات والمنتجات وبطلّع تقارير دورية، وبضع أهداف تسويقية مبنية عليها. وبنيت نظام حضور داخلي بنفسي عشان يوقف التلاعب بالوقت."
-             data-en="I analyse sales and product data, produce regular reports, and set marketing targets from them. I also built an internal attendance system myself to stop time tampering.">
-            بحلل بيانات المبيعات والمنتجات وبطلّع تقارير دورية، وبضع أهداف تسويقية مبنية عليها.
-            وبنيت نظام حضور داخلي بنفسي عشان يوقف التلاعب بالوقت.
-          </p>
-        </article>
+        </div>
       </div>
     </div>
   </section>
 
-  <!-- ===== العلامات ===== -->
-  <section class="sec alt" id="work">
+
+  <!-- ===== 3. الخبرة الرئيسية ودراسة الحالة: برو هاوس (PRO HOUSE FEATURED CASE STUDY) ===== -->
+  <section class="sec" id="prohouse">
     <div class="wrap">
-      <h2 class="reveal" data-ar="علامات اشتغلت معها" data-en="Brands I've worked with">علامات اشتغلت معها</h2>
-      <p class="sub reveal" data-ar="علامات تجارية بقطاعات مختلفة ومتنوعة."
-         data-en="Brands across diverse sectors.">علامات تجارية بقطاعات مختلفة ومتنوعة.</p>
+      <div class="sec-head reveal">
+        <span class="badge-tag" data-ar="الخبرة الرئيسية والنموذج القيادي" data-en="Primary Professional Proof">الخبرة الرئيسية والنموذج القيادي</span>
+        <h2 data-ar="مطعم برو هاوس — تشغيل الفروع وتطوير الأنظمة" data-en="Pro House Restaurant — Operations & Systems Development">مطعم برو هاوس — تشغيل الفروع وتطوير الأنظمة</h2>
+        <p class="sub" data-ar="مساعد مشرف عام · 3 فروع (عبداللطيف جميل، الروضة، الشاطئ) · 11/2025 – الآن"
+           data-en="Assistant General Supervisor · 3 Branches (Jameel, Al-Rawdah, Al-Shati) · Nov 2025 – Present">
+          مساعد مشرف عام · 3 فروع (عبداللطيف جميل، الروضة، الشاطئ) · 11/2025 – الآن
+        </p>
+      </div>
 
-      <ul class="brands">
-        <li class="brand reveal">
-          <span class="bname" data-ar="برو هاوس" data-en="Pro House">برو هاوس</span>
-          <span class="bcat" data-ar="وجبات صحية واشتراكات" data-en="Healthy meals &amp; subscriptions">وجبات صحية واشتراكات</span>
-          <a href="https://www.instagram.com/prohouse.sa/" target="_blank" rel="noopener">@prohouse.sa</a>
-        </li>
-        <li class="brand reveal">
-          <span class="bname" data-ar="أميزنج كار" data-en="Amazing Car">أميزنج كار</span>
-          <span class="bcat" data-ar="مستلزمات سيارات" data-en="Car accessories">مستلزمات سيارات</span>
-          <a href="https://www.tiktok.com/@amazingcar.1" target="_blank" rel="noopener">@amazingcar.1</a>
-        </li>
-        <li class="brand reveal">
-          <span class="bname" data-ar="مجوهرات روبي" data-en="Ruby Jewelry">مجوهرات روبي</span>
-          <span class="bcat" data-ar="سبائك ذهب ومجوهرات" data-en="Gold &amp; jewellery">سبائك ذهب ومجوهرات</span>
-          <a href="https://www.instagram.com/rubyjewelry2/" target="_blank" rel="noopener">@rubyjewelry2</a>
-        </li>
-        <li class="brand reveal">
-          <span class="bname" data-ar="ريونيك" data-en="Reunique">ريونيك</span>
-          <span class="bcat" data-ar="عناية بالسيارات" data-en="Car care">عناية بالسيارات</span>
-          <a href="https://www.instagram.com/reunique.co/" target="_blank" rel="noopener">@reunique.co</a>
-        </li>
-        <li class="brand reveal">
-          <span class="bname" data-ar="تمور شموخ" data-en="Shumukh Dates">تمور شموخ</span>
-          <span class="bcat" data-ar="تمور فاخرة" data-en="Premium dates">تمور فاخرة</span>
-          <a href="https://www.instagram.com/shumukhdates/" target="_blank" rel="noopener">@shumukhdates</a>
-        </li>
-        <li class="brand reveal">
-          <span class="bname" data-ar="سمارت ديجيتال" data-en="Smart Digital">سمارت ديجيتال</span>
-          <span class="bcat" data-ar="كاميرات وحلول أمنية" data-en="Cameras &amp; security">كاميرات وحلول أمنية</span>
-          <a href="https://www.tiktok.com/@smartdigitalksa" target="_blank" rel="noopener">@smartdigitalksa</a>
-        </li>
-        <li class="brand reveal">
-          <span class="bname" data-ar="وكالة بي هايف" data-en="Beehive Agency">وكالة بي هايف</span>
-          <span class="bcat" data-ar="تسويق وصناعة محتوى" data-en="Marketing &amp; content agency">تسويق وصناعة محتوى</span>
-          <a href="https://www.instagram.com/beehiveagency.sa/" target="_blank" rel="noopener">@beehiveagency.sa</a>
-        </li>
-      </ul>
-
-      <h3 class="mini reveal" data-ar="مقاطع من الشغل" data-en="Selected videos">مقاطع من الشغل</h3>
-      <ul class="clips">
-        <li class="reveal"><a href="https://www.instagram.com/reel/Db5kVq7szo5/" target="_blank" rel="noopener"><span class="pf">Instagram</span><span class="n" data-ar="١" data-en="1">١</span></a></li>
-        <li class="reveal"><a href="https://www.instagram.com/reel/DYwgbGDMkTh/" target="_blank" rel="noopener"><span class="pf">Instagram</span><span class="n" data-ar="٢" data-en="2">٢</span></a></li>
-        <li class="reveal"><a href="https://www.instagram.com/reel/DbqM7Qyq9qD/" target="_blank" rel="noopener"><span class="pf">Instagram</span><span class="n" data-ar="٣" data-en="3">٣</span></a></li>
-        <li class="reveal"><a href="https://www.instagram.com/reel/DbDfI3KktZW/" target="_blank" rel="noopener"><span class="pf">Instagram</span><span class="n" data-ar="٤" data-en="4">٤</span></a></li>
-        <li class="reveal"><a href="https://www.instagram.com/reel/DRuAwAFCIZ6/" target="_blank" rel="noopener"><span class="pf">Instagram</span><span class="n" data-ar="٥" data-en="5">٥</span></a></li>
-        <li class="reveal"><a href="https://www.instagram.com/reel/DUjFb5Zgu13/" target="_blank" rel="noopener"><span class="pf">Instagram</span><span class="n" data-ar="٦" data-en="6">٦</span></a></li>
-        <li class="reveal"><a href="https://www.instagram.com/reel/DUdgS5TleHq/" target="_blank" rel="noopener"><span class="pf">Instagram</span><span class="n" data-ar="٧" data-en="7">٧</span></a></li>
-        <li class="reveal"><a href="https://vt.tiktok.com/ZSVYtKB4f/" target="_blank" rel="noopener"><span class="pf">TikTok</span><span class="n" data-ar="٨" data-en="8">٨</span></a></li>
-        <li class="reveal"><a href="https://vt.tiktok.com/ZSVYnyByX/" target="_blank" rel="noopener"><span class="pf">TikTok</span><span class="n" data-ar="٩" data-en="9">٩</span></a></li>
-        <li class="reveal"><a href="https://vt.tiktok.com/ZSVYnkpuUR/" target="_blank" rel="noopener"><span class="pf">TikTok</span><span class="n" data-ar="١٠" data-en="10">١٠</span></a></li>
-        <li class="reveal"><a href="https://vt.tiktok.com/ZSVYn6uGY/" target="_blank" rel="noopener"><span class="pf">TikTok</span><span class="n" data-ar="١١" data-en="11">١١</span></a></li>
-        <li class="reveal"><a href="https://vt.tiktok.com/ZSVYnBbA1/" target="_blank" rel="noopener"><span class="pf">TikTok</span><span class="n" data-ar="١٢" data-en="12">١٢</span></a></li>
-        <li class="reveal"><a href="https://vt.tiktok.com/ZSVYnLGvW/" target="_blank" rel="noopener"><span class="pf">TikTok</span><span class="n" data-ar="١٣" data-en="13">١٣</span></a></li>
-        <li class="reveal"><a href="https://vt.tiktok.com/ZSVYnhn9s/" target="_blank" rel="noopener"><span class="pf">TikTok</span><span class="n" data-ar="١٤" data-en="14">١٤</span></a></li>
-        <li class="reveal"><a href="https://vt.tiktok.com/ZSVYnXiLo/" target="_blank" rel="noopener"><span class="pf">TikTok</span><span class="n" data-ar="١٥" data-en="15">١٥</span></a></li>
-        <li class="reveal"><a href="https://vt.tiktok.com/ZSVYnnKYr/" target="_blank" rel="noopener"><span class="pf">TikTok</span><span class="n" data-ar="١٦" data-en="16">١٦</span></a></li>
-      </ul>
-    </div>
-  </section>
-
-
-  <!-- ===== أنظمة ===== -->
-  <section class="sec" id="systems">
-    <div class="wrap">
-      <h2 class="reveal" data-ar="أنظمة بنيتها" data-en="Systems I built">أنظمة بنيتها</h2>
-      <p class="sub reveal" data-ar="مش مواقع تعريفية — أنظمة بيشتغل عليها ناس كل يوم."
-         data-en="Not brochure sites — systems people use every day.">مش مواقع تعريفية — أنظمة بيشتغل عليها ناس كل يوم.</p>
-
-      <ul class="stores">
-        <li class="store reveal">
-          <div class="shead">
-            <span class="sname" data-ar="نظام تشغيل برو هاوس" data-en="Pro House operations system">نظام تشغيل برو هاوس</span>
-            <span class="tag hot" data-ar="شغّال على ٣ فروع" data-en="Running across 3 branches">شغّال على ٣ فروع</span>
-          </div>
-          <p data-ar="نظام بيدير الدورة اليومية كاملة لثلاثة فروع: افتتاح الفرع بقائمة فحص، استلام الإنتاج من المطبخ المركزي بالوزن الفعلي مقابل المطلوب، الجرد والمتبقي آخر اليوم، تسجيل الهدر بأسبابه، طلبية الغد، وإقفال اليوم."
-             data-en="A system running the full daily cycle for three branches: opening checklist, receiving production from the central kitchen by actual weight against what was requested, end-of-day stocktake and leftovers, waste logged by reason, tomorrow's order, and day closing.">
-            نظام بيدير الدورة اليومية كاملة لثلاثة فروع: افتتاح الفرع بقائمة فحص، استلام الإنتاج من
-            المطبخ المركزي بالوزن الفعلي مقابل المطلوب، الجرد والمتبقي آخر اليوم، تسجيل الهدر
-            بأسبابه، طلبية الغد، وإقفال اليوم.
-          </p>
-          <ul class="feats">
-            <li data-ar="أربعة أدوار بصلاحيات مختلفة — مالك، مدير فرع، شيف، موظف — مع دخول برقم سري وتحكم بالوصول لكل فرع"
-                data-en="Four roles with different permissions — owner, branch manager, chef, employee — with PIN login and per-branch access control">أربعة أدوار بصلاحيات مختلفة — مالك، مدير فرع، شيف، موظف — مع دخول برقم سري وتحكم بالوصول لكل فرع</li>
-            <li data-ar="سحب آلي ليلي للمبيعات من نظام الكاشير"
-                data-en="Automated nightly sales pull from the POS">سحب آلي ليلي للمبيعات من نظام الكاشير</li>
-            <li data-ar="حساب انحراف المتبقي: المتوقع مقابل الفعلي، بأعتاب تنبيه قابلة للضبط بدون كود"
-                data-en="Leftover variance: expected against actual, with alert thresholds adjustable without code">حساب انحراف المتبقي: المتوقع مقابل الفعلي، بأعتاب تنبيه قابلة للضبط بدون كود</li>
-            <li data-ar="نسخ احتياطي يومي، وتصدير البيانات للتحليل"
-                data-en="Daily backups, and a data export for analysis">نسخ احتياطي يومي، وتصدير البيانات للتحليل</li>
+      <div class="prohouse-main reveal">
+        <div class="ph-overview">
+          <h3 data-ar="نطاق المسؤوليات التشغيلية" data-en="Operational Scope & Ownership">نطاق المسؤوليات التشغيلية</h3>
+          <ul class="ph-list">
+            <li>
+              <strong data-ar="الإشراف الفعلي على الفروع:" data-en="Branch Operations Supervision:">الإشراف الفعلي على الفروع:</strong>
+              <span data-ar="متابعة جاهزية 3 فروع، تنفيذ قائمة فحص الافتتاح والإغلاق، تنظيم الموظفين، وضمان استمرارية جودة الخدمة."
+                    data-en="Overseeing readiness across 3 branches, enforcing opening/closing checklists, coordinating branch staff, and ensuring consistent service quality.">متابعة جاهزية 3 فروع، تنفيذ قائمة فحص الافتتاح والإغلاق، تنظيم الموظفين، وضمان استمرارية جودة الخدمة.</span>
+            </li>
+            <li>
+              <strong data-ar="دورة المطبخ المركزي والمخزون:" data-en="Central Kitchen & Production Intake:">دورة المطبخ المركزي والمخزون:</strong>
+              <span data-ar="مطابقة واستلام إنتاج المطبخ المركزي بالوزن الفعلي مقابل المطلوب، تسجيل المتبقي بالجرد اليومي، وحصر الهدر بأسبابه وتحديد طلبية اليوم التالي."
+                    data-en="Receiving daily production from central kitchen by actual weight against requested, managing stocktakes, logging waste with reason codes, and placing next-day orders.">مطابقة واستلام إنتاج المطبخ المركزي بالوزن الفعلي مقابل المطلوب، تسجيل المتبقي بالجرد اليومي، وحصر الهدر بأسبابه وتحديد طلبية اليوم التالي.</span>
+            </li>
+            <li>
+              <strong data-ar="منصات التوصيل وتطبيق الاشتراكات:" data-en="Delivery Platforms & Subscription App:">منصات التوصيل وتطبيق الاشتراكات:</strong>
+              <span data-ar="إدارة القوائم، الأسعار، العروض، والتقييمات على تطبيقات التوصيل، بالإضافة إلى تشغيل تطبيق الاشتراكات (تكرار) كقناة إيرادات متكررة."
+                    data-en="Managing menus, pricing, promotions, and reviews across delivery aggregators, plus operating the official subscription platform (Takrar) for recurring revenue.">إدارة القوائم، الأسعار، العروض، والتقييمات على تطبيقات التوصيل، بالإضافة إلى تشغيل تطبيق الاشتراكات (تكرار) كقناة إيرادات متكررة.</span>
+            </li>
+            <li>
+              <strong data-ar="البنية الرقمية والموقع الإلكتروني:" data-en="Digital Infrastructure & Website:">البنية الرقمية والموقع الإلكتروني:</strong>
+              <span data-ar="بناء موقع برو هاوس الرسمي بالكود المخصص من الصفر (prohouse.sa)، ربطه مع Search Console وAnalytics، وتطوير أنظمة أتمتة تشغيلية داخلية."
+                    data-en="Coding the official Pro House website from scratch (prohouse.sa), integrating Search Console & Analytics, and engineering custom internal automation systems.">بناء موقع برو هاوس الرسمي بالكود المخصص من الصفر (prohouse.sa)، ربطه مع Search Console وAnalytics، وتطوير أنظمة أتمتة تشغيلية داخلية.</span>
+            </li>
           </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- ===== 4. المشروع البارز: نظام تشغيل برو هاوس (PRO HOUSE OPERATIONS SYSTEM CASE STUDY) ===== -->
+  <section class="sec alt" id="systems">
+    <div class="wrap">
+      <div class="sec-head reveal">
+        <span class="badge-tag" data-ar="المشروع الهندسي التشغيلي البارز" data-en="Major Featured Operational System">المشروع الهندسي التشغيلي البارز</span>
+        <h2 data-ar="نظام تشغيل برو هاوس الداخلي (PWA)" data-en="Pro House Internal Operations System (PWA)">نظام تشغيل برو هاوس الداخلي (PWA)</h2>
+        <p class="sub" data-ar="تطبيق ويب تشغيلي متكامل يخدم الدورة اليومية لـ 3 فروع والمطبخ المركزي"
+           data-en="Comprehensive operations web app running the daily cycle across 3 branches & central kitchen">
+          تطبيق ويب تشغيلي متكامل يخدم الدورة اليومية لـ 3 فروع والمطبخ المركزي
+        </p>
+      </div>
+
+      <div class="case-study-card reveal">
+        <div class="cs-grid">
+          
+          <div class="cs-block">
+            <h3 data-ar="1. التحدي التشغيلي (The Challenge)" data-en="1. Operational Challenge">1. التحدي التشغيلي (The Challenge)</h3>
+            <p data-ar="وجود تعقيد في متابعة العمليات اليومية لثلاثة فروع: الاعتماد على التسجيل الورقي للافتتاح والإغلاق، تباين الأوزان المستلمة من المطبخ المركزي مقارنة بالطلبيات، التشتت في حصر الهدر والمتبقي، وصعوبة مطابقة مبيعات الكاشير اليومية مع المخزون الفعلي."
+               data-en="Operational complexity across 3 branches: reliance on manual paper logs for opening/closing, weight discrepancies between central kitchen dispatch and branch receipts, untracked waste, and difficulty reconciling daily POS sales with physical inventory.">
+              وجود تعقيد في متابعة العمليات اليومية لثلاثة فروع: الاعتماد على التسجيل الورقي للافتتاح والإغلاق، تباين الأوزان المستلمة من المطبخ المركزي مقارنة بالطلبيات، التشتت في حصر الهدر والمتبقي، وصعوبة مطابقة مبيعات الكاشير اليومية مع المخزون الفعلي.
+            </p>
+          </div>
+
+          <div class="cs-block">
+            <h3 data-ar="2. دوري في المبادرة (My Role)" data-en="2. My Role">2. دوري في المبادرة (My Role)</h3>
+            <p data-ar="قمت بتحليل الدورة التشغيلية الكاملة للمطعم، وتصميم وتنفيذ نظام رقمي داخلي من الصفر كـ PWA مع كتابة أكثر من 75 دالة برمجية على Google Apps Script وقواعد بيانات Google Sheets."
+               data-en="Analyzed the full restaurant operational cycle, architected, and coded a custom internal Progressive Web App (PWA) from scratch, writing 75+ backend Apps Script functions backed by Google Sheets database architecture.">
+              قمت بتحليل الدورة التشغيلية الكاملة للمطعم، وتصميم وتنفيذ نظام رقمي داخلي من الصفر كـ PWA مع كتابة أكثر من 75 دالة برمجية على Google Apps Script وقواعد بيانات Google Sheets.
+            </p>
+          </div>
+
+          <div class="cs-block full">
+            <h3 data-ar="3. ما قمت ببنائه وتطويره (What I Built)" data-en="3. What I Built">3. ما قمت ببنائه وتطويره (What I Built)</h3>
+            <ul class="cs-features">
+              <li data-ar="قائمة فحص تفاعلية للافتتاح والافتتاح اليومي لكل فرع." data-en="Interactive opening and closing checklists for each branch.">قائمة فحص تفاعلية للافتتاح والافتتاح اليومي لكل فرع.</li>
+              <li data-ar="نظام استلام إنتاج المطبخ المركزي بالوزن الفعلي مقارنة بالمطلوب." data-en="Central kitchen production intake module measuring actual vs requested weights.">نظام استلام إنتاج المطبخ المركزي بالوزن الفعلي مقارنة بالمطلوب.</li>
+              <li data-ar="سحب آلي ليلي لبيانات المبيعات من نظام الكاشير (Tabsense POS)." data-en="Automated nightly sales data pull from Tabsense POS system.">سحب آلي ليلي لبيانات المبيعات من نظام الكاشير (Tabsense POS).</li>
+              <li data-ar="حساب انحراف المتبقي والمخزون مع أعتاب تنبيه تلقائية قابلة للتعديل." data-en="Leftover & inventory variance calculation with customizable alert thresholds.">حساب انحراف المتبقي والمخزون مع أعتاب تنبيه تلقائية قابلة للتعديل.</li>
+              <li data-ar="سجل حصر الهدر اليومي وتصنيفه حسب السبب وطلب طلبيات اليوم التالي." data-en="Daily waste logging categorized by reason and next-day kitchen order generation.">سجل حصر الهدر اليومي وتصنيفه حسب السبب وطلب طلبيات اليوم التالي.</li>
+              <li data-ar="نظام حماية بـ 4 أدوار وصلاحيات دخول برقم سري (مالك، مدير فرع، شيف، موظف)." data-en="4-role PIN security architecture (Owner, Branch Manager, Chef, Employee).">نظام حماية بـ 4 أدوار وصلاحيات دخول برقم سري (مالك، مدير فرع، شيف، موظف).</li>
+              <li data-ar="نسخ احتياطي آلي يومي على Google Drive وتصدير البيانات للتحليل." data-en="Automated daily backups to Google Drive and data export engine for analysis.">نسخ احتياطي آلي يومي على Google Drive وتصدير البيانات للتحليل.</li>
+            </ul>
+          </div>
+
+          <div class="cs-block">
+            <h3 data-ar="4. كيف يدعم العمليات؟ (Operational Support)" data-en="4. How It Supports Operations">4. كيف يدعم العمليات؟ (Operational Support)</h3>
+            <p data-ar="أنهى السجلات الورقية، ألغى التلاعب بالتسليمات والأنصبة، وفر رؤية لحظية للإدارة حول المتبقي والمبيعات والهدر، وسهّل التواصل المباشر بين الشيف ومدير الفرع."
+               data-en="Eliminated paper records, prevented weight delivery tampering, provided management with real-time visibility into inventory and waste, and bridged branch managers with the central kitchen chef.">
+              أنهى السجلات الورقية، ألغى التلاعب بالتسليمات والأنصبة، وفر رؤية لحظية للإدارة حول المتبقي والمبيعات والهدر، وسهّل التواصل المباشر بين الشيف ومدير الفرع.
+            </p>
+          </div>
+
+          <div class="cs-block">
+            <h3 data-ar="5. ما يثبته هذا المشروع (What This Demonstrates)" data-en="5. What This Demonstrates">5. ما يثبته هذا المشروع (What This Demonstrates)</h3>
+            <p data-ar="التفكير الهندسي التشغيلي، تصميم الإجراءات، حل المشكلات الميدانية، فهم بيانات المطاعم، والقدرة على أتمتة ودقمنة دورات العمل بنجاح."
+               data-en="Operational systems thinking, process design, floor problem solving, restaurant data fluency, and hands-on digital transformation capability.">
+              التفكير الهندسي التشغيلي، تصميم الإجراءات، حل المشكلات الميدانية، فهم بيانات المطاعم، والقدرة على أتمتة ودقمنة دورات العمل بنجاح.
+            </p>
+          </div>
+
+        </div>
+
+        <div class="cs-link-box">
+          <a href="https://prohouse-official.github.io/prohouse/" target="_blank" rel="noopener" class="btn solid"
+             data-ar="استعراض النسخة الحية للنظام التشغيلي" data-en="View Live Operations System Demo">
+            استعراض النسخة الحية للنظام التشغيلي
+          </a>
+        </div>
+      </div>
+
+
+      <!-- أنظمة برمجية إضافية -->
+      <div class="other-systems-grid">
+        
+        <div class="sys-card reveal">
+          <div class="sys-head">
+            <h3 data-ar="نظام تسجيل الحضور والانصراف (Kiosk)" data-en="Clock-in / Clock-out Kiosk System">نظام تسجيل الحضور والانصراف (Kiosk)</h3>
+            <span class="tag live" data-ar="شغّال" data-en="Live">شغّال</span>
+          </div>
+          <p data-ar="كشك رقمي يسجل خروج وعودة الموظفين للبريكات على جهاز الكاشير والجوال. يعتمد وقت ساعة السيرفر لحظة الضغط لمنع التلاعب بالوقت، ويتمتع بخاصية العمل أوفلاين مع المزامنة التلقائية فور عودة الاتصال."
+             data-en="Digital kiosk recording staff break clock-ins and clock-outs on POS terminals and mobile devices. Uses server timestamping to prevent time tampering, with offline PWA support and auto-sync on connection recovery.">
+            كشك رقمي يسجل خروج وعودة الموظفين للبريكات على جهاز الكاشير والجوال. يعتمد وقت ساعة السيرفر لحظة الضغط لمنع التلاعب بالوقت، ويتمتع بخاصية العمل أوفلاين مع المزامنة التلقائية فور عودة الاتصال.
+          </p>
+          <div class="stack">
+            <span>JavaScript</span><span>Service Worker</span><span>Google Apps Script</span><span>PWA</span>
+          </div>
+        </div>
+
+        <div class="sys-card reveal">
+          <div class="sys-head">
+            <h3 data-ar="موقع برو هاوس الرسمي (prohouse.sa)" data-en="Pro House Official Website (prohouse.sa)">موقع برو هاوس الرسمي (prohouse.sa)</h3>
+            <span class="tag hot" data-ar="كود مخصص" data-en="Custom Coded">كود مخصص</span>
+          </div>
+          <p data-ar="تطوير الموقع الإلكتروني الرسمي للمطعم بدون استخدام منصات جاهزة، وشراء الدومين وربطه بـ Google Search Console و Analytics لإدارة الهوية الرقمية ومتابعة الأداء."
+             data-en="Engineered the official restaurant web presence with custom code, configured domain infrastructure, and established Search Console & Analytics tracking for digital performance management.">
+            تطوير الموقع الإلكتروني الرسمي للمطعم بدون استخدام منصات جاهزة، وشراء الدومين وربطه بـ Google Search Console و Analytics لإدارة الهوية الرقمية ومتابعة الأداء.
+          </p>
+          <div class="stack">
+            <span>HTML5</span><span>CSS3</span><span>Analytics</span><span>SEO Infrastructure</span>
+          </div>
+          <a href="https://prohouse.sa/" target="_blank" rel="noopener" class="link-out">prohouse.sa</a>
+        </div>
+
+        <div class="sys-card reveal">
+          <div class="sys-head">
+            <h3 data-ar="موقع نادي فينكس (Phoenix MMA)" data-en="Phoenix MMA Club Site">موقع نادي فينكس (Phoenix MMA)</h3>
+            <span class="tag dev" data-ar="منهجية بحث" data-en="Research Methodology">منهجية بحث</span>
+          </div>
+          <p data-ar="تطوير منصة لنادي فنون قتالية مبنية على منهجية البحث الموثق: ربط كل معلومة ومدرب بمصدر موثوق لضمان دقة البيانات المنشورة."
+             data-en="Developed a martial arts sports platform built on documented research architecture: mapping facts and coach profiles to verified sources before publishing.">
+            تطوير منصة لنادي فنون قتالية مبنية على منهجية البحث الموثق: ربط كل معلومة ومدرب بمصدر موثوق لضمان دقة البيانات المنشورة.
+          </p>
           <div class="stack">
             <span>HTML</span><span>CSS</span><span>JavaScript</span>
-            <span>Google Apps Script</span><span>Google Sheets</span><span>PWA</span>
           </div>
-          <a href="https://prohouse-official.github.io/prohouse/" target="_blank" rel="noopener">prohouse-official.github.io/prohouse</a>
-        </li>
+          <a href="https://hasanoyounalsoud-stack.github.io/phoenix-mma-ksa/" target="_blank" rel="noopener" class="link-out">phoenix-mma-ksa</a>
+        </div>
 
-        <li class="store reveal">
-          <div class="shead">
-            <span class="sname" data-ar="نظام تسجيل الدخول والخروج" data-en="Clock-in / clock-out system">نظام تسجيل الدخول والخروج</span>
-            <span class="tag" data-ar="شغّال" data-en="Live">شغّال</span>
-          </div>
-          <p data-ar="كشك بيسجّل خروج وعودة الموظفين للبريكات على جهاز الكاشير وعلى الجوال. الوقت بينتسجّل من ساعة السيرفر لحظة الضغط مش من ورقة، وبيشتغل بدون نت وبيزامن لحاله لما يرجع."
-             data-en="A kiosk that records staff leaving for and returning from breaks, on the counter terminal and on phones. Time is stamped by the server the moment the button is pressed — not written on paper — and it works offline, syncing itself when the connection returns.">
-            كشك بيسجّل خروج وعودة الموظفين للبريكات على جهاز الكاشير وعلى الجوال. الوقت بينتسجّل من
-            ساعة السيرفر لحظة الضغط مش من ورقة، وبيشتغل بدون نت وبيزامن لحاله لما يرجع.
-          </p>
-          <div class="stack">
-            <span>JavaScript</span><span>Service Worker</span><span>Google Apps Script</span>
-          </div>
-        </li>
-
-        <li class="store reveal">
-          <div class="shead">
-            <span class="sname" data-ar="موقع نادي فينكس" data-en="Phoenix MMA site">موقع نادي فينكس</span>
-            <span class="tag" data-ar="قيد التطوير" data-en="In progress">قيد التطوير</span>
-          </div>
-          <p data-ar="موقع لنادي فنون قتالية بجدة. بنيته على بحث موثّق: كل معلومة عن النادي والمدربين مربوطة بمصدر، وأي إشي ما تأكد منه النادي ما بينشر. لسا ما اكتمل."
-             data-en="A site for a martial-arts club in Jeddah. Built on documented research: every fact about the club and its coaches is tied to a source, and anything the club hasn't confirmed doesn't get published. Still in progress.">
-            موقع لنادي فنون قتالية بجدة. بنيته على بحث موثّق: كل معلومة عن النادي والمدربين مربوطة
-            بمصدر، وأي إشي ما تأكد منه النادي ما بينشر. لسا ما اكتمل.
-          </p>
-          <a href="https://hasanoyounalsoud-stack.github.io/phoenix-mma-ksa/" target="_blank" rel="noopener">phoenix-mma-ksa</a>
-        </li>
-      </ul>
+      </div>
     </div>
   </section>
 
-  <!-- ===== المتاجر ===== -->
-  <section class="sec alt" id="stores">
+
+  <!-- ===== 5. منهجية وآلية العمل (HOW I WORK SECTION) ===== -->
+  <section class="sec" id="approach">
     <div class="wrap">
-      <h2 class="reveal" data-ar="متاجر بنيتها" data-en="Stores I built">متاجر بنيتها</h2>
+      <h2 class="reveal" data-ar="منهجية العمل التشغيلي" data-en="Operational Working Approach">منهجية العمل التشغيلي</h2>
+      <p class="sub reveal" data-ar="آلية ميكانيكية عمليّة لتحويل المعوقات التشغيلية إلى إجراءات منظمة ومؤتمتة"
+         data-en="A practical 5-step framework to transform operational bottlenecks into structured automated workflows">
+        آلية ميكانيكية عمليّة لتحويل المعوقات التشغيلية إلى إجراءات منظمة ومؤتمتة
+      </p>
 
-      <ul class="stores">
-        <li class="store reveal">
-          <div class="shead">
-            <span class="sname" data-ar="برو هاوس" data-en="Pro House">برو هاوس</span>
-            <span class="tag hot" data-ar="كود من الصفر" data-en="Coded from scratch">كود من الصفر</span>
-          </div>
-          <p data-ar="بنيته بالكود بدون أي منصة جاهزة، اشتريت الدومين، وربطته بـGoogle Search Console وAnalytics. ولسا أنا المسؤول عن كل الجانب الرقمي فيه."
-             data-en="Coded with no platform, bought the domain, connected Google Search Console and Analytics. I still run its entire digital side.">
-            بنيته بالكود بدون أي منصة جاهزة، اشتريت الدومين، وربطته بـGoogle Search Console
-            وAnalytics. ولسا أنا المسؤول عن كل الجانب الرقمي فيه.
+      <div class="approach-grid">
+        <div class="app-step reveal">
+          <span class="app-num">01</span>
+          <h3 data-ar="افهم التحدي (Understand)" data-en="1. Understand">افهم التحدي (Understand)</h3>
+          <p data-ar="دراسة الخلل التشغيلي في الميدان ومعايشة حركة الموظفين والعملاء والمخزون قبل كتابة أي إجراء أو كود."
+             data-en="Study floor bottlenecks, staff workflows, and inventory movements in real operations before proposing solutions.">
+            دراسة الخلل التشغيلي في الميدان ومعايشة حركة الموظفين والعملاء والمخزون قبل كتابة أي إجراء أو كود.
           </p>
-          <a href="https://prohouse.sa/" target="_blank" rel="noopener">prohouse.sa</a>
-        </li>
+        </div>
 
-        <li class="store reveal">
-          <div class="shead">
-            <span class="sname" data-ar="أميزنج كار" data-en="Amazing Car">أميزنج كار</span>
-            <span class="tag">سلة</span>
-          </div>
-          <p data-ar="بنيت المتجر واشتغلت على تسويقه وتطوير المبيعات بشكل مستمر."
-             data-en="Built the store and managed its marketing to scale sales continuously.">
-            بنيت المتجر واشتغلت على تسويقه وتطوير المبيعات بشكل مستمر.
+        <div class="app-step reveal">
+          <span class="app-num">02</span>
+          <h3 data-ar="نظّم المسار (Organize)" data-en="2. Organize">نظّم المسار (Organize)</h3>
+          <p data-ar="تحويل المشكلة التشغيلية إلى مسار عمل واضح وسلس ومحدد الصلاحيات لجميع الأطراف المعنية."
+             data-en="Convert operational problems into clear, standardized operating procedures (SOPs) with defined roles.">
+            تحويل المشكلة التشغيلية إلى مسار عمل واضح وسلس ومحدد الصلاحيات لجميع الأطراف المعنية.
           </p>
-        </li>
+        </div>
 
-        <li class="store reveal">
-          <div class="shead">
-            <span class="sname" data-ar="تمور شموخ" data-en="Shumukh Dates">تمور شموخ</span>
-            <span class="tag">سلة</span>
-          </div>
-          <p data-ar="بنيت المتجر واشتغلت معهم فترة قصيرة."
-             data-en="Built the store and worked with them for a short period.">
-            بنيت المتجر واشتغلت معهم فترة قصيرة.
+        <div class="app-step reveal">
+          <span class="app-num">03</span>
+          <h3 data-ar="اِبنِ النظام (Build)" data-en="3. Build">اِبنِ النظام (Build)</h3>
+          <p data-ar="تصميم وبناء الأداة أو النظام البرمجي الداخلي المؤتمت الذي ينفذ المسار بدقة وبدون تعقيد."
+             data-en="Design and code the internal automated system or digital tool required to enforce the workflow smoothly.">
+            تصميم وبناء الأداة أو النظام البرمجي الداخلي المؤتمت الذي ينفذ المسار بدقة وبدون تعقيد.
           </p>
-        </li>
+        </div>
 
-        <li class="store reveal">
-          <div class="shead">
-            <span class="sname" data-ar="سرفايف" data-en="Survive">سرفايف</span>
-            <span class="tag own" data-ar="مشروعي" data-en="My own">مشروعي</span>
-          </div>
-          <p data-ar="مشروع وجبات صحية من البيت. جهّزت منيو كامل للوجبات الصحية محسوبة السعرات مع إطلاق وإدارة نظام الاشتراكات."
-             data-en="A healthy meal-prep business run from home. I built a full calorie-counted menu and launched subscriber management.">
-            مشروع وجبات صحية من البيت. جهّزت منيو كامل للوجبات الصحية محسوبة السعرات مع إطلاق
-            وإدارة نظام الاشتراكات.
+        <div class="app-step reveal">
+          <span class="app-num">04</span>
+          <h3 data-ar="تابِع المؤشرات (Monitor)" data-en="4. Monitor">تابِع المؤشرات (Monitor)</h3>
+          <p data-ar="متابعة التقارير اليومية وتدفق البيانات والملاحظات الميدانية للتأكد من انضباط التنفيذ."
+             data-en="Track daily operational reports, data variance alerts, and floor feedback to ensure process compliance.">
+            متابعة التقارير اليومية وتدفق البيانات والملاحظات الميدانية للتأكد من انضباط التنفيذ.
           </p>
-        </li>
+        </div>
 
-        <li class="store reveal">
-          <div class="shead">
-            <span class="sname" data-ar="تريند زون" data-en="Trend Zone">تريند زون</span>
-            <span class="tag own" data-ar="مشروعي" data-en="My own">مشروعي</span>
-          </div>
-          <p data-ar="متجر منتجات منزلية. بنيته وشغّلته، وبعدين وقف."
-             data-en="A home-products store. I built it and ran it, then it shut down.">
-            متجر منتجات منزلية. بنيته وشغّلته، وبعدين وقف.
+        <div class="app-step reveal">
+          <span class="app-num">05</span>
+          <h3 data-ar="طوّر باستمرار (Improve)" data-en="5. Improve">طوّر باستمرار (Improve)</h3>
+          <p data-ar="تحديث الإجراءات والنظام بناءً على التطبيق الفعلي والتوسعات المستمرة للمشروع والفروع."
+             data-en="Continuously refine workflows and tools based on real floor execution and business scaling requirements.">
+            تحديث الإجراءات والنظام بناءً على التطبيق الفعلي والتوسعات المستمرة للمشروع والفروع.
           </p>
-        </li>
-      </ul>
+        </div>
+      </div>
     </div>
   </section>
 
-  <!-- ===== المسيرة ===== -->
+
+  <!-- ===== 6. المهارات والقدرات الإدارية (PROFESSIONAL SKILLS PRIORITY) ===== -->
+  <section class="sec alt" id="skills">
+    <div class="wrap">
+      <h2 class="reveal" data-ar="المهارات والقدرات التشغيلية" data-en="Core Capabilities & Skills">المهارات والقدرات التشغيلية</h2>
+      <p class="sub reveal" data-ar="مرتبة حسب الأولوية المهنية ومستندة على ممارسات عمل حقيقية"
+         data-en="Prioritized by professional domain and grounded in verified operational experience">
+        مرتبة حسب الأولوية المهنية ومستندة على ممارسات عمل حقيقية
+      </p>
+
+      <div class="skills-grid">
+        
+        <!-- 1. Restaurant Operations -->
+        <div class="skill-card reveal priority-1">
+          <div class="sk-head">
+            <span class="sk-num">01</span>
+            <h3 data-ar="تشغيل المطاعم والفروع (Restaurant Operations)" data-en="1. Restaurant Operations">تشغيل المطاعم والفروع (Restaurant Operations)</h3>
+          </div>
+          <p data-ar="إشراف يومي على الفروع، متابعة الجاهزية والنظافة، تطبيق قوائم الفحص، أتمتة مسارات العمل، وحل المشاكل التشغيلية الميدانية."
+             data-en="Daily branch operations, floor readiness, opening/closing checklists, workflow optimization, and floor-level problem solving.">
+            إشراف يومي على الفروع، متابعة الجاهزية والنظافة، تطبيق قوائم الفحص، أتمتة مسارات العمل، وحل المشاكل التشغيلية الميدانية.
+          </p>
+        </div>
+
+        <!-- 2. Team & People -->
+        <div class="skill-card reveal priority-2">
+          <div class="sk-head">
+            <span class="sk-num">02</span>
+            <h3 data-ar="تنسيق الفرق والكوادر (Team & People Coordination)" data-en="2. Team & People">تنسيق الفرق والكوادر (Team & People Coordination)</h3>
+          </div>
+          <p data-ar="تنظيم مهام الموظفين، متابعة الانضباط، ضبط مسارات التواصل بين الشيف ومدير الفرع والإدارة، وتعزيز المساءلة التشغيلية."
+             data-en="Staff scheduling, team alignment, branch-to-kitchen communication channels, break compliance, and operational accountability.">
+            تنظيم مهام الموظفين، متابعة الانضباط، ضبط مسارات التواصل بين الشيف ومدير الفرع والإدارة، وتعزيز المساءلة التشغيلية.
+          </p>
+        </div>
+
+        <!-- 3. Inventory & Production -->
+        <div class="skill-card reveal priority-3">
+          <div class="sk-head">
+            <span class="sk-num">03</span>
+            <h3 data-ar="المخزون والإنتاج (Inventory & Production)" data-en="3. Inventory & Production">المخزون والإنتاج (Inventory & Production)</h3>
+          </div>
+          <p data-ar="استلام إنتاج المطبخ المركزي بالوزن الفعلي، إدارة الجرد اليومي والمتبقي، رصد وتسجيل الهدر بأسبابه، وضبط طلبات التزويد."
+             data-en="Central kitchen intake by weight, stocktakes, leftover tracking, waste logging by reason, and replenishment ordering.">
+            استلام إنتاج المطبخ المركزي بالوزن الفعلي، إدارة الجرد اليومي والمتبقي، رصد وتسجيل الهدر بأسبابه، وضبط طلبات التزويد.
+          </p>
+        </div>
+
+        <!-- 4. Sales & Customer Experience -->
+        <div class="skill-card reveal priority-4">
+          <div class="sk-head">
+            <span class="sk-num">04</span>
+            <h3 data-ar="المبيعات وتجربة العملاء (Sales & Service Experience)" data-en="4. Sales & Service Experience">المبيعات وتجربة العملاء (Sales & Service Experience)</h3>
+          </div>
+          <p data-ar="إدارة تطبيقات التوصيل (قوائم، أسعار، عروض، تقييمات)، متابعة الكاشير، تشغيل برنامج الاشتراكات، ورصد سلوك الزبائن."
+             data-en="Delivery aggregators management, POS sales monitoring, subscription operations (Takrar app), and service workflow auditing.">
+            إدارة تطبيقات التوصيل (قوائم، أسعار، عروض، تقييمات)، متابعة الكاشير، تشغيل برنامج الاشتراكات، ورصد سلوك الزبائن.
+          </p>
+        </div>
+
+        <!-- 5. Data & Reporting -->
+        <div class="skill-card reveal priority-5">
+          <div class="sk-head">
+            <span class="sk-num">05</span>
+            <h3 data-ar="البيانات والتقارير (Data & Operational Reporting)" data-en="5. Data & Operational Reporting">البيانات والتقارير (Data & Operational Reporting)</h3>
+          </div>
+          <p data-ar="تحليل مبيعات الأصناف، إعداد تقارير الأداء الدوربة، رصد انحراف المخزون، واتخاذ القرارات بناءً على البيانات الواقعية."
+             data-en="Product sales analysis, periodic operational reporting, inventory variance metrics, and data-backed decision making.">
+            تحليل مبيعات الأصناف، إعداد تقارير الأداء الدوربة، رصد انحراف المخزون، واتخاذ القرارات بناءً على البيانات الواقعية.
+          </p>
+        </div>
+
+        <!-- 6. Systems & Technology -->
+        <div class="skill-card reveal priority-6">
+          <div class="sk-head">
+            <span class="sk-num">06</span>
+            <h3 data-ar="الأنظمة والتقنية — ميزة تنافسية (Internal Systems & Automation)" data-en="6. Internal Systems (Differentiator)">الأنظمة والتقنية — ميزة تنافسية (Internal Systems & Automation)</h3>
+          </div>
+          <p data-ar="تطوير أنظمة تشغيلية كود مخصص (Google Apps Script, PWA, Service Worker)، أتمتة السحبيات الليلية، وبناء المواقع."
+             data-en="Engineering internal custom PWA systems (Google Apps Script, Service Worker), automated POS data sync, and web dev.">
+            تطوير أنظمة تشغيلية كود مخصص (Google Apps Script, PWA, Service Worker)، أتمتة السحبيات الليلية، وبناء المواقع.
+          </p>
+        </div>
+
+        <!-- 7. Supporting Strengths -->
+        <div class="skill-card reveal priority-7 full">
+          <div class="sk-head">
+            <span class="sk-num">07</span>
+            <h3 data-ar="التسويق والتجارة الإلكترونية — قدرات مساندة (Marketing & E-commerce)" data-en="7. Supporting Business Strengths">التسويق والتجارة الإلكترونية — قدرات مساندة (Marketing & E-commerce)</h3>
+          </div>
+          <p data-ar="صناعة محتوى UGC إعلاني، بناء المتاجر الإلكترونية (سلة، زد)، الحملات الموجهة (Snapchat, TikTok, WhatsApp)، ودعم نمو العلامات."
+             data-en="UGC video ad creation, e-commerce store building (Salla, Zid), social campaigns, and supporting multi-sector brand growth.">
+            صناعة محتوى UGC إعلاني، بناء المتاجر الإلكترونية (سلة، زد)، الحملات الموجهة (Snapchat, TikTok, WhatsApp)، ودعم نمو العلامات.
+          </p>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+
+  <!-- ===== 7. الأعمال والخبرات المساندة (SUPPORTING PROJECTS & MEDIA) ===== -->
+  <section class="sec" id="work">
+    <div class="wrap">
+      <h2 class="reveal" data-ar="المشاريع والأعمال المساندة" data-en="Supporting Projects & Experience">المشاريع والأعمال المساندة</h2>
+      <p class="sub reveal" data-ar="متاجر إلكترونية ومحتوى إعلاني صُنّع لدعم نمو العلامات التجارية"
+         data-en="E-commerce store builds and ad content produced across multi-sector brands">
+        متاجر إلكترونية ومحتوى إعلاني صُنّع لدعم نمو العلامات التجارية
+      </p>
+
+      <!-- المتاجر الإلكترونية -->
+      <div class="sub-sec-head reveal">
+        <h3 data-ar="بناء المتاجر الإلكترونية" data-en="E-commerce Store Builds">بناء المتاجر الإلكترونية</h3>
+      </div>
+      <div class="stores-grid">
+        
+        <div class="store-card reveal">
+          <div class="st-head">
+            <h4 data-ar="أميزنج كار (Amazing Car)" data-en="Amazing Car">أميزنج كار (Amazing Car)</h4>
+            <span class="tag">سلة</span>
+          </div>
+          <p data-ar="بناء المتجر الإلكتروني وإدارة الحملات التسويقية والعمليات الخاصة بمستلزمات السيارات."
+             data-en="E-commerce store setup on Salla platform and marketing operations management for car accessories.">
+            بناء المتجر الإلكتروني وإدارة الحملات التسويقية والعمليات الخاصة بمستلزمات السيارات.
+          </p>
+        </div>
+
+        <div class="store-card reveal">
+          <div class="st-head">
+            <h4 data-ar="سرفايف (Survive — مشروع شخصي)" data-en="Survive (My Own Project)">سرفايف (Survive — مشروع شخصي)</h4>
+            <span class="tag own" data-ar="مشروعي" data-en="My Own">مشروعي</span>
+          </div>
+          <p data-ar="تأسيس مشروع وجبات صحية منزلية محسوبة السعرات، بناء منيو شامل وإدارة نظام الاشتراكات."
+             data-en="Founded a calorie-counted home meal prep business, engineered a full healthy menu, and operated subscriptions.">
+            تأسيس مشروع وجبات صحية منزلية محسوبة السعرات، بناء منيو شامل وإدارة نظام الاشتراكات.
+          </p>
+        </div>
+
+        <div class="store-card reveal">
+          <div class="st-head">
+            <h4 data-ar="تمور شموخ (Shumukh Dates)" data-en="Shumukh Dates">تمور شموخ (Shumukh Dates)</h4>
+            <span class="tag">سلة</span>
+          </div>
+          <p data-ar="تأسيس وبناء المتجر الإلكتروني على منصة سلة لعلامة تمور فاخرة."
+             data-en="Built and configured the online store on Salla platform for a premium dates brand.">
+            تأسيس وبناء المتجر الإلكتروني على منصة سلة لعلامة تمور فاخرة.
+          </p>
+        </div>
+
+        <div class="store-card reveal">
+          <div class="st-head">
+            <h4 data-ar="تريند زون (Trend Zone — مشروع شخصي)" data-en="Trend Zone (My Own Project)">تريند زون (Trend Zone — مشروع شخصي)</h4>
+            <span class="tag own" data-ar="مشروعي" data-en="My Own">مشروعي</span>
+          </div>
+          <p data-ar="تأسيس وتشغيل متجر إلكتروني للمنتجات المنزلية وخوض تجربة إدارية متكاملة."
+             data-en="Launched and operated a home products e-commerce store gaining hands-on founding experience.">
+            تأسيس وتشغيل متجر إلكتروني للمنتجات المنزلية وخوض تجربة إدارية متكاملة.
+          </p>
+        </div>
+
+      </div>
+
+      <!-- مقاطع الـ UGC والعلامات -->
+      <div class="sub-sec-head reveal margin-top">
+        <h3 data-ar="صناعة المحتوى الإعلاني الـ UGC" data-en="UGC Video Ad Creation">صناعة المحتوى الإعلاني الـ UGC</h3>
+        <p data-ar="التعاون مع 7 علامات تجارية بـ 6 قطاعات متنوعة (أغذية، سيارات، ذهب، تمور، أجهزة أمنية، وكالات تسويق)"
+           data-en="Collaborations across 7 brands in 6 diverse sectors (food, auto, gold, dates, security, agencies)">
+          التعاون مع 7 علامات تجارية بـ 6 قطاعات متنوعة (أغذية، سيارات، ذهب، تمور، أجهزة أمنية، وكالات تسويق)
+        </p>
+      </div>
+
+      <ul class="brands-list reveal">
+        <li><strong>برو هاوس</strong> <span>@prohouse.sa</span></li>
+        <li><strong>أميزنج كار</strong> <span>@amazingcar.1</span></li>
+        <li><strong>مجوهرات روبي</strong> <span>@rubyjewelry2</span></li>
+        <li><strong>ريونيك</strong> <span>@reunique.co</span></li>
+        <li><strong>تمور شموخ</strong> <span>@shumukhdates</span></li>
+        <li><strong>سمارت ديجيتال</strong> <span>@smartdigitalksa</span></li>
+        <li><strong>وكالة بي هايف</strong> <span>@beehiveagency.sa</span></li>
+      </ul>
+
+      <h4 class="mini-title reveal" data-ar="روابط مقاطع من الشغل" data-en="Selected Video Clips">روابط مقاطع من الشغل</h4>
+      <ul class="clips">
+        <li class="reveal"><a href="https://www.instagram.com/reel/Db5kVq7szo5/" target="_blank" rel="noopener"><span class="pf">Instagram</span><span class="n">1</span></a></li>
+        <li class="reveal"><a href="https://www.instagram.com/reel/DYwgbGDMkTh/" target="_blank" rel="noopener"><span class="pf">Instagram</span><span class="n">2</span></a></li>
+        <li class="reveal"><a href="https://www.instagram.com/reel/DbqM7Qyq9qD/" target="_blank" rel="noopener"><span class="pf">Instagram</span><span class="n">3</span></a></li>
+        <li class="reveal"><a href="https://www.instagram.com/reel/DbDfI3KktZW/" target="_blank" rel="noopener"><span class="pf">Instagram</span><span class="n">4</span></a></li>
+        <li class="reveal"><a href="https://www.instagram.com/reel/DRuAwAFCIZ6/" target="_blank" rel="noopener"><span class="pf">Instagram</span><span class="n">5</span></a></li>
+        <li class="reveal"><a href="https://www.instagram.com/reel/DUjFb5Zgu13/" target="_blank" rel="noopener"><span class="pf">Instagram</span><span class="n">6</span></a></li>
+        <li class="reveal"><a href="https://www.instagram.com/reel/DUdgS5TleHq/" target="_blank" rel="noopener"><span class="pf">Instagram</span><span class="n">7</span></a></li>
+        <li class="reveal"><a href="https://vt.tiktok.com/ZSVYtKB4f/" target="_blank" rel="noopener"><span class="pf">TikTok</span><span class="n">8</span></a></li>
+        <li class="reveal"><a href="https://vt.tiktok.com/ZSVYnyByX/" target="_blank" rel="noopener"><span class="pf">TikTok</span><span class="n">9</span></a></li>
+        <li class="reveal"><a href="https://vt.tiktok.com/ZSVYnkpuUR/" target="_blank" rel="noopener"><span class="pf">TikTok</span><span class="n">10</span></a></li>
+        <li class="reveal"><a href="https://vt.tiktok.com/ZSVYn6uGY/" target="_blank" rel="noopener"><span class="pf">TikTok</span><span class="n">11</span></a></li>
+        <li class="reveal"><a href="https://vt.tiktok.com/ZSVYnBbA1/" target="_blank" rel="noopener"><span class="pf">TikTok</span><span class="n">12</span></a></li>
+        <li class="reveal"><a href="https://vt.tiktok.com/ZSVYnLGvW/" target="_blank" rel="noopener"><span class="pf">TikTok</span><span class="n">13</span></a></li>
+        <li class="reveal"><a href="https://vt.tiktok.com/ZSVYnhn9s/" target="_blank" rel="noopener"><span class="pf">TikTok</span><span class="n">14</span></a></li>
+        <li class="reveal"><a href="https://vt.tiktok.com/ZSVYnXiLo/" target="_blank" rel="noopener"><span class="pf">TikTok</span><span class="n">15</span></a></li>
+        <li class="reveal"><a href="https://vt.tiktok.com/ZSVYnnKYr/" target="_blank" rel="noopener"><span class="pf">TikTok</span><span class="n">16</span></a></li>
+      </ul>
+
+    </div>
+  </section>
+
+
+  <!-- ===== 8. المسيرة والخبرات (EXPERIENCE TIMELINE) ===== -->
   <section class="sec alt" id="path">
     <div class="wrap">
-      <h2 class="reveal" data-ar="المسيرة" data-en="Path">المسيرة</h2>
-      <p class="sub reveal" data-ar="بديت الشغل من البدايات."
-         data-en="I started from the ground up.">بديت الشغل من البدايات.</p>
+      <h2 class="reveal" data-ar="التسلسل الزمني للخبرات" data-en="Professional Experience Timeline">التسلسل الزمني للخبرات</h2>
+      <p class="sub reveal" data-ar="مسيرة تدرجت من المهام الميدانية إلى قيادة وتطوير عمليات الفروع والمشاريع"
+         data-en="Career progression moving from ground floor roles to restaurant operations & project development">
+        مسيرة تدرجت من المهام الميدانية إلى قيادة وتطوير عمليات الفروع والمشاريع
+      </p>
 
       <ol class="time">
+        
+        <li class="reveal now dominant">
+          <span class="when" data-ar="11/2025 – الآن" data-en="Nov 2025 – Present">11/2025 – الآن</span>
+          <div>
+            <strong data-ar="مطعم برو هاوس — مساعد مشرف عام (3 فروع)" data-en="Pro House Restaurant — Assistant General Supervisor (3 Branches)">مطعم برو هاوس — مساعد مشرف عام (3 فروع)</strong>
+            <p data-ar="الإشراف الفعلي على 3 فروع، إدارة تطبيقات التوصيل والاشتراكات، متابعة إنتاج المطبخ المركزي بالوزن، حصر الهدر والمخزون، وتطوير النظام التشغيلي والموقع الإلكتروني."
+               data-en="Supervising 3 branches, managing delivery & subscription platforms, tracking central kitchen production intake, logging waste, and engineering internal PWA operations systems.">
+              الإشراف الفعلي على 3 فروع، إدارة تطبيقات التوصيل والاشتراكات، متابعة إنتاج المطبخ المركزي بالوزن، حصر الهدر والمخزون، وتطوير النظام التشغيلي والموقع الإلكتروني.
+            </p>
+          </div>
+        </li>
+
         <li class="reveal">
-          <span class="when">٢٠٢١</span>
+          <span class="when" data-ar="11/2024 – 11/2025" data-en="Nov 2024 – Nov 2025">11/2024 – 11/2025</span>
           <div>
-            <strong data-ar="مودي شيك · عالم الأوائل" data-en="ModiChic · Alam AlAwael">مودي شيك · عالم الأوائل</strong>
-            <p data-ar="خدمة عملاء من البيت، وبعدها إشراف وتجهيز الطلبات اليومية."
-               data-en="Customer service from home, then managing and fulfilling daily orders.">خدمة عملاء من البيت، وبعدها إشراف وتجهيز الطلبات اليومية.</p>
+            <strong data-ar="أورنج بيد آند باث — من المستودع إلى تشغيل الموقع والإشراف" data-en="Orange Bed & Bath — Warehouse to Web Ops & Media Supervision">أورنج بيد آند باث — من المستودع إلى تشغيل الموقع والإشراف</strong>
+            <p data-ar="البداية في المستودع بتجهيز طلبات الموقع، ثم الانتقال للمكتب الرئيسي: تشغيل وتتبع الطلبات، والإشراف على قسم الميديا."
+               data-en="Started in warehouse order fulfillment, progressing to head office: operating web orders, tracking logistics, and overseeing the media section.">
+              البداية في المستودع بتجهيز طلبات الموقع، ثم الانتقال للمكتب الرئيسي: تشغيل وتتبع الطلبات، والإشراف على قسم الميديا.
+            </p>
           </div>
         </li>
+
         <li class="reveal">
-          <span class="when">٢٠٢١</span>
+          <span class="when" data-ar="11/2024 – 04/2025" data-en="Nov 2024 – Apr 2025">11/2024 – 04/2025</span>
           <div>
-            <strong data-ar="رويال ستيم" data-en="Royal Steam">رويال ستيم</strong>
-            <p data-ar="غسيل وتلميع سيارات، وبعدها خدمة عملاء وإشراف على موظفين."
-               data-en="Car washing and detailing, then customer service and supervising staff.">غسيل وتلميع سيارات، وبعدها خدمة عملاء وإشراف على موظفين.</p>
+            <strong data-ar="أميزنج كار — بناء المتجر والتسويق" data-en="Amazing Car — Store Setup & Marketing Ops">أميزنج كار — بناء المتجر والتسويق</strong>
+            <p data-ar="بناء متجر سلة وتشغيل العمليات التسويقية ومتابعة المبيعات."
+               data-en="Built Salla store infrastructure and directed marketing operations.">
+              بناء متجر سلة وتشغيل العمليات التسويقية ومتابعة المبيعات.
+            </p>
           </div>
         </li>
+
         <li class="reveal">
-          <span class="when">٢٠٢٢</span>
+          <span class="when" data-ar="02/2024 – 11/2024" data-en="Feb 2024 – Nov 2024">02/2024 – 11/2024</span>
           <div>
-            <strong data-ar="سميت طرابزون" data-en="Simit Trabzon">سميت طرابزون</strong>
-            <p data-ar="خبز المخبوزات وخدمة الزباين."
-               data-en="Baking and customer service.">خبز المخبوزات وخدمة الزباين.</p>
+            <strong data-ar="سرفايف (مشروع شخصي) — وجبات صحية واشتراكات" data-en="Survive (My Project) — Healthy Meal Prep & Subscriptions">سرفايف (مشروع شخصي) — وجبات صحية واشتراكات</strong>
+            <p data-ar="إعداد منيو وجبات صحية محسوبة السعرات وتوفير خدمة اشتراكات متكاملة من البيت."
+               data-en="Created a calorie-counted healthy menu and operated home meal subscriptions.">
+              إعداد منيو وجبات صحية محسوبة السعرات وتوفير خدمة اشتراكات متكاملة من البيت.
+            </p>
           </div>
         </li>
+
         <li class="reveal">
-          <span class="when">٢٠٢٤</span>
+          <span class="when">07/2022 – 09/2022</span>
           <div>
-            <strong data-ar="سرفايف — مشروعي" data-en="Survive — my own">سرفايف — مشروعي</strong>
-            <p data-ar="وجبات صحية من البيت: منيو وجبات صحية بسعرات محسوبة، وتوفير خدمة اشتراكات."
-               data-en="Healthy meal prep from home: a calorie-counted menu and subscription management.">وجبات صحية من البيت: منيو وجبات صحية بسعرات محسوبة، وتوفير خدمة اشتراكات.</p>
+            <strong data-ar="سميت طرابزون — مخبوزات وخدمة عملاء" data-en="Simit Trabzon — Baking & Customer Service">سميت طرابزون — مخبوزات وخدمة عملاء</strong>
+            <p data-ar="خبز المخبوزات والتعامل المباشر مع الزباين."
+               data-en="Baking operations and direct customer service on the floor.">
+              خبز المخبوزات والتعامل المباشر مع الزباين.
+            </p>
           </div>
         </li>
+
         <li class="reveal">
-          <span class="when">٢٠٢٤ – ٢٠٢٥</span>
+          <span class="when">08/2021 – 12/2021</span>
           <div>
-            <strong data-ar="أميزنج كار" data-en="Amazing Car">أميزنج كار</strong>
-            <p data-ar="بنيت المتجر وشغّلت تسويقه ومبيعاته."
-               data-en="Built the store and managed its marketing and sales operations.">بنيت المتجر وشغّلت تسويقه ومبيعاته.</p>
+            <strong data-ar="رويال ستيم — غسيل، خدمة عملاء وإشراف" data-en="Royal Steam — Detailing, Service & Supervision">رويال ستيم — غسيل، خدمة عملاء وإشراف</strong>
+            <p data-ar="البداية في الغسيل والتلميع، ثم الترقية لخدمة العملاء والإشراف على الموظفين."
+               data-en="Started in car wash detailing, promoted to customer service and staff supervision.">
+              البداية في الغسيل والتلميع، ثم الترقية لخدمة العملاء والإشراف على الموظفين.
+            </p>
           </div>
         </li>
+
         <li class="reveal">
-          <span class="when">٢٠٢٤ – ٢٠٢٥</span>
+          <span class="when">02/2021 – 05/2021</span>
           <div>
-            <strong data-ar="أورنج بيد آند باث" data-en="Orange Bed &amp; Bath">أورنج بيد آند باث</strong>
-            <p data-ar="بلّشت بالمستودع بتجهيز طلبات الموقع، وبعدها بالمكتب الرئيسي: تشغيل وتتبع الطلبات والإشراف على قسم الميديا."
-               data-en="Started in the warehouse fulfilling web orders, then moved to head office: running and tracking orders and overseeing the media section.">بلّشت بالمستودع بتجهيز طلبات الموقع، وبعدها بالمكتب الرئيسي: تشغيل وتتبع الطلبات والإشراف على قسم الميديا.</p>
+            <strong data-ar="مودي شيك / عالم الأوائل — خدمة عملاء وتجهيز طلبات" data-en="ModiChic / Alam AlAwael — Service & Fulfillment">مودي شيك / عالم الأوائل — خدمة عملاء وتجهيز طلبات</strong>
+            <p data-ar="خدمة العملاء والتواصل المباشر، وتجهيز وشحن الطلبات اليومية."
+               data-en="Customer service support and daily warehouse order packing & shipping.">
+              خدمة العملاء والتواصل المباشر، وتجهيز وشحن الطلبات اليومية.
+            </p>
           </div>
         </li>
-        <li class="reveal">
-          <span class="when">٢٠٢٥</span>
-          <div>
-            <strong data-ar="محتوى UGC" data-en="UGC content">محتوى UGC</strong>
-            <p data-ar="صناعة مقاطع إعلانية لأكثر من متجر ومطعم، وبناء قاعدة متابعين وتفاعل عالي على حساباتي الشخصية."
-               data-en="Created ad videos for multiple stores and restaurants, building high engagement across personal accounts.">صناعة مقاطع إعلانية لأكثر من متجر ومطعم، وبناء قاعدة متابعين وتفاعل عالي على حساباتي الشخصية.</p>
-          </div>
-        </li>
-        <li class="reveal now">
-          <span class="when" data-ar="٢٠٢٥ – الآن" data-en="2025 – now">٢٠٢٥ – الآن</span>
-          <div>
-            <strong data-ar="برو هاوس — مساعد مشرف عام" data-en="Pro House — assistant general supervisor">برو هاوس — مساعد مشرف عام</strong>
-            <p data-ar="بنيت الموقع، وبدير تطبيقات التوصيل وتطبيق الاشتراكات، وبشتغل على المحتوى والحملات والتقارير، وبشرف على تشغيل الفروع."
-               data-en="I built the site, run the delivery apps and the subscription app, handle content, campaigns and reporting, and supervise branch operations.">بنيت الموقع، وبدير تطبيقات التوصيل وتطبيق الاشتراكات، وبشتغل على المحتوى والحملات والتقارير، وبشرف على تشغيل الفروع.</p>
-          </div>
-        </li>
+
       </ol>
     </div>
   </section>
 
-  <!-- ===== الدروس ===== -->
+
+  <!-- ===== 9. الدروس التشغيلية المستفادة (LESSONS LEARNED) ===== -->
   <section class="sec" id="lessons">
     <div class="wrap narrow">
-      <h2 class="reveal" data-ar="وإشي ما نجح" data-en="And what didn't work">وإشي ما نجح</h2>
+      <h2 class="reveal" data-ar="دروس تشغيلية وعملية" data-en="Operational Lessons Learned">دروس تشغيلية وعملية</h2>
 
-      <p class="reveal"
-         data-ar="بشهر رمضان ٢٠٢٥ فتحت مشروع ألعاب موسمية. حقق المشروع مبيعات وسرعة انتشار عالية — لكن واجهت خسارة، لأني ما تأكدت من جودة المنتج قبل ما أطلبه."
-         data-en="In Ramadan 2025 I ran a seasonal toy business. It gained rapid initial traction — but I faced losses because I didn't verify product quality before ordering.">
-        بشهر رمضان ٢٠٢٥ فتحت مشروع ألعاب موسمية. حقق المشروع مبيعات وسرعة انتشار عالية —
-        لكن واجهت خسارة، لأني ما تأكدت من جودة المنتج قبل ما أطلبه.
-      </p>
-      <p class="reveal"
-         data-ar="وتريند زون، متجر المنتجات المنزلية، وقف كمان. المشروعين علموني إشي ما بتعلمه من كتاب: إنك تبيع بسرعة مش نجاح لحاله، والمنتج نفسه لازم يستحمل. صرت من يومها أفحص قبل ما أصرف."
-         data-en="Trend Zone, my home-products store, also shut down. Both taught me something no book does: selling fast isn't success on its own, and the product itself has to hold up. Since then I check before I spend.">
-        وتريند زون، متجر المنتجات المنزلية، وقف كمان. المشروعين علموني إشي ما بتعلمه من كتاب:
-        إنك تبيع بسرعة مش نجاح لحاله، والمنتج نفسه لازم يستحمل. صرت من يومها أفحص قبل ما أصرف.
-      </p>
+      <div class="lesson-box reveal">
+        <h3 data-ar="السرعة في البيع لا تكفي بدون جودة وثبات في المنتج" data-en="Sales Speed Means Nothing Without Product Quality">السرعة في البيع لا تكفي بدون جودة وثبات في المنتج</h3>
+        <p data-ar="في شهر رمضان 2025 قمت بتأسيس مشروع ألعاب موسمية. حقق المشروع انتشاراً ومبيعات سريعة خلال أسبوعين، لكن واجهت خسارة كاملة بسبب عدم فحص جودة وشحنات المنتج بشكل دقيق قبل الطلب."
+           data-en="In Ramadan 2025, I launched a seasonal toy business. It achieved rapid sales traction, but resulted in a total loss because I hadn't properly verified product quality before ordering.">
+          في شهر رمضان 2025 قمت بتأسيس مشروع ألعاب موسمية. حقق المشروع انتشاراً ومبيعات سريعة خلال أسبوعين، لكن واجهت خسارة كاملة بسبب عدم فحص جودة وشحنات المنتج بشكل دقيق قبل الطلب.
+        </p>
+        <p data-ar="تعلمت من هذه التجربة ومن متجر تريند زون درساً جوهرياً لا تمنحه الكتب: النوايا التسويقية والسرعة ليست نجاحاً مستداماً بمفردها؛ بل يجب أن ينطوي التشغيل على فحص دقيق واختبار حقيقي للثبات والجودة قبل إنفاق أي موارد."
+           data-en="This experience and Trend Zone taught me a fundamental lesson: marketing momentum alone isn't sustainable success; operations must incorporate rigorous testing and quality control before committing resources.">
+          تعلمت من هذه التجربة ومن متجر تريند زون درساً جوهرياً لا تمنحه الكتب: النوايا التسويقية والسرعة ليست نجاحاً مستداماً بمفردها؛ بل يجب أن ينطوي التشغيل على فحص دقيق واختبار حقيقي للثبات والجودة قبل إنفاق أي موارد.
+        </p>
+      </div>
     </div>
   </section>
 
-  <!-- ===== تواصل ===== -->
+
+  <!-- ===== 10. التواصل وطلب التواصل المباشر (CONTACT & CTA SECTION) ===== -->
   <section class="sec contact" id="contact">
     <div class="wrap narrow">
-      <h2 class="reveal" data-ar="تواصل معي" data-en="Get in touch">تواصل معي</h2>
+      <h2 class="reveal" data-ar="تواصل مهني" data-en="Get in Touch">تواصل مهني</h2>
       <p class="reveal"
-         data-ar="بدوّر على مكان أتعلم فيه وأطوّر حالي، وأشتغل مع ناس أستفيد منهم. لو عندك إشي مناسب، احكيلي."
-         data-en="I'm looking for somewhere I can learn, grow, and work with people I can learn from. If you have something that fits, get in touch.">
-        بدوّر على مكان أتعلم فيه وأطوّر حالي، وأشتغل مع ناس أستفيد منهم. لو عندك إشي مناسب، احكيلي.
+         data-ar="أبحث عن فرصة مهنية وطموحة في تشغيل المطاعم، تطوير المشاريع، وتطوير الإجراءات مع فريق يسعى لبناء عمليات مستدامة وحلول مبتكرة. إذا كان لديك فرصة مناسبة، يسعدني التواصل."
+         data-en="I am seeking career opportunities in Restaurant Operations, Project Development, and Process Optimization with organizations focused on building scalable operations. Feel free to reach out.">
+        أبحث عن فرصة مهنية وطموحة في تشغيل المطاعم، تطوير المشاريع، وتطوير الإجراءات مع فريق يسعى لبناء عمليات مستدامة وحلول مبتكرة. إذا كان لديك فرصة مناسبة، يسعدني التواصل.
       </p>
 
       <div class="ways reveal">
-        <a class="btn solid" href="mailto:hasanoyouna@gmail.com">hasanoyouna@gmail.com</a>
+        <a class="btn solid mail-btn" href="mailto:Hasanoyouna@gmail.com">Hasanoyouna@gmail.com</a>
         <a class="btn line" href="https://wa.me/966545205548" target="_blank" rel="noopener"
            data-ar="واتساب" data-en="WhatsApp">واتساب</a>
+        <a class="btn line cv-download-btn" href="assets/Hasan_Oyouna_CV.pdf" download id="cvContactBtn" data-ar="تحميل CV (PDF)" data-en="Download CV (PDF)">تحميل CV (PDF)</a>
       </div>
 
       <div class="social reveal">
+        <a href="https://www.linkedin.com/in/hasan-oyouna/" target="_blank" rel="noopener">LinkedIn</a>
         <a href="https://www.instagram.com/hsnoals/" target="_blank" rel="noopener">Instagram</a>
         <a href="https://www.tiktok.com/@hsnoals" target="_blank" rel="noopener">TikTok</a>
       </div>
@@ -449,13 +707,14 @@
 
 </main>
 
+<!-- ===== الفوتر ===== -->
 <footer class="foot">
   <div class="wrap foot-in">
-    <span data-ar="حسن عيون السود — جدة، السعودية" data-en="Hasan Oyoun AlSoud — Jeddah, Saudi Arabia">حسن عيون السود — جدة، السعودية</span>
+    <span data-ar="حسن عيون السود — تشغيل مطاعم وتطوير مشاريع · جدة، السعودية" data-en="Hassan Oyouna — Restaurant Operations & Project Development · Jeddah, Saudi Arabia">حسن عيون السود — تشغيل مطاعم وتطوير مشاريع · جدة، السعودية</span>
     <span id="year">—</span>
   </div>
 </footer>
 
-<script src="js/main.js?v=5"></script>
+<script src="js/main.js?v=6"></script>
 </body>
 </html>
