@@ -158,6 +158,64 @@ a { color: inherit; }
 /* ===== الواجهة ===== */
 .hero { padding: clamp(56px, 10vw, 104px) 0 clamp(40px, 6vw, 64px); }
 
+.hero-wrap {
+  display: grid;
+  grid-template-columns: 1.2fr 0.8fr;
+  gap: 36px;
+  align-items: center;
+}
+@media (max-width: 768px) {
+  .hero-wrap {
+    grid-template-columns: 1fr;
+    gap: 28px;
+  }
+}
+
+.hero-portrait-card {
+  position: relative;
+  border-radius: 20px;
+  overflow: hidden;
+  box-shadow: 0 16px 36px -12px rgba(0, 0, 0, .25);
+  border: 2px solid var(--line);
+  background: var(--raise);
+  transition: transform .3s var(--ease), border-color .3s var(--ease);
+}
+.hero-portrait-card:hover {
+  transform: translateY(-4px);
+  border-color: var(--accent);
+}
+.portrait-img {
+  width: 100%;
+  max-height: 420px;
+  object-fit: cover;
+  object-position: center 20%;
+  display: block;
+}
+.portrait-tag {
+  position: absolute; bottom: 12px; inset-inline: 12px;
+  background: color-mix(in srgb, var(--ground) 88%, transparent);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  padding: 8px 14px; border-radius: 10px;
+  font-weight: 800; font-size: 13.5px; text-align: center;
+  border: 1px solid var(--line);
+  color: var(--ink);
+}
+
+.work-photo-card {
+  margin-top: 16px;
+  border-radius: 12px;
+  overflow: hidden;
+  border: 1px solid var(--line);
+  box-shadow: 0 6px 16px -6px rgba(0, 0, 0, .15);
+}
+.work-img {
+  width: 100%;
+  height: 220px;
+  object-fit: cover;
+  display: block;
+}
+
 .status {
   display: inline-flex; align-items: center; gap: 9px;
   margin: 0 0 26px; padding: 6px 15px 6px 12px;
