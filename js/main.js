@@ -120,26 +120,9 @@
   /* ===== النافذة التفاعلية لاستعراض شاشات برو هاوس (SYSTEM LIGHTBOX MODAL) ===== */
   var phModal = document.getElementById("phSystemModal");
   var closePhModalBtn = document.getElementById("closePhModalBtn");
-  var phModalBody = document.getElementById("phModalBody");
-  var phShowcase = document.getElementById("prohouseSystemShowcase");
 
   function openSystemModal() {
     if (!phModal) return;
-    if (phModalBody && phShowcase) {
-      var existingClone = phModalBody.querySelector("#modalShowcaseClone");
-      if (!existingClone) {
-        var showcaseClone = phShowcase.cloneNode(true);
-        showcaseClone.id = "modalShowcaseClone";
-        showcaseClone.style.marginBottom = "24px";
-        showcaseClone.style.borderRadius = "12px";
-        // Hide duplicate trigger buttons inside the modal clone
-        var innerBtns = showcaseClone.querySelectorAll(".ph-expand-btn, .ph-sys-footer");
-        for (var i = 0; i < innerBtns.length; i++) {
-          innerBtns[i].style.display = "none";
-        }
-        phModalBody.insertBefore(showcaseClone, phModalBody.firstChild);
-      }
-    }
     phModal.classList.remove("hidden");
     document.body.style.overflow = "hidden";
   }

@@ -186,11 +186,11 @@
         <div class="ph-sys-bar">
           <div class="ph-sys-left">
             <span class="ph-sys-brand">Pro House Operations Center</span>
-            <span class="ph-sys-branch" data-ar="الفرع الحالي: عبداللطيف جميل" data-en="Current Branch: Jameel Branch">الفرع الحالي: عبداللطيف جميل</span>
+            <span class="ph-sys-branch" data-ar="نظام تشغيلي PWA لـ 3 فروع والمطبخ المركزي" data-en="Internal PWA for 3 Branches & Central Kitchen">نظام تشغيلي PWA لـ 3 فروع والمطبخ المركزي</span>
           </div>
           <div class="ph-sys-right">
-            <span class="ph-sys-sync" data-ar="🔄 متصل" data-en="🔄 Connected">🔄 متصل</span>
-            <button class="ph-expand-btn ph-case-study-btn" id="expandSystemModalBtn" data-ar="🔍 تكبير واستعراض الواجهة الحقيقية" data-en="🔍 Expand Real UI">🔍 تكبير واستعراض الواجهة الحقيقية</button>
+            <span class="ph-sys-sync" data-ar="🔄 متصل" data-en="🔄 Live System">🔄 متصل</span>
+            <button class="ph-expand-btn ph-case-study-btn" id="expandSystemModalBtn" data-ar="🔍 استعراض الحالة الكاملة" data-en="🔍 View Full Case Study">🔍 استعراض الحالة الكاملة</button>
           </div>
         </div>
 
@@ -203,157 +203,28 @@
             </div>
           </div>
 
-          <!-- MAIN DASHBOARD CENTER -->
+          <!-- SUMMARY PANEL FOR MAIN PAGE -->
           <div class="ph-main-panel">
             <div class="ph-panel-head">
-              <span class="ph-panel-title" data-ar="📊 لوحة التحكم والعمليات اليومية" data-en="📊 Dashboard & Daily Operations">📊 لوحة التحكم والعمليات اليومية</span>
-              <div class="ph-role-badges">
-                <span class="ph-badge owner" data-ar="مالك" data-en="Owner">مالك</span>
-                <span class="ph-badge mgr" data-ar="مدير فرع" data-en="Manager">مدير فرع</span>
-                <span class="ph-badge chef" data-ar="شيف" data-en="Chef">شيف</span>
-                <span class="ph-badge emp" data-ar="موظف" data-en="Employee">موظف</span>
-              </div>
+              <span class="ph-panel-title" data-ar="📊 أبرز ميزات ونتائج النظام التشغيلي" data-en="📊 System Operational Highlights">📊 أبرز ميزات ونتائج النظام التشغيلي</span>
             </div>
             
             <div class="ph-metrics-row">
               <div class="ph-kpi ok">
-                <span class="ph-kpi-lbl" data-ar="حالة الاستلام من المطبخ" data-en="Central Kitchen Intake">حالة الاستلام من المطبخ</span>
-                <span class="ph-kpi-val" data-ar="مكتمل بالوزن" data-en="Completed by Weight">مكتمل بالوزن</span>
-                <span class="ph-kpi-sub" data-ar="0.0kg انحراف الأوزان" data-en="0.0kg Weight Variance">0.0kg انحراف الأوزان</span>
-              </div>
-              <div class="ph-kpi warn">
-                <span class="ph-kpi-lbl" data-ar="جرد المتبقي والهدر" data-en="EOD Stocktake & Waste">جرد المتبقي والهدر</span>
-                <span class="ph-kpi-val" data-ar="تم التسجيل" data-en="Logged & Saved">تم التسجيل</span>
-                <span class="ph-kpi-sub" data-ar="تنبيه المتبقي نشط" data-en="Stock Alert Active">تنبيه المتبقي نشط</span>
+                <span class="ph-kpi-lbl" data-ar="المطبخ والمخزون" data-en="Kitchen & Inventory">المطبخ والمخزون</span>
+                <span class="ph-kpi-val" data-ar="استلام بالوزن" data-en="Weight Intake">استلام بالوزن</span>
+                <span class="ph-kpi-sub" data-ar="مطابقة الدفعة وتحديد الهدر" data-en="Verified Intake & Waste Log">مطابقة الدفعة وتحديد الهدر</span>
               </div>
               <div class="ph-kpi info">
-                <span class="ph-kpi-lbl" data-ar="مبيعات الكاشير (POS)" data-en="POS Sales Sync">مبيعات الكاشير (POS)</span>
-                <span class="ph-kpi-val" data-ar="سحب ليلي آلي" data-en="Automated Nightly Pull">سحب ليلي آلي</span>
-                <span class="ph-kpi-sub" data-ar="مزامنة تلقائية" data-en="Auto Sync">مزامنة تلقائية</span>
+                <span class="ph-kpi-lbl" data-ar="أتمتة الكاشير" data-en="POS Automation">أتمتة الكاشير</span>
+                <span class="ph-kpi-val" data-ar="سحب ليلي آلي" data-en="Nightly Auto Pull">سحب ليلي آلي</span>
+                <span class="ph-kpi-sub" data-ar="مزامنة مبيعات ومتبقي" data-en="Sales Sync & Alerts">مزامنة مبيعات ومتبقي</span>
               </div>
               <div class="ph-kpi ok">
-                <span class="ph-kpi-lbl" data-ar="فحص الافتتاح والإغلاق" data-en="Shift Checklists">فحص الافتتاح والإغلاق</span>
-                <span class="ph-kpi-val" data-ar="100% معتمد" data-en="100% Verified">100% معتمد</span>
-                <span class="ph-kpi-sub" data-ar="بصمة الوقت محفوظة" data-en="Server Timestamped">بصمة الوقت محفوظة</span>
+                <span class="ph-kpi-lbl" data-ar="الأمان والتقارير" data-en="Security & Reports">الأمان والتقارير</span>
+                <span class="ph-kpi-val" data-ar="4 أدوار + WhatsApp" data-en="4 Roles + WhatsApp">4 أدوار + WhatsApp</span>
+                <span class="ph-kpi-sub" data-ar="دخول PIN وبوت تقارير آلي" data-en="PIN Auth & Auto Report Bot">دخول PIN وبوت تقارير آلي</span>
               </div>
-            </div>
-          </div>
-
-          <!-- SYSTEM MODULES SHOWCASE GRID -->
-          <div class="ph-modules-grid">
-            
-            <!-- Module 1: Opening Checklist -->
-            <div class="ph-module-card">
-              <div class="ph-mod-head">
-                <span data-ar="✅ قائمة فحص الفرع" data-en="✅ Branch Checklist">✅ قائمة فحص الفرع</span>
-                <span class="ph-mod-tag" data-ar="85% اكتمال" data-en="85% Complete">85% اكتمال</span>
-              </div>
-              <div class="ph-mod-body">
-                <div class="ph-check-item done">
-                  <span class="ph-chk">✓</span>
-                  <span data-ar="افتتاح الفرع وتشغيل جهاز الكاشير" data-en="Branch opening & POS startup">افتتاح الفرع وتشغيل جهاز الكاشير</span>
-                </div>
-                <div class="ph-check-item done">
-                  <span class="ph-chk">✓</span>
-                  <span data-ar="فحص درجات حرارة الثلاجات والمطبخ" data-en="Kitchen refrigeration temp audit">فحص درجات حرارة الثلاجات والمطبخ</span>
-                </div>
-                <div class="ph-check-item">
-                  <span class="ph-chk border"></span>
-                  <span data-ar="تأكيد جاهزية منطقة الاستلام والتغليف" data-en="Packaging area readiness check">تأكيد جاهزية منطقة الاستلام والتغليف</span>
-                </div>
-              </div>
-            </div>
-
-            <!-- Module 2: Kitchen Intake -->
-            <div class="ph-module-card">
-              <div class="ph-mod-head">
-                <span data-ar="📥 استلام المطبخ بالوزن" data-en="📥 Kitchen Weight Intake">📥 استلام المطبخ بالوزن</span>
-                <span class="ph-mod-tag hot" data-ar="دقة الوزن" data-en="Scale Weight">دقة الوزن</span>
-              </div>
-              <div class="ph-mod-body">
-                <div class="ph-weight-row">
-                  <span class="ph-item-name" data-ar="دجاج برو هاوس المتبل" data-en="Marinated Chicken">دجاج برو هاوس المتبل</span>
-                  <span class="ph-weight-val">25.0 kg</span>
-                  <span class="ph-tag-status ok" data-ar="مطابق" data-en="Match">مطابق</span>
-                </div>
-                <div class="ph-weight-row">
-                  <span class="ph-item-name" data-ar="وجبات اللحم المشوي" data-en="Grilled Beef Prep">وجبات اللحم المشوي</span>
-                  <span class="ph-weight-val">18.5 kg</span>
-                  <span class="ph-tag-status ok" data-ar="مطابق" data-en="Match">مطابق</span>
-                </div>
-                <div class="ph-weight-row">
-                  <span class="ph-item-name" data-ar="عصير البرتقال الطازج" data-en="Fresh Juice Stock">عصير البرتقال الطازج</span>
-                  <span class="ph-weight-val">12.0 L</span>
-                  <span class="ph-tag-status alert" data-ar="ملاحظة وزن" data-en="Note">ملاحظة وزن</span>
-                </div>
-              </div>
-            </div>
-
-            <!-- Module 3: Stocktake & Waste -->
-            <div class="ph-module-card">
-              <div class="ph-mod-head">
-                <span data-ar="📋 جرد المتبقي وحصر الهدر" data-en="📋 Stocktake & Waste">📋 جرد المتبقي وحصر الهدر</span>
-                <span class="ph-mod-tag warn" data-ar="تنبيه انحراف" data-en="Variance Alert">تنبيه انحراف</span>
-              </div>
-              <div class="ph-mod-body">
-                <div class="ph-waste-row">
-                  <span data-ar="المتبقي الفعلي آخر اليوم:" data-en="EOD Actual Remaining:">المتبقي الفعلي آخر اليوم:</span>
-                  <strong data-ar="مطابق للمتوقع" data-en="Expected Match">مطابق للمتوقع</strong>
-                </div>
-                <div class="ph-waste-row">
-                  <span data-ar="سجل الهدر اليومي:" data-en="Daily Waste Log:">سجل الهدر اليومي:</span>
-                  <span class="ph-badge-reason" data-ar="عينة فحص جودة" data-en="QC Sample">عينة فحص جودة</span>
-                </div>
-                <div class="ph-waste-row">
-                  <span data-ar="طلبية الغد للشيف:" data-en="Next-Day Kitchen Order:">طلبية الغد للشيف:</span>
-                  <span class="ph-tag-status ok" data-ar="تم الإرسال" data-en="Sent">تم الإرسال</span>
-                </div>
-              </div>
-            </div>
-
-            <!-- Module 4: POS Sales & Reports -->
-            <div class="ph-module-card">
-              <div class="ph-mod-head">
-                <span data-ar="📈 مبيعات الكاشير والتقارير" data-en="📈 POS & Reports">📈 مبيعات الكاشير والتقارير</span>
-                <button class="ph-excel-btn" data-ar="⬇ تصدير Excel" data-en="⬇ Export Excel">⬇ تصدير Excel</button>
-              </div>
-              <div class="ph-mod-body">
-                <div class="ph-report-row">
-                  <span data-ar="سحب المبيعات اليومي:" data-en="POS Daily Sync:">سحب المبيعات اليومي:</span>
-                  <strong data-ar="مزامنة آليّة ليلية" data-en="Nightly Auto Pull">مزامنة آليّة ليلية</strong>
-                </div>
-                <div class="ph-report-row">
-                  <span data-ar="إرسال التقارير اليومية:" data-en="Daily Report Bot:">إرسال التقارير اليومية:</span>
-                  <span class="ph-tag-status ok" data-ar="📲 بوت آلي على WhatsApp" data-en="📲 Auto WhatsApp Bot">📲 بوت آلي على WhatsApp</span>
-                </div>
-                <div class="ph-report-row">
-                  <span data-ar="تقارير مقارنة الفروع:" data-en="Branch Analytics:">تقارير مقارنة الفروع:</span>
-                  <strong data-ar="تصدير فوري للتحليل" data-en="Instant Analysis">تصدير فوري للتحليل</strong>
-                </div>
-                <div class="ph-report-row">
-                  <span data-ar="النسخ الاحتياطي:" data-en="Drive Backup:">النسخ الاحتياطي:</span>
-                  <span class="ph-tag-status ok" data-ar="مخزن على Drive" data-en="Stored on Drive">مخزن على Drive</span>
-                </div>
-              </div>
-            </div>
-
-          </div>
-
-          <!-- SYSTEM OPERATIONAL FLOW BAR -->
-          <div class="ph-flow-bar">
-            <span class="ph-flow-title" data-ar="دورة العمل التشغيلية الفليّة للنظام:" data-en="Actual System Operational Flow:">دورة العمل التشغيلية الفليّة للنظام:</span>
-            <div class="ph-flow-steps">
-              <span data-ar="افتتاح الفرع (Checklist)" data-en="Opening Checklist">افتتاح الفرع (Checklist)</span>
-              <span class="ph-arr">←</span>
-              <span data-ar="استلام الإنتاج (بالوزن)" data-en="Intake by Weight">استلام الإنتاج (بالوزن)</span>
-              <span class="ph-arr">←</span>
-              <span data-ar="جرد المتبقي والهدر" data-en="Stocktake & Waste">جرد المتبقي والهدر</span>
-              <span class="ph-arr">←</span>
-              <span data-ar="سحب مبيعات الكاشير" data-en="POS Sales Sync">سحب مبيعات الكاشير</span>
-              <span class="ph-arr">←</span>
-              <span data-ar="طلبية الغد" data-en="Next-Day Kitchen Order">طلبية الغد</span>
-              <span class="ph-arr">←</span>
-              <span data-ar="تصدير التقارير" data-en="Excel Export & Reports">تصدير التقارير</span>
             </div>
           </div>
 
