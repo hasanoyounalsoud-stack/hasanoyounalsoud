@@ -700,6 +700,30 @@ a { color: inherit; }
 }
 .foot-in { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 12px; }
 
+/* ===== Compact Stepper & Skills Badges Grid ===== */
+.compact-stepper-bar {
+  display: inline-flex; align-items: center; flex-wrap: wrap; gap: 8px;
+  margin-top: 14px; padding: 10px 16px; border-radius: 10px;
+  background: var(--raise); border: 1px solid var(--line); font-size: 13.5px; font-weight: 700;
+}
+.stp-title { color: var(--accent); font-weight: 800; }
+.stp-item { color: var(--ink); background: var(--surface); padding: 3px 8px; border-radius: 5px; border: 1px solid var(--line); }
+.stp-arr { color: var(--muted); font-size: 12px; }
+
+.skills-tags-grid {
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 16px; margin-top: 20px;
+}
+.skill-group-card {
+  padding: 20px; border-radius: 12px; background: var(--surface); border: 1px solid var(--line);
+}
+.skill-group-card h3 { margin: 0 0 12px; font-size: 16px; font-weight: 800; color: var(--ink); }
+.tags-container { display: flex; flex-wrap: wrap; gap: 6px; }
+.sk-tag {
+  font-size: 12.5px; font-weight: 700; color: var(--muted); background: var(--raise);
+  padding: 4px 10px; border-radius: 6px; border: 1px solid var(--line);
+}
+.skill-group-card:hover .sk-tag { border-color: var(--accent-soft); }
+
 /* ===== Toast Notification ===== */
 .toast-msg {
   position: fixed; bottom: 24px; inset-inline-end: 24px; z-index: 1000;

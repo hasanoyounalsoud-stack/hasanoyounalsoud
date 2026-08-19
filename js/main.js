@@ -118,20 +118,12 @@
   }
 
   /* ===== النافذة التفاعلية لاستعراض شاشات برو هاوس (SYSTEM LIGHTBOX MODAL) ===== */
-  var expandBtn = document.getElementById("expandSystemModalBtn");
   var phModal = document.getElementById("phSystemModal");
   var closePhModalBtn = document.getElementById("closePhModalBtn");
   var phModalBody = document.getElementById("phModalBody");
-  var phShowcase = document.getElementById("prohouseSystemShowcase");
 
   function openSystemModal() {
-    if (!phModal || !phShowcase) return;
-    if (phModalBody) {
-      phModalBody.innerHTML = phShowcase.outerHTML;
-      // remove expand button inside modal
-      var innerBtn = phModalBody.querySelector("#expandSystemModalBtn");
-      if (innerBtn) innerBtn.style.display = "none";
-    }
+    if (!phModal) return;
     phModal.classList.remove("hidden");
     document.body.style.overflow = "hidden";
   }
@@ -142,7 +134,10 @@
     document.body.style.overflow = "";
   }
 
-  if (expandBtn) expandBtn.addEventListener("click", openSystemModal);
+  var caseStudyBtns = document.querySelectorAll(".ph-case-study-btn, #expandSystemModalBtn, #openPhCaseStudyBtn");
+  for (var bIdx = 0; bIdx < caseStudyBtns.length; bIdx++) {
+    caseStudyBtns[bIdx].addEventListener("click", openSystemModal);
+  }
   if (closePhModalBtn) closePhModalBtn.addEventListener("click", closeSystemModal);
 
   if (phModal) {
