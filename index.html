@@ -22,7 +22,7 @@
 <link rel="preload" href="assets/fonts/tajawal-800-ar.woff2" as="font" type="font/woff2" crossorigin />
 <link rel="preload" href="assets/fonts/tajawal-400-ar.woff2" as="font" type="font/woff2" crossorigin />
 
-<link rel="stylesheet" href="css/style.css?v=8" />
+<link rel="stylesheet" href="css/style.css?v=9" />
 
 <!-- Structured Data for SEO -->
 <script type="application/ld+json">
@@ -51,6 +51,13 @@
 </script>
 </head>
 <body>
+
+<div id="preloader" aria-hidden="true">
+  <div class="pre-inner">
+    <img class="pre-avatar" src="assets/images/hasan.jpg" alt="" width="96" height="96" />
+    <div class="pre-name"><span class="pre-word" id="preWord"></span><span class="pre-caret" id="preCaret"></span></div>
+  </div>
+</div>
 
 <a class="skip" href="#main" data-ar="تخطَّ إلى المحتوى" data-en="Skip to content">تخطَّ إلى المحتوى</a>
 
@@ -866,6 +873,8 @@
   </div>
 </footer>
 
-<script src="js/main.js?v=8"></script>
+<script src="js/vendor/gsap.min.js" defer></script>
+<script src="js/vendor/ScrollTrigger.min.js" defer></script>
+<script src="js/main.js?v=9" defer></script>
 </body>
 </html>

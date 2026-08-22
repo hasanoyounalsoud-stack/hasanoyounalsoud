@@ -57,10 +57,59 @@
     });
   }
 
+  var reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  var pointerFine = window.matchMedia("(pointer:fine)").matches;
+  var hasGsap = !!(window.gsap);
+
+  /* ===== البريلودر: كتابة الاسم فوق صورة، ثم انزلاق يكشف الموقع ===== */
+  (function () {
+    var pre = document.getElementById("preloader");
+    if (!pre) return;
+
+    if (reduceMotion) { pre.remove(); return; }
+
+    var word = "حسن عيون السود";
+    var el = document.getElementById("preWord");
+    var caret = document.getElementById("preCaret");
+    var i = 0;
+
+    function finish() {
+      if (caret) caret.style.display = "none";
+      if (hasGsap) {
+        gsap.to(pre, {
+          yPercent: -100, duration: .8, ease: "power4.inOut", delay: .2,
+          onComplete: function () { pre.remove(); }
+        });
+      } else {
+        pre.style.transition = "transform .5s ease";
+        pre.style.transform = "translateY(-100%)";
+        setTimeout(function () { pre.remove(); }, 520);
+      }
+    }
+    function type() {
+      if (i <= word.length) {
+        el.textContent = word.slice(0, i++);
+        setTimeout(type, 65);
+      } else {
+        setTimeout(finish, 320);
+      }
+    }
+    setTimeout(type, 550); /* تبدأ الكتابة بعد ظهور الصورة */
+  })();
+
   /* ===== ظهور تدريجي ===== */
   var reveals = document.querySelectorAll(".reveal");
-  if (!("IntersectionObserver" in window)) {
+  if (reduceMotion || !("IntersectionObserver" in window)) {
     for (var k = 0; k < reveals.length; k++) reveals[k].classList.add("shown");
+  } else if (hasGsap && window.ScrollTrigger) {
+    gsap.registerPlugin(ScrollTrigger);
+    reveals.forEach(function (el) {
+      el.classList.add("shown"); /* الفولباك CSS يبقى شغّال لو تأخّر GSAP */
+      gsap.fromTo(el,
+        { y: 16, opacity: 0 },
+        { y: 0, opacity: 1, duration: .6, ease: "power3.out",
+          scrollTrigger: { trigger: el, start: "top 90%", once: true, markers: false } });
+    });
   } else {
     var io = new IntersectionObserver(function (entries) {
       entries.forEach(function (entry) {
@@ -71,6 +120,22 @@
     }, { rootMargin: "0px 0px -8% 0px", threshold: 0.05 });
 
     for (var m = 0; m < reveals.length; m++) io.observe(reveals[m]);
+  }
+
+  /* ===== أزرار مغناطيسية — الدعوات الأساسية فقط ===== */
+  if (hasGsap && pointerFine && !reduceMotion) {
+    var magnets = document.querySelectorAll(".btn.solid, .cv-cta, .cv-btn");
+    magnets.forEach(function (btn) {
+      btn.addEventListener("mousemove", function (e) {
+        var r = this.getBoundingClientRect();
+        var x = e.clientX - r.left - r.width / 2;
+        var y = e.clientY - r.top - r.height / 2;
+        gsap.to(this, { x: x * .25, y: y * .35, duration: .35, ease: "power3.out" });
+      });
+      btn.addEventListener("mouseleave", function () {
+        gsap.to(this, { x: 0, y: 0, duration: .5, ease: "elastic.out(1,.5)" });
+      });
+    });
   }
 
   /* ===== حالة الهيدر ===== */

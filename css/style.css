@@ -744,6 +744,67 @@ a { color: inherit; }
 }
 .reveal.shown { opacity: 1; transform: translateY(0); }
 
+/* ===== البريلودر ===== */
+#preloader {
+  position: fixed; inset: 0; z-index: 300;
+  background: var(--accent-deep);
+  display: grid; place-items: center;
+}
+#preloader .pre-inner {
+  display: flex; flex-direction: column; align-items: center; gap: 20px;
+}
+#preloader .pre-avatar {
+  width: 88px; height: 88px; border-radius: 50%;
+  object-fit: cover;
+  border: 3px solid var(--accent-bright);
+  box-shadow: 0 0 0 8px rgb(110 231 183 / .12), 0 18px 40px -14px rgb(0 0 0 / .55);
+  opacity: 0; transform: scale(.82);
+  animation: pre-avatar-in .6s cubic-bezier(.22,1,.36,1) .15s forwards;
+}
+@keyframes pre-avatar-in { to { opacity: 1; transform: scale(1); } }
+#preloader .pre-name { min-height: 1.2em; }
+#preloader .pre-word {
+  font-family: 'Tajawal', system-ui, sans-serif; font-weight: 800;
+  color: var(--on-accent);
+  font-size: clamp(1.7rem, 6.5vw, 3rem);
+}
+#preloader .pre-caret {
+  display: inline-block; width: .06em; height: .82em;
+  background: var(--accent-bright);
+  margin-inline-start: .1em; vertical-align: -.04em;
+  animation: pre-blink .7s steps(1) infinite;
+}
+@keyframes pre-blink { 50% { opacity: 0; } }
+
+/* ===== رفعة خفيفة عند الهوفر — بطاقات الأعمال والمهارات ===== */
+.store-card, .skill-group-card, .prohouse-system-showcase, .ph-kpi {
+  transition: transform .3s var(--ease), box-shadow .3s var(--ease), border-color .3s var(--ease);
+}
+.store-card:hover, .skill-group-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 16px 34px -18px rgb(11 110 98 / .28);
+  border-color: var(--accent);
+}
+.ph-kpi:hover { transform: translateY(-2px); }
+
+/* ===== الأزرار المغناطيسية — الطبقة الأساسية بدون جافاسكربت ===== */
+.btn.solid, .btn.line, .cv-btn {
+  transition: transform .25s var(--ease), background-color .2s, border-color .2s, color .2s;
+  will-change: transform;
+}
+
+/* ===== احترام تفضيل تقليل الحركة — كان غائبًا بالكامل ===== */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: .001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: .001ms !important;
+    scroll-behavior: auto !important;
+  }
+  .reveal { opacity: 1 !important; transform: none !important; }
+  #preloader { display: none !important; }
+}
+
 /* ===== الاستجابة للجوال الأجهزة اللوحية (RESPONSIVE) ===== */
 @media (max-width: 768px) {
   .nav-in { gap: 10px; }
