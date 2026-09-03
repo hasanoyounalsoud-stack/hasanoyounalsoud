@@ -84,31 +84,41 @@
         </div>
       </div>
 
-      <!-- Hero Key Metrics Dashboard -->
-      <div class="hero-card">
-        <div class="hero-card-header">
-          <div class="hero-card-title" data-ar="المؤشرات الاستثمارية الرئيسية (السيناريو الأساسي)" data-en="KEY INVESTMENT TARGETS (BASE CASE)">المؤشرات الاستثمارية الرئيسية (السيناريو الأساسي)</div>
+      <!-- Hero Visual & Key Metrics Dashboard -->
+      <div style="display: flex; flex-direction: column; gap: 1.5rem;">
+        <div style="border-radius: var(--radius-lg); overflow: hidden; border: 2px solid var(--suna-brioche); box-shadow: var(--shadow-dramatic); position: relative; height: 260px;">
+          <img src="assets/images/hero.jpg" alt="SUNA Craft Food Truck & Gourmet Burgers" style="width: 100%; height: 100%; object-fit: cover; display: block;" />
+          <div style="position: absolute; bottom: 0; left: 0; right: 0; padding: 1.25rem; background: linear-gradient(to top, rgba(10,30,23,0.95) 0%, transparent 100%);">
+            <span class="tag tag-verified" style="margin-bottom: 0.35rem;">THE CRAFT FORMULA</span>
+            <div style="color: #FFF; font-weight: 800; font-size: 1.1rem; text-shadow: 0 2px 4px rgba(0,0,0,0.8);">سماش برغر مزدوج + ستيك أنتركوت باريسي + دجاج مقرمش</div>
+          </div>
         </div>
-        <div class="hero-metrics-grid">
-          <div class="metric-box">
-            <div class="metric-val">$14,820</div>
-            <div class="metric-lbl" data-ar="الإيراد الشهري المتوقع" data-en="Target Monthly Revenue">الإيراد الشهري المتوقع</div>
-            <div class="metric-delta">204.5M ل.س / شهر</div>
+
+        <div class="hero-card">
+          <div class="hero-card-header">
+            <div class="hero-card-title" data-ar="المؤشرات الاستثمارية الرئيسية (السيناريو الأساسي)" data-en="KEY INVESTMENT TARGETS (BASE CASE)">المؤشرات الاستثمارية الرئيسية (السيناريو الأساسي)</div>
           </div>
-          <div class="metric-box">
-            <div class="metric-val">54.9%</div>
-            <div class="metric-lbl" data-ar="متوسط هامش الربح الإجمالي" data-en="Weighted Gross Margin">متوسط هامش الربح الإجمالي</div>
-            <div class="metric-delta" data-ar="هامش حماية قوي" data-en="Strong pricing power">هامش حماية قوي</div>
-          </div>
-          <div class="metric-box">
-            <div class="metric-val">38 طلب</div>
-            <div class="metric-lbl" data-ar="مبيعات التعادل اليومية" data-en="Break-Even Orders / Day">مبيعات التعادل اليومية</div>
-            <div class="metric-delta" data-ar="أمان تشغيلي عالٍ" data-en="High safety margin">أمان تشغيلي عالٍ</div>
-          </div>
-          <div class="metric-box">
-            <div class="metric-val">11.2 شهر</div>
-            <div class="metric-lbl" data-ar="فترة استرداد رأس المال" data-en="Capital Payback Period">فترة استرداد رأس المال</div>
-            <div class="metric-delta" data-ar="عائد استثماري 190% (3 سنين)" data-en="190% 3-Yr Cumulative ROI">عائد استثماري 190% (3 سنين)</div>
+          <div class="hero-metrics-grid">
+            <div class="metric-box">
+              <div class="metric-val">$14,820</div>
+              <div class="metric-lbl" data-ar="الإيراد الشهري المتوقع" data-en="Target Monthly Revenue">الإيراد الشهري المتوقع</div>
+              <div class="metric-delta">204.5M ل.س / شهر</div>
+            </div>
+            <div class="metric-box">
+              <div class="metric-val">54.9%</div>
+              <div class="metric-lbl" data-ar="متوسط هامش الربح الإجمالي" data-en="Weighted Gross Margin">متوسط هامش الربح الإجمالي</div>
+              <div class="metric-delta" data-ar="هامش حماية قوي" data-en="Strong pricing power">هامش حماية قوي</div>
+            </div>
+            <div class="metric-box">
+              <div class="metric-val">38 طلب</div>
+              <div class="metric-lbl" data-ar="مبيعات التعادل اليومية" data-en="Break-Even Orders / Day">مبيعات التعادل اليومية</div>
+              <div class="metric-delta" data-ar="أمان تشغيلي عالٍ" data-en="High safety margin">أمان تشغيلي عالٍ</div>
+            </div>
+            <div class="metric-box">
+              <div class="metric-val">11.2 شهر</div>
+              <div class="metric-lbl" data-ar="فترة استرداد رأس المال" data-en="Capital Payback Period">فترة استرداد رأس المال</div>
+              <div class="metric-delta" data-ar="عائد استثماري 190% (3 سنين)" data-en="190% 3-Yr Cumulative ROI">عائد استثماري 190% (3 سنين)</div>
+            </div>
           </div>
         </div>
       </div>
@@ -340,11 +350,11 @@
       <div class="grid-3" style="margin-top: 2rem;">
         <!-- Product 1: Smash Burger -->
         <div class="product-card">
-          <div class="product-visual">
+          <div class="product-visual" style="background: url('assets/images/smash.jpg') center/cover no-repeat; height: 230px;">
             <span class="product-visual-badge">SIGNATURE SKU #1</span>
-            <div>
-              <h3 style="color: #FFF; font-size: 1.35rem;">SUNA Double Smash</h3>
-              <p style="font-size: 0.8125rem; color: var(--suna-gold-subtle);">سماش برغر مزدوج (120 جم)</p>
+            <div style="position: absolute; bottom: 0; left: 0; right: 0; padding: 1.25rem; background: linear-gradient(to top, rgba(10,30,23,0.92) 0%, transparent 100%);">
+              <h3 style="color: #FFF; font-size: 1.35rem; text-shadow: 0 2px 8px rgba(0,0,0,0.8);">SUNA Double Smash</h3>
+              <p style="font-size: 0.8125rem; color: var(--suna-brioche); font-weight: 800;">سماش برغر مزدوج (120 جم عجل بلدي طازج)</p>
             </div>
           </div>
           <div class="product-body">
@@ -360,11 +370,11 @@
 
         <!-- Product 2: Entrecôte Steak Sub -->
         <div class="product-card">
-          <div class="product-visual" style="background: linear-gradient(135deg, #382415 0%, #1D140E 100%);">
+          <div class="product-visual" style="background: url('assets/images/entrecote.jpg') center/cover no-repeat; height: 230px;">
             <span class="product-visual-badge" style="background: #BD3A2B;">GOURMET SKU #2</span>
-            <div>
-              <h3 style="color: #FFF; font-size: 1.35rem;">Café de Paris Entrecôte</h3>
-              <p style="font-size: 0.8125rem; color: #EAD0C8;">ستيك أنتركوت باريسي فاخر</p>
+            <div style="position: absolute; bottom: 0; left: 0; right: 0; padding: 1.25rem; background: linear-gradient(to top, rgba(10,30,23,0.92) 0%, transparent 100%);">
+              <h3 style="color: #FFF; font-size: 1.35rem; text-shadow: 0 2px 8px rgba(0,0,0,0.8);">Café de Paris Entrecôte</h3>
+              <p style="font-size: 0.8125rem; color: #FCA5A5; font-weight: 800;">ستيك أنتركوت باريسي (شرائح فيليه وبطاطا رفيعة)</p>
             </div>
           </div>
           <div class="product-body">
@@ -380,11 +390,11 @@
 
         <!-- Product 3: Crispy Chicken -->
         <div class="product-card">
-          <div class="product-visual" style="background: linear-gradient(135deg, #573E11 0%, #2A1D06 100%);">
-            <span class="product-visual-badge" style="background: var(--suna-gold);">CRISPY SKU #3</span>
-            <div>
-              <h3 style="color: #FFF; font-size: 1.35rem;">SUNA Golden Crispy</h3>
-              <p style="font-size: 0.8125rem; color: var(--suna-gold-subtle);">دجاج مقرمش ذهبي منقوع</p>
+          <div class="product-visual" style="background: url('assets/images/chicken.jpg') center/cover no-repeat; height: 230px;">
+            <span class="product-visual-badge" style="background: var(--suna-brioche);">CRISPY SKU #3</span>
+            <div style="position: absolute; bottom: 0; left: 0; right: 0; padding: 1.25rem; background: linear-gradient(to top, rgba(10,30,23,0.92) 0%, transparent 100%);">
+              <h3 style="color: #FFF; font-size: 1.35rem; text-shadow: 0 2px 8px rgba(0,0,0,0.8);">SUNA Golden Crispy</h3>
+              <p style="font-size: 0.8125rem; color: var(--suna-brioche-light); font-weight: 800;">دجاج مقرمش ذهبي منقوع 24 ساعة</p>
             </div>
           </div>
           <div class="product-body">
