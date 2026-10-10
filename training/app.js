@@ -4,15 +4,11 @@ const SUPABASE_URL = 'https://dsgzqdznntsriaezmlbn.supabase.co';
 const SUPABASE_KEY = 'sb_publishable_HxWnLtIFqNZRRg1O1QFWHg_Lkrw-TSv';
 const STORAGE_TUS = 'https://dsgzqdznntsriaezmlbn.storage.supabase.co/storage/v1/upload/resumable';
 const BUCKET = 'exercise-videos';
-const COACH_EMAIL = 'hasanoyouna@gmail.com';
 const FREE_PLAN_MAX_MB = 50;
 const PAGE_URL = location.origin + location.pathname;
 
-// invite / recovery links land with tokens in the hash; remember the type before the client consumes it
-const authType = new URLSearchParams(location.hash.replace(/^#/, '')).get('type');
-
 const sb = createClient(SUPABASE_URL, SUPABASE_KEY, {
-  auth: { persistSession: true, autoRefreshToken: true, detectSessionInUrl: true },
+  auth: { persistSession: true, autoRefreshToken: true, detectSessionInUrl: false },
 });
 
 const app = document.getElementById('app');
@@ -30,6 +26,12 @@ const fmtSet = (w, r) => `${w != null ? +w + 'kg' : '—'} × ${r ?? '—'}`;
 const e1rm = (w, r) => (w && r ? w * (1 + r / 30) : 0); // Epley
 const isCoach = () => state.profile?.role === 'coach';
 const uid = () => state.session?.user.id;
+
+function newPassword() {
+  const a = 'abcdefghjkmnpqrstuvwxyz', d = '23456789';
+  const r = (set, n) => Array.from(crypto.getRandomValues(new Uint32Array(n)), (x) => set[x % set.length]).join('');
+  return `${r(a, 4)}-${r(d, 4)}-${r(a, 3)}`;
+}
 
 let toastTimer;
 function toast(msg, err = false) {
@@ -159,11 +161,8 @@ function viewLogin() {
       <label class="field"><span>الإيميل</span><input type="email" name="email" required autocomplete="email" dir="ltr" /></label>
       <label class="field"><span>كلمة السر</span><input type="password" name="password" required autocomplete="current-password" dir="ltr" /></label>
       <button class="btn block">دخول</button>
-      <div class="divider">أو</div>
-      <button type="button" class="btn ghost block" id="magic">ابعتلي رابط دخول عالإيميل</button>
-      <button type="button" class="btn ghost block sm" id="forgot" style="border:0">نسيت كلمة السر</button>
     </form>
-    <p class="muted small center" style="margin-top:16px">الحسابات بتنعمل بدعوة من المدرب.</p>
+    <p class="muted small center" style="margin-top:16px">الحساب بيعطيك ياه المدرب. نسيت كلمة السر؟ تواصل معه ليعطيك وحدة جديدة.</p>
   </div>`;
   const form = $('#pwForm');
   form.onsubmit = async (e) => {
@@ -174,33 +173,17 @@ function viewLogin() {
     btn.disabled = false;
     if (error) return toast(error.message.includes('Invalid') ? 'الإيميل أو كلمة السر غلط' : error.message, true);
   };
-  $('#magic').onclick = async () => {
-    const email = form.email.value.trim();
-    if (!email) return toast('اكتب إيميلك أول', true);
-    const { error } = await sb.auth.signInWithOtp({
-      email, options: { emailRedirectTo: PAGE_URL, shouldCreateUser: email.toLowerCase() === COACH_EMAIL },
-    });
-    if (error) return toast(error.message.includes('Signups not allowed') ? 'هالإيميل ما إله حساب، تواصل مع المدرب' : error.message, true);
-    toast('بعتنالك رابط عالإيميل ✉️');
-  };
-  $('#forgot').onclick = async () => {
-    const email = form.email.value.trim();
-    if (!email) return toast('اكتب إيميلك أول', true);
-    const { error } = await sb.auth.resetPasswordForEmail(email, { redirectTo: PAGE_URL });
-    if (error) return fail(error);
-    toast('بعتنالك رابط لتغيير كلمة السر ✉️');
-  };
 }
 
-function viewSetPassword(first) {
+function viewAccount() {
   app.innerHTML = `
   <div class="auth">
-    <div class="center" style="margin-bottom:20px">
-      <h1>${first ? 'أهلاً بالفريق 🎉' : 'كلمة سر جديدة'}</h1>
-      <p class="muted">${first ? 'اختار كلمة سر لحسابك، رح تستخدمها كل مرة بتدخل.' : 'اكتب كلمة السر الجديدة.'}</p>
-    </div>
+    <a href="#/" class="small">→ رجوع</a>
+    <h1 style="margin-top:8px">حسابي</h1>
+    <div class="card"><div class="small muted">الإيميل</div><div dir="ltr" style="text-align:right">${esc(state.session.user.email)}</div></div>
     <form class="card stack" id="setPw">
-      <label class="field"><span>كلمة السر (6 أحرف على الأقل)</span><input type="password" name="p" minlength="6" required autocomplete="new-password" dir="ltr" /></label>
+      <h3>تغيير كلمة السر</h3>
+      <label class="field"><span>كلمة السر الجديدة (8 أحرف على الأقل)</span><input type="password" name="p" minlength="8" required autocomplete="new-password" dir="ltr" /></label>
       <button class="btn block">حفظ</button>
     </form>
   </div>`;
@@ -208,7 +191,7 @@ function viewSetPassword(first) {
     e.preventDefault();
     const { error } = await sb.auth.updateUser({ password: e.target.p.value });
     if (error) return fail(error);
-    toast('تم حفظ كلمة السر ✅');
+    toast('تم تغيير كلمة السر ✅');
     location.hash = '#/';
   };
 }
@@ -290,6 +273,7 @@ async function viewHome() {
           ${d.program_exercises.map((pe) => `<li><span class="grow" dir="auto">${esc(pe.exercise.name)}</span><span class="muted small">${setsLabel(pe)}</span>${pe.exercise.video_path ? '<span title="فيه فيديو">🎬</span>' : ''}</li>`).join('')}
         </ol>
       </a>`).join('')}
+    <p class="center small" style="margin-top:20px"><a href="#/account">حسابي وتغيير كلمة السر</a></p>
   `;
 }
 
@@ -910,15 +894,16 @@ async function viewTrainees() {
 
   app.innerHTML = `
     <h1>المتدربين</h1>
+    <div id="creds"></div>
     <form class="card stack" id="invite">
-      <h3>دعوة متدرب جديد</h3>
-      <p class="small muted" style="margin:0">رح يوصله إيميل فيه رابط ليفعّل حسابه ويختار كلمة سر.</p>
+      <h3>إضافة متدرب جديد</h3>
+      <p class="small muted" style="margin:0">بنعمله حساب بكلمة سر، وبتبعتله معلومات الدخول عالواتساب بكبسة.</p>
       <div class="form-grid">
         <label class="field"><span>الاسم</span><input name="full_name" required /></label>
         <label class="field"><span>الإيميل</span><input type="email" name="email" required dir="ltr" /></label>
         <label class="field"><span>الجدول</span><select name="program_id">${progOpts(programs[0]?.id)}</select></label>
       </div>
-      <button class="btn">ابعت الدعوة ✉️</button>
+      <button class="btn">اعمل الحساب</button>
     </form>
     ${people.map((p) => `
       <div class="card" data-id="${p.id}">
@@ -934,22 +919,49 @@ async function viewTrainees() {
           <label class="field"><span>الجدول</span><select data-assign>${progOpts(p.program_id)}</select></label>
           <label class="field"><span>الاسم</span><input data-name value="${esc(p.full_name || '')}" /></label>
         </div>
+        ${p.role === 'coach' ? '' : '<button class="btn ghost sm" data-resetpw style="margin-top:10px">كلمة سر جديدة</button>'}
       </div>`).join('')}`;
 
+  const manage = async (body) => {
+    const { data, error: er } = await sb.functions.invoke('manage-trainee', { body });
+    if (!er) return data;
+    let msg = er.message;
+    try { msg = (await er.context.json()).error || msg; } catch {}
+    throw new Error(msg === 'email already registered' ? 'هالإيميل إله حساب من قبل' : msg);
+  };
+  const showCreds = (name, email, password) => {
+    const msg = `أهلاً ${name} 💪\nهاد حسابك على موقع التمارين:\n${PAGE_URL}\nالإيميل: ${email}\nكلمة السر: ${password}\n(فيك تغيّرها من "حسابي" بعد ما تدخل)`;
+    $('#creds').innerHTML = `<div class="card stack" style="border-color:var(--accent);margin-bottom:12px">
+      <h3>معلومات الدخول لـ${esc(name)} ✅</h3>
+      <div class="small">الإيميل: <b dir="ltr">${esc(email)}</b><br>كلمة السر: <b dir="ltr" class="num">${esc(password)}</b></div>
+      <p class="small muted" style="margin:0">انسخها هلق، كلمة السر ما رح تنعرض مرة تانية.</p>
+      <div class="row">
+        <a class="btn" target="_blank" rel="noopener" href="https://wa.me/?text=${encodeURIComponent(msg)}">ابعت عالواتساب</a>
+        <button class="btn ghost" id="copyCreds">نسخ</button>
+      </div></div>`;
+    $('#copyCreds').onclick = () => navigator.clipboard.writeText(msg).then(() => toast('انتسخ ✅'), () => toast('ما زبط النسخ', true));
+    $('#creds').scrollIntoView({ behavior: 'smooth' });
+  };
   $('#invite').onsubmit = async (e) => {
     e.preventDefault();
     const body = Object.fromEntries(new FormData(e.target));
-    body.redirect_to = PAGE_URL;
+    const password = newPassword();
     const btn = e.target.querySelector('button'); btn.disabled = true;
-    const { data, error: er } = await sb.functions.invoke('invite-trainee', { body });
-    btn.disabled = false;
-    if (er) {
-      let msg = er.message;
-      try { msg = (await er.context.json()).error || msg; } catch {}
-      return toast('ما زبطت الدعوة: ' + msg, true);
-    }
-    toast(data.invited ? 'انبعتت الدعوة ✅' : 'المتدرب عنده حساب، انضاف ✅');
-    viewTrainees();
+    try {
+      await manage({ action: 'create', ...body, password });
+      await viewTrainees();
+      showCreds(body.full_name, body.email.trim().toLowerCase(), password);
+    } catch (err) { fail(err); btn.disabled = false; }
+  };
+  app.onclick = async (e) => {
+    const b = e.target.closest('[data-resetpw]'); if (!b) return;
+    const p = people.find((x) => x.id === b.closest('[data-id]').dataset.id);
+    if (!confirm(`تعطي ${p.full_name || p.email} كلمة سر جديدة؟ القديمة بتبطل تشتغل.`)) return;
+    const password = newPassword();
+    b.disabled = true;
+    try { await manage({ action: 'reset_password', user_id: p.id, password }); showCreds(p.full_name || '', p.email, password); }
+    catch (err) { fail(err); }
+    b.disabled = false;
   };
   app.onchange = async (e) => {
     const card = e.target.closest('[data-id]'); if (!card) return;
@@ -970,7 +982,6 @@ async function route() {
   app.onclick = null; app.onchange = null; app.oninput = null; // drop the previous view's handlers
   const h = location.hash.replace(/^#/, '') || '/';
   if (!state.session) { renderNav(); return viewLogin(); }
-  if (h === '/set-password') { renderNav(); return viewSetPassword(authType === 'invite'); }
   if (!state.profile) await loadProfile();
   renderNav();
   if (!state.profile) return viewNoProfile();
@@ -980,6 +991,7 @@ async function route() {
     if (h === '/' || h === '/login') return await viewHome();
     if ((m = h.match(/^\/day\/([\w-]+)/))) return await viewDay(m[1]);
     if (h === '/progress') return await viewProgress();
+    if (h === '/account') return viewAccount();
     if (isCoach()) {
       if (h === '/coach/exercises') return await viewExercises();
       if ((m = h.match(/^\/coach\/programs(?:\/([\w-]+))?/))) return await viewPrograms(m[1]);
@@ -996,14 +1008,10 @@ window.addEventListener('hashchange', route);
 sb.auth.onAuthStateChange((event, session) => {
   const had = !!state.session;
   state.session = session;
-  if (event === 'PASSWORD_RECOVERY' || (event === 'SIGNED_IN' && authType === 'invite' && !had)) {
-    location.hash = '#/set-password'; return;
-  }
   if (event === 'SIGNED_OUT') { Object.assign(state, { profile: null, program: null, logs: null, exercises: null }); }
   if (event === 'SIGNED_IN' && !had) setTimeout(route, 0);
 });
 const { data: { session } } = await sb.auth.getSession();
 state.session = session;
-if (session && (authType === 'invite' || authType === 'recovery')) location.hash = '#/set-password';
-else if (!/^#\//.test(location.hash)) history.replaceState(null, '', PAGE_URL + '#/');
+if (!/^#\//.test(location.hash)) history.replaceState(null, '', PAGE_URL + '#/');
 route();
