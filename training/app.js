@@ -1009,6 +1009,7 @@ function upload(ex, file, card) {
     fitVideo(file, (FREE_PLAN_MAX_MB - 4) * 1048576, (p) => { bar.style.width = `${p * 100}%`; txt.textContent = `تجهيز الفيديو… ${(p * 100).toFixed(0)}% — خلّي الشاشة مفتوحة`; }, () => stop)
       .then((out) => {
         if (stop) return;
+        txt.textContent = 'خلص التجهيز، عم يرفع…';
         logEvent('video_fit', { ex: ex.name, from: +mb.toFixed(1), to: +(out.blob.size / 1048576).toFixed(1), kbps: out.kbps, mime: out.blob.type });
         if (out.blob.size / 1048576 > FREE_PLAN_MAX_MB) throw new Error('الفيديو طويل كتير — قصّه لأقل من دقيقتين أو حطه رابط يوتيوب');
         const f2 = new File([out.blob], `v.${out.ext}`, { type: out.blob.type.split(';')[0] });
@@ -1081,15 +1082,31 @@ async function fitVideo(file, maxBytes, onProgress, cancelled) {
   if (!mime) throw new Error('المتصفح ما بيدعم تجهيز الفيديو — حطه رابط يوتيوب');
   const rec = new MediaRecorder(stream, { mimeType: mime, videoBitsPerSecond: kbps * 1000, audioBitsPerSecond: 128000 });
   const chunks = []; rec.ondataavailable = (e) => e.data.size && chunks.push(e.data);
-  const finished = new Promise((res) => (rec.onstop = res));
-  const draw = () => { g.drawImage(v, 0, 0, c.width, c.height); onProgress(Math.min(1, v.currentTime / dur)); if (cancelled()) { v.pause(); rec.state !== 'inactive' && rec.stop(); return; } if (!v.ended) v.requestVideoFrameCallback ? v.requestVideoFrameCallback(draw) : requestAnimationFrame(draw); };
+  // iOS doesn't reliably fire 'ended' or 'stop', so the end is detected from the clock and every wait has a timeout
+  let finish; const reachedEnd = new Promise((res) => (finish = res));
+  const atEnd = () => v.ended || v.currentTime >= dur - 0.08;
+  const draw = () => {
+    g.drawImage(v, 0, 0, c.width, c.height); onProgress(Math.min(1, v.currentTime / dur));
+    if (cancelled() || atEnd()) return finish();
+    v.requestVideoFrameCallback ? v.requestVideoFrameCallback(draw) : requestAnimationFrame(draw);
+  };
+  v.onended = () => finish();
+  const watchdog = setInterval(() => { if (atEnd() || (v.paused && v.currentTime > 0)) finish(); }, 500);
+  const hardStop = setTimeout(() => finish(), (dur + 8) * 1000);
   rec.start(1000);
   try { await v.play(); } catch { v.muted = true; await v.play(); }
   draw();
-  await new Promise((res) => (v.onended = res));
-  g.drawImage(v, 0, 0, c.width, c.height);
-  rec.stop(); await finished;
+  await reachedEnd;
+  clearInterval(watchdog); clearTimeout(hardStop);
+  v.pause();
+  const stopped = new Promise((res) => { rec.onstop = res; setTimeout(res, 4000); });
+  try { if (rec.state !== 'inactive') { rec.requestData?.(); rec.stop(); } } catch {}
+  await stopped;
+  await new Promise((r) => setTimeout(r, 300)); // let the last chunk land
+  stream.getTracks().forEach((t) => t.stop());
   URL.revokeObjectURL(v.src); v.remove();
+  if (cancelled()) throw new Error('انلغى');
+  if (!chunks.length) throw new Error('التسجيل طلع فاضي — جرّب كمان مرة');
   const blob = new Blob(chunks, { type: mime.split(';')[0] });
   return { blob, kbps, ext: mime.includes('mp4') ? 'mp4' : 'webm' };
 }
