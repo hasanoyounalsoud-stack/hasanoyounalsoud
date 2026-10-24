@@ -55,6 +55,8 @@ function toast(msg, { err = false, undo = null, ms = 3200 } = {}) {
 function logEvent(kind, detail = {}) {
   try { sb.from('client_events').insert({ kind, detail: { ...detail, ua: navigator.userAgent, page: location.hash } }).then(() => {}, () => {}); } catch {}
 }
+window.addEventListener('error', (e) => logEvent('js_error', { msg: e.message, src: String(e.filename || '').split('/').pop(), line: e.lineno }));
+window.addEventListener('unhandledrejection', (e) => logEvent('js_rejection', { msg: String(e.reason?.message || e.reason) }));
 function fail(e) { console.error(e); toast(e?.message || 'صار خطأ، جرّب كمان مرة', { err: true }); }
 
 const I = {
@@ -1000,7 +1002,16 @@ async function viewLibrary() {
       state.program = null; toast(url ? 'انحفظ الرابط' : 'انشال الرابط'); viewLibrary();
     }
   };
-  app.onchange = (e) => { const ex = find(e.target); const f = e.target.files?.[0]; if (ex && f) upload(ex, f, e.target.closest('[data-id]')); };
+  app.onchange = async (e) => {
+    const inp = e.target.closest('[data-file]'); if (!inp) return;
+    const ex = find(inp), f = inp.files?.[0], card = inp.closest('[data-id]');
+    logEvent('file_picked', { ex: ex?.name, name: f?.name, mb: f ? +(f.size / 1048576).toFixed(1) : null, type: f?.type, has_ex: !!ex, has_card: !!card });
+    if (!f) return;
+    const box = $('.upbar', card); box.hidden = false; $('.up-txt', box).textContent = 'اخترت الفيديو… عم جهّز الرفع';
+    if (!f.size) { $('.up-txt', box).textContent = 'الآيفون لسا عم يجهّز الفيديو (ممكن عم ينزّله من iCloud). استنى شوي وجرّب كمان مرة.'; return; }
+    try { await upload(ex, f, card); } catch (err) { $('.up-txt', box).textContent = 'ما انرفع: ' + (err.message || err); logEvent('upload_crash', { msg: String(err.message || err) }); }
+    inp.value = ''; // so picking the same file again fires a new change event
+  };
 
   function exForm(ex = {}) {
     const sh = sheet(`<div class="h2">${ex.id ? 'تعديل التمرين' : 'تمرين جديد'}</div><form id="exF">
@@ -1310,4 +1321,4 @@ const { data: { session } } = await sb.auth.getSession();
 state.session = session;
 if (!/^#\//.test(location.hash)) history.replaceState(null, '', PAGE_URL + '#/');
 await route();
-if (session) flushPending();
+if (session) { flushPending(); logEvent('page_load', { v: 11 }); }
