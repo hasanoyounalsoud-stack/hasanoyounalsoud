@@ -8,25 +8,22 @@
 <meta name="robots" content="noindex" />
 <meta name="theme-color" content="#0B6E62" />
 <link rel="icon" href="../assets/logo.svg" type="image/svg+xml" />
+<link rel="manifest" href="manifest.json" />
+<link rel="apple-touch-icon" href="icons/icon-180.png" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-title" content="تمارين حسن" />
 <link rel="preload" href="../assets/fonts/tajawal-400-ar.woff2" as="font" type="font/woff2" crossorigin />
-<link rel="stylesheet" href="app.css?v=3" />
+<link rel="stylesheet" href="app.css?v=5" />
 </head>
 <body>
-<header class="top">
-  <a class="brand" href="#/">
-    <img src="../assets/logo.svg" alt="" width="28" height="28" />
-    <span>تمارين حسن</span>
-  </a>
-  <nav id="nav" class="nav" hidden></nav>
-</header>
 
-<main id="app" class="wrap" aria-live="polite">
-  <p class="muted center pad">جاري التحميل…</p>
+<main id="app" class="wrap">
+  <p class="empty">جاري التحميل…</p>
 </main>
 
-<div id="toast" class="toast" role="status" hidden></div>
 
 <script src="https://cdn.jsdelivr.net/npm/tus-js-client@4.1.0/dist/tus.min.js"></script>
-<script type="module" src="app.js?v=3"></script>
+<script type="module" src="app.js?v=5"></script>
 </body>
 </html>
