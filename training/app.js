@@ -3,14 +3,12 @@ import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js
 /* ================= config ================= */
 const SUPABASE_URL = 'https://dsgzqdznntsriaezmlbn.supabase.co';
 const SUPABASE_KEY = 'sb_publishable_HxWnLtIFqNZRRg1O1QFWHg_Lkrw-TSv';
-const STORAGE_TUS = 'https://dsgzqdznntsriaezmlbn.storage.supabase.co/storage/v1/upload/resumable';
 const BUCKET = 'exercise-videos';
+const WEEKDAYS = ['الأحد', 'الاثنين', 'الثلاثاء', 'الأربعاء', 'الخميس', 'الجمعة', 'السبت'];
 const PHOTO_BUCKET = 'machine-photos';
 const FREE_PLAN_MAX_MB = 50;
 const PAGE_URL = location.origin + location.pathname;
-// accounts are username + PIN; these map onto Supabase email/password auth
-const USER_DOMAIN = 'users.hsnoals.com';
-const toEmail = (u) => (u.includes('@') ? u.trim().toLowerCase() : `${u.trim().toLowerCase()}@${USER_DOMAIN}`);
+// accounts are a unique 4-digit PIN; it maps onto Supabase email/password auth (see the pin-login function)
 const toPassword = (pin) => `hsn:${pin}:train`;
 
 const sb = createClient(SUPABASE_URL, SUPABASE_KEY, { auth: { persistSession: true, autoRefreshToken: true, detectSessionInUrl: false } });
@@ -54,6 +52,10 @@ function toast(msg, { err = false, undo = null, ms = 3200 } = {}) {
   document.body.appendChild(t);
   clearTimeout(toastT); toastT = setTimeout(() => t.remove(), undo ? 7000 : ms);
 }
+// failures on phones get written to client_events so they can be diagnosed later
+function logEvent(kind, detail = {}) {
+  try { sb.from('client_events').insert({ kind, detail: { ...detail, ua: navigator.userAgent, page: location.hash } }).then(() => {}, () => {}); } catch {}
+}
 function fail(e) { console.error(e); toast(e?.message || 'صار خطأ، جرّب كمان مرة', { err: true }); }
 
 const I = {
@@ -91,7 +93,7 @@ async function loadProfile() {
 async function loadProgram(id) {
   if (!id) return null;
   const { data, error } = await sb.from('programs')
-    .select('id,name,description,archived,program_days(id,day_order,name,notes,program_exercises(id,position,sets,reps,rest_seconds,notes,exercise:exercises(id,name,muscle_group,description,video_path,video_url)))')
+    .select('id,name,description,archived,program_days(id,day_order,weekday,name,notes,program_exercises(id,position,sets,reps,rest_seconds,notes,exercise:exercises(id,name,muscle_group,description,video_path,video_url)))')
     .eq('id', id).maybeSingle();
   if (error) throw error;
   if (!data) return null;
@@ -215,13 +217,21 @@ async function openVideo(ex) {
 
 /* ================= LET'S GO intro: animation + sound ================= */
 let actx;
+// iOS: Web Audio must be started inside the tap itself, and is silenced by the ring/silent switch
+// unless the page asks for the "playback" audio session.
 function audio() {
-  try { actx ||= new (window.AudioContext || window.webkitAudioContext)(); if (actx.state === 'suspended') actx.resume(); } catch { actx = null; }
+  try {
+    if (navigator.audioSession) navigator.audioSession.type = 'playback';
+    actx ||= new (window.AudioContext || window.webkitAudioContext)();
+    if (actx.state !== 'running') actx.resume();
+    const b = actx.createBuffer(1, 1, 22050), src = actx.createBufferSource(); // unlock with one silent sample
+    src.buffer = b; src.connect(actx.destination); src.start(0);
+  } catch { actx = null; }
   return actx;
 }
 function hypeSound() {
-  const ac = audio(); if (!ac || ac.state !== 'running') return false;
-  const t = ac.currentTime, out = ac.createGain(); out.gain.value = 0.9; out.connect(ac.destination);
+  const ac = audio(); if (!ac) return false;
+  const t = ac.currentTime + 0.05, out = ac.createGain(); out.gain.value = 0.9; out.connect(ac.destination);
   // whoosh
   const len = ac.sampleRate * 0.5, buf = ac.createBuffer(1, len, ac.sampleRate), d = buf.getChannelData(0);
   for (let i = 0; i < len; i++) d[i] = (Math.random() * 2 - 1) * (1 - i / len);
@@ -252,14 +262,16 @@ function sayLetsGo(name) {
     u.lang = 'en-US'; u.rate = 1.05; u.pitch = 0.85; u.volume = 1;
     const v = speechSynthesis.getVoices().find((x) => /en[-_]US/i.test(x.lang) && /male|david|alex|daniel|google us/i.test(x.name)) || speechSynthesis.getVoices().find((x) => /^en/i.test(x.lang));
     if (v) u.voice = v;
-    setTimeout(() => speechSynthesis.speak(u), 650);
+    speechSynthesis.cancel();
+    speechSynthesis.speak(u); // must be called inside the tap on iOS
   } catch {}
 }
 const ARM = '<div class="go-arm" aria-hidden="true"><span class="bi">💪</span></div>';
 function letsGo({ sound = false } = {}) {
   if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
   document.querySelector('.intro')?.remove();
-  const name = (state.profile?.username || firstName(state.profile?.full_name) || '').toUpperCase();
+  const un = state.profile?.username || '';
+  const name = (/^u[0-9a-z]{6,}$/.test(un) || !un ? firstName(state.profile?.full_name) : un).toUpperCase();
   const el = document.createElement('div'); el.className = 'intro'; el.setAttribute('role', 'presentation');
   const sparks = Array.from({ length: 14 }, (_, i) => { const a = (i / 14) * Math.PI * 2, r = 130 + (i % 3) * 30; return `<i class="go-spark" style="--x:${Math.cos(a) * r}px;--y:${Math.sin(a) * r}px;animation-delay:${0.9 + (i % 4) * 0.04}s"></i>`; }).join('');
   el.innerHTML = `<div class="go-stage"><div class="go-halo"></div><div class="go-halo h2"></div><div class="go-blob"></div>${ARM}${sparks}</div>
@@ -293,60 +305,59 @@ function renderChrome() {
 }
 document.addEventListener('click', (e) => { if (e.target.closest('[data-acct]')) location.hash = '#/account'; });
 
-/* ================= login (username + PIN, like the ops app) ================= */
+/* ================= login: PIN only, like the ops app ================= */
+async function pinLogin(pin) {
+  const r = await fetch(`${SUPABASE_URL}/functions/v1/pin-login`, {
+    method: 'POST', headers: { 'content-type': 'application/json', apikey: SUPABASE_KEY, authorization: `Bearer ${SUPABASE_KEY}` }, body: JSON.stringify({ pin }),
+  });
+  const j = await r.json().catch(() => ({}));
+  return r.ok ? j : null;
+}
 function viewLogin() {
-  const saved = store.get('lastUser');
-  let pin = '';
   app.className = '';
   document.body.style.paddingBottom = '0';
-  app.innerHTML = `<div class="login"><div class="login-card">
-    <img class="logo big" src="../assets/logo.svg" alt="" width="72" height="72" />
-    <h1>تمارين حسن</h1>
-    <div class="sub">برنامجك، فيديوهات التمارين، وسجل أوزانك</div>
-    ${saved ? `<div class="who"><span class="en">${esc(saved.u)}</span><button type="button" id="other">مش أنا</button></div>` :
-      `<label class="field"><span>اسم المستخدم</span><input id="u" autocomplete="username" autocapitalize="none" dir="ltr" placeholder="wassim" /></label>`}
-    <div class="dots" aria-hidden="true">${'<i></i>'.repeat(4)}</div>
-    <div class="center sm" style="color:#A9A79F">الرقم السري</div>
-    <div class="keypad">${[1, 2, 3, 4, 5, 6, 7, 8, 9].map((n) => `<button type="button" data-k="${n}">${n}</button>`).join('')}
-      <button type="button" data-k="del" aria-label="مسح">⌫</button><button type="button" data-k="0">0</button><button type="button" class="go" data-k="go">دخول</button></div>
-    <div class="err" id="err" role="alert"></div>
-  </div></div>`;
-  const dots = () => $$('.dots i').forEach((d, i) => d.classList.toggle('on', i < pin.length));
+  app.innerHTML = `<div class="login"><i class="orb o1"></i><i class="orb o2"></i>
+    <form class="login-card" id="lf">
+      <img class="logo big" src="../assets/logo.svg" alt="" width="72" height="72" />
+      <h1>تمارين حسن</h1>
+      <p class="sub">اكتب رقمك السري</p>
+      <div class="pin-boxes" id="pb"><input id="pin" type="password" inputmode="numeric" pattern="[0-9]*" maxlength="4" autocomplete="one-time-code" aria-label="الرقم السري" />
+        <i></i><i></i><i></i><i></i></div>
+      <button class="btn lg block mt2" id="go">دخول</button>
+      <div class="err" id="err" role="alert"></div>
+    </form></div>`;
+  const pinEl = $('#pin'), boxes = $$('#pb i');
+  const paint = () => { const n = pinEl.value.length; boxes.forEach((b, i) => { b.classList.toggle('on', i < n); b.classList.toggle('cur', i === n && document.activeElement === pinEl); }); };
   let busy = false;
   const go = async () => {
     if (busy) return;
-    const u = saved ? saved.u : ($('#u')?.value || '').trim();
-    if (!u) return ($('#err').textContent = 'اكتب اسم المستخدم');
-    if (pin.length < 4) return ($('#err').textContent = 'الرقم السري 4 أرقام');
-    busy = true; $('#err').textContent = '';
-    const { error } = await sb.auth.signInWithPassword({ email: toEmail(u), password: toPassword(pin) });
-    busy = false;
-    if (error) { pin = ''; dots(); $('#err').textContent = /invalid/i.test(error.message) ? 'اسم المستخدم أو الرقم السري غلط' : error.message; return; }
-    store.set('lastUser', { u: u.toLowerCase() });
-    loginTapped = true; audio();
+    if (pinEl.value.length < 4) { $('#err').textContent = 'الرقم السري 4 أرقام'; pinEl.focus(); return; }
+    busy = true; $('#err').textContent = ''; $('#go').disabled = true; $('#go').textContent = 'جاري الدخول…';
+    audio();
+    let ok = false;
+    try {
+      const t = await pinLogin(pinEl.value);
+      if (t?.access_token) { loginTapped = true; const { error } = await sb.auth.setSession(t); ok = !error; }
+    } catch (e) { $('#err').textContent = 'ما في نت، جرّب كمان مرة'; }
+    busy = false; $('#go').disabled = false; $('#go').textContent = 'دخول';
+    if (!ok) {
+      pinEl.value = ''; paint(); $('#pb').classList.remove('shake'); void $('#pb').offsetWidth; $('#pb').classList.add('shake');
+      if (!$('#err').textContent) $('#err').textContent = 'الرقم السري غلط';
+      pinEl.focus();
+    }
   };
-  const press = (k) => {
-    if (k === 'del') pin = pin.slice(0, -1);
-    else if (k === 'go') return go();
-    else if (pin.length < 8) pin += k;
-    dots();
-    if (pin.length === 4) go();
-  };
-  $('.keypad').onclick = (e) => { const k = e.target.closest('[data-k]')?.dataset.k; if (k) press(k); };
-  document.onkeydown = (e) => {
-    if (e.target.id === 'u') { if (e.key === 'Enter') e.target.blur(); return; }
-    if (/^\d$/.test(e.key)) press(e.key);
-    else if (e.key === 'Backspace') press('del');
-    else if (e.key === 'Enter') go();
-  };
-  const other = $('#other'); if (other) other.onclick = () => { store.del('lastUser'); viewLogin(); };
+  pinEl.oninput = () => { pinEl.value = pinEl.value.replace(/\D/g, '').slice(0, 4); $('#err').textContent = ''; paint(); if (pinEl.value.length === 4) go(); };
+  pinEl.onfocus = pinEl.onblur = paint;
+  $('#pb').onclick = () => pinEl.focus();
+  $('#lf').onsubmit = (e) => { e.preventDefault(); go(); };
+  setTimeout(() => pinEl.focus(), 300);
 }
 
 function viewAccount() {
   app.innerHTML = `<div class="view">
     <div class="h1">حسابي</div>
     <div class="card mt"><div class="row"><span class="mark">${esc(firstName(state.profile.full_name).slice(0, 1))}</span>
-      <div><div class="b">${esc(state.profile.full_name || '')}</div><div class="sm muted en">${esc(state.profile.username || '')}</div></div></div></div>
+      <div><div class="b">${esc(state.profile.full_name || '')}</div><div class="sm muted">${isCoach() ? 'مدرب' : 'متدرب'}</div></div></div></div>
     <form class="card mt" id="pinF">
       <div class="h2">تغيير الرقم السري</div>
       <div class="grid2 mt">
@@ -362,6 +373,9 @@ function viewAccount() {
     const { cur, nw } = Object.fromEntries(new FormData(e.target));
     const { error: e1 } = await sb.auth.signInWithPassword({ email: state.session.user.email, password: toPassword(cur) });
     if (e1) return toast('الرقم الحالي غلط', { err: true });
+    if (!/^\d{4}$/.test(nw)) return toast('الرقم الجديد 4 أرقام', { err: true });
+    const taken = await pinLogin(nw); // the PIN alone identifies a person, so it must be free
+    if (taken?.access_token && JSON.parse(atob(taken.access_token.split('.')[1])).sub !== uid()) return toast('هالرقم مستعمل، اختار غيره', { err: true });
     const { error } = await sb.auth.updateUser({ password: toPassword(nw) });
     if (error) return fail(error);
     toast('تغيّر الرقم السري'); e.target.reset();
@@ -370,19 +384,32 @@ function viewAccount() {
 }
 
 /* ================= home ================= */
+// with weekdays set: today's session if it's a training day and not done yet, otherwise the next training day
 function nextDay(program, logs) {
-  const ids = program.program_days.map((d) => d.id);
-  const last = logs.find((l) => l.status === 'done' && ids.includes(l.day_id));
-  if (!last) return program.program_days[0];
-  return program.program_days[(ids.indexOf(last.day_id) + 1) % ids.length];
+  const days = program.program_days;
+  const done = logs.filter((l) => l.status === 'done');
+  if (days.every((d) => d.weekday != null)) {
+    const t = D(today());
+    for (let k = 0; k < 8; k++) {
+      const dt = new Date(t); dt.setDate(t.getDate() + k);
+      const day = days.find((d) => d.weekday === dt.getDay());
+      if (!day) continue;
+      if (k === 0 && done.some((l) => l.performed_on === today())) continue;
+      return { day, when: k === 0 ? 'اليوم' : k === 1 ? 'بكرا' : WEEKDAYS[dt.getDay()], date: iso(dt) };
+    }
+  }
+  const ids = days.map((d) => d.id);
+  const last = done.find((l) => ids.includes(l.day_id));
+  return { day: last ? days[(ids.indexOf(last.day_id) + 1) % ids.length] : days[0], when: null };
 }
 function weekStart() { const t = D(today()); t.setDate(t.getDate() - ((t.getDay() + 1) % 7)); return iso(t); } // weeks start Saturday
-function weekStrip(logs) {
+function weekStrip(logs, program) {
+  const planned = new Set((program?.program_days || []).map((d) => d.weekday).filter((x) => x != null));
   const done = new Set(logs.filter((l) => l.status === 'done').map((l) => l.performed_on));
   const t = D(today()); const start = new Date(t); start.setDate(t.getDate() - ((t.getDay() + 1) % 7)); // week starts Saturday
   return `<div class="week">${Array.from({ length: 7 }, (_, i) => {
     const d = new Date(start); d.setDate(start.getDate() + i); const s = iso(d);
-    return `<div class="d ${done.has(s) ? 'on' : ''} ${s === today() ? 'today' : ''}"><div class="w">${wd(s)}</div><div class="n num">${d.getDate()}</div></div>`;
+    return `<div class="d ${done.has(s) ? 'on' : ''} ${s === today() ? 'today' : ''} ${planned.has(d.getDay()) ? 'plan' : ''}"><div class="w">${wd(s)}</div><div class="n num">${d.getDate()}</div><i class="pd"></i></div>`;
   }).join('')}</div>`;
 }
 function sessionRow(l, href) {
@@ -398,6 +425,8 @@ function sessionRow(l, href) {
 
 async function viewHome() {
   const [program, logs] = await Promise.all([myProgram(), myLogs()]);
+  const ids = new Set(logs.map((l) => l.id));
+  for (let i = localStorage.length - 1; i >= 0; i--) { const k = localStorage.key(i); if (k?.startsWith('wk:') && !ids.has(k.slice(3)) && !store.get(k)?.dirty) store.del(k); }
   const active = logs.find((l) => l.status === 'active');
   const done = logs.filter((l) => l.status === 'done');
   const ws = weekStart();
@@ -413,8 +442,8 @@ async function viewHome() {
       <div class="bar on-dark mt"><i style="width:${Math.min(100, (did / total) * 100)}%"></i></div>
       <a class="btn lt lg block mt" href="#/w/${active.id}">كمّل التمرين</a></div>`;
   } else if (program) {
-    const nd = nextDay(program, logs);
-    hero = `<div class="hero"><div class="kicker">التمرين الجاي</div><div class="h1" style="margin-top:4px">${esc(nd.name)}</div>
+    const nx = nextDay(program, logs); const nd = nx.day;
+    hero = `<div class="hero"><div class="kicker">${nx.when === 'اليوم' ? 'تمرين اليوم' : nx.when === 'بكرا' ? `تمرين بكرا · ${WEEKDAYS[nd.weekday]}` : nx.when ? `التمرين الجاي · ${nx.when}` : 'التمرين الجاي'}</div><div class="h1" style="margin-top:4px">${esc(nd.name)}</div>
       <div class="muted sm mt1">${nd.program_exercises.length} تمارين · ${nd.program_exercises.reduce((a, p) => a + p.sets, 0)} جولات</div>
       <div class="chips mt">${nd.program_exercises.map((pe) => `<span class="chip"><span class="en">${esc(pe.exercise.name)}</span><span class="n num">${pe.sets}</span></span>`).join('')}</div>
       <button class="btn lt lg block mt" data-start="${nd.id}">ابدأ التمرين</button></div>`;
@@ -425,13 +454,13 @@ async function viewHome() {
   app.innerHTML = `<div class="view">
     <div class="kicker">${fmtDay(today())}</div><div class="h1">أهلاً ${esc(firstName(state.profile.full_name))}</div>
     <div class="mt">${hero}</div>
-    <div class="card mt"><div class="row between" style="margin-bottom:10px"><div class="b">هالأسبوع</div><span class="tag ${thisWeek >= perWeek ? 'g' : ''}">${thisWeek} / ${perWeek} حصص</span></div>${weekStrip(logs)}</div>
+    <div class="card mt"><div class="row between" style="margin-bottom:10px"><div class="b">هالأسبوع</div><span class="tag ${thisWeek >= perWeek ? 'g' : ''}">${thisWeek} / ${perWeek} حصص</span></div>${weekStrip(logs, program)}</div>
     ${program ? `<div class="sec"><div class="h2">${esc(program.name)}</div><span class="sm muted">${program.program_days.length} أيام</span></div>
       ${program.description ? `<p class="sm muted" style="margin:-4px 0 10px;white-space:pre-line">${esc(program.description)}</p>` : ''}
       ${program.program_days.map((d) => {
         const last = done.find((l) => l.day_id === d.id);
         return `<div class="card">
-          <div class="row between"><div><div class="b">${esc(d.name)}</div><div class="xs muted">${last ? `آخر مرة: ${wd(last.performed_on)} ${fmtShort(last.performed_on)}` : 'لسا ما انعمل'}</div></div>
+          <div class="row between"><div><div class="b">${esc(d.name)}${d.weekday != null ? ` <span class="tag g">${WEEKDAYS[d.weekday]}</span>` : ''}</div><div class="xs muted">${last ? `آخر مرة: ${wd(last.performed_on)} ${fmtShort(last.performed_on)}` : 'لسا ما انعمل'}</div></div>
           <button class="btn sm" data-start="${d.id}">ابدأ</button></div>
           ${d.notes ? `<p class="sm muted mt1">${esc(d.notes)}</p>` : ''}
           <ul class="plist">${d.program_exercises.map((pe, i) => `<li><span class="i num">${i + 1}</span><span class="ex-name grow">${esc(pe.exercise.name)}</span>${hasVideo(pe.exercise) ? `<button class="icon-btn" style="width:30px;height:30px" data-vid="${pe.exercise.id}" aria-label="فيديو">${ico('play', 's')}</button>` : ''}<span class="sets">${setsWord(pe.sets)}</span></li>`).join('')}</ul>
@@ -627,11 +656,11 @@ async function viewWorkout(id) {
         <div class="row mt1"><div class="bar grow"><i style="width:${total ? (done / total) * 100 : 0}%"></i></div><span class="xs b num" id="cnt">${done}/${total}</span></div>
       </div>
       ${s.plan.map(exCard).join('')}
-      ${ro ? (s.notes ? `<div class="card mt"><div class="b">ملاحظات</div><p class="sm mt1">${esc(s.notes)}</p></div>` : '') : `
+      ${ro ? (s.notes ? `<div class="card mt"><div class="b">ملاحظات</div><p class="sm mt1">${esc(s.notes)}</p></div>` : '') + (isCoach() ? `<button class="btn danger block mt" data-delete>${ico('trash', 's')} حذف هالحصة</button>` : '') : `
       <button class="btn w block mt" data-addex>${ico('plus', 's')} زيد تمرين لهالحصة</button>
       <div class="card mt"><label class="field"><span>تاريخ الحصة</span><input type="date" id="date" value="${esc(s.performed_on)}" max="${today()}" /></label></div>
       <div class="finish-bar"><button class="btn y lg block" data-finish>${s.status === 'done' ? 'حفظ التعديلات' : 'إنهاء التمرين'}</button></div>
-      ${s.status === 'done' ? `<button class="btn danger block mt" data-delete>${ico('trash', 's')} حذف الحصة</button>` : ''}`}
+      <button class="btn danger block mt" data-delete>${ico('trash', 's')} ${s.status === 'done' ? 'حذف الحصة' : 'إلغاء التمرين وحذفه'}</button>`}
     </div>`;
     window.scrollTo(0, y);
     showSync(); prs(); fillPhotos(app);
@@ -641,7 +670,7 @@ async function viewWorkout(id) {
     const im = e.target.closest('[data-open-photo]'); if (!im) return false;
     const exId = im.closest('[data-card]').dataset.card; openPhoto(im.dataset.photo, exById(exId)?.name); return true;
   };
-  if (ro) { app.onclick = photoClick; return; }
+  if (ro) { app.onclick = (e) => { if (photoClick(e)) return; if (e.target.closest('[data-delete]')) deleteSession(); }; return; }
   app.onchange = async (e) => {
     const inp = e.target.closest('[data-shot]'); const f = inp?.files?.[0]; if (!f) return;
     const exId = inp.closest('[data-card]').dataset.card; const p = s.plan.find((q) => q.exercise_id === exId);
@@ -761,10 +790,13 @@ async function viewWorkout(id) {
     };
   }
   async function deleteSession() {
-    if (!confirm('تحذف هالحصة نهائياً؟')) return;
-    const { error } = await sb.from('workout_logs').delete().eq('id', s.id);
+    if (!confirm('تحذف هالحصة نهائياً؟ كل الأوزان اللي فيها رح تنمسح.')) return;
+    clearTimeout(syncTimer); s.dirty = false;
+    const { data, error } = await sb.from('workout_logs').delete().eq('id', s.id).select('id');
     if (error) return fail(error);
-    store.del(wkKey(s.id)); wk = null; state.logs = null; toast('انحذفت الحصة'); location.hash = '#/';
+    if (!data?.length && s.savedAt) return toast('ما قدرت احذفها', { err: true });
+    store.del(wkKey(s.id)); wk = null; state.logs = null; toast('انحذفت الحصة');
+    location.hash = s.readonly ? `#/coach/person/${s.owner}` : '#/';
   }
 }
 
@@ -905,7 +937,7 @@ async function viewLibrary() {
     <div class="row between"><div class="h1">مكتبة التمارين</div><button class="btn sm" id="add">${ico('plus', 's')} تمرين</button></div>
     <div class="card mt info">
       <div class="b">رفع الفيديوهات بجودة عالية</div>
-      <p class="sm mt1"><b>رفع ملف:</b> بينرفع الملف الأصلي متل ما هو بدون أي ضغط، وبيكمّل لو انقطع النت. حد الخطة المجانية ${FREE_PLAN_MAX_MB}MB للفيديو (تقريباً دقيقة 1080p).</p>
+      <p class="sm mt1"><b>رفع ملف:</b> إذا الفيديو أقل من ${FREE_PLAN_MAX_MB}MB بينرفع متل ما هو. إذا أكبر، الموقع بيجهّزه لحاله على الموبايل بجودة 1080p عالية ليقدر يرفعه — خلّي الشاشة مفتوحة لحد ما يخلص.</p>
       <p class="sm mt1"><b>رابط يوتيوب (Unlisted):</b> للفيديوهات الطويلة أو 4K — بدون حد حجم، والجودة بتتظبط حسب نت المتدرب.</p>
     </div>
     ${exs.map((ex) => `<div class="card" data-id="${ex.id}">
@@ -964,35 +996,102 @@ async function viewLibrary() {
 }
 function upload(ex, file, card) {
   const mb = file.size / 1048576;
-  if (mb > FREE_PLAN_MAX_MB && !confirm(`الفيديو ${mb.toFixed(0)}MB والحد بالخطة المجانية ${FREE_PLAN_MAX_MB}MB، فغالباً رح ينرفض. للفيديوهات الكبيرة استعمل "رابط يوتيوب". تجرّب الرفع؟`)) return;
-  const ext = (file.name.split('.').pop() || 'mp4').toLowerCase().replace(/[^a-z0-9]/g, '') || 'mp4';
-  const objectName = `${ex.id}/${Date.now()}.${ext}`;
   const box = $('.upbar', card), bar = $('.bar i', box), txt = $('.up-txt', box);
-  box.hidden = false; txt.textContent = `جاري الرفع… 0% من ${mb.toFixed(0)}MB`;
+  box.hidden = false; bar.style.width = '0';
+  const ext = (file.name.split('.').pop() || 'mp4').toLowerCase().replace(/[^a-z0-9]/g, '') || 'mp4';
+  const type = file.type || ({ mov: 'video/quicktime', m4v: 'video/x-m4v', webm: 'video/webm' }[ext] || 'video/mp4');
+  logEvent('upload_start', { ex: ex.name, mb: +mb.toFixed(1), type, name: file.name });
+  if (mb > FREE_PLAN_MAX_MB) {
+    // too big for the free plan: re-encode on the phone to 1080p at the highest bitrate that fits
+    let stop = false;
+    $('[data-cancel]', box).textContent = 'إلغاء'; $('[data-cancel]', box).onclick = () => { stop = true; box.hidden = true; };
+    txt.textContent = `الفيديو ${mb.toFixed(0)}MB — عم جهّزه ليصير أقل من ${FREE_PLAN_MAX_MB}MB… خلّي الشاشة مفتوحة`;
+    fitVideo(file, (FREE_PLAN_MAX_MB - 4) * 1048576, (p) => { bar.style.width = `${p * 100}%`; txt.textContent = `تجهيز الفيديو… ${(p * 100).toFixed(0)}% — خلّي الشاشة مفتوحة`; }, () => stop)
+      .then((out) => {
+        if (stop) return;
+        logEvent('video_fit', { ex: ex.name, from: +mb.toFixed(1), to: +(out.blob.size / 1048576).toFixed(1), kbps: out.kbps, mime: out.blob.type });
+        if (out.blob.size / 1048576 > FREE_PLAN_MAX_MB) throw new Error('الفيديو طويل كتير — قصّه لأقل من دقيقتين أو حطه رابط يوتيوب');
+        const f2 = new File([out.blob], `v.${out.ext}`, { type: out.blob.type.split(';')[0] });
+        upload(ex, f2, card);
+      })
+      .catch((err) => { txt.textContent = 'ما زبط التجهيز: ' + (err.message || err); $('[data-cancel]', box).textContent = 'سكّر'; logEvent('video_fit_error', { ex: ex.name, mb: +mb.toFixed(1), msg: String(err.message || err) }); });
+    return;
+  }
+  const objectName = `${ex.id}/${Date.now()}.${ext}`;
+  txt.textContent = `جاري الرفع… 0% من ${mb.toFixed(0)}MB`;
   const leave = (e) => { e.preventDefault(); e.returnValue = ''; };
   window.addEventListener('beforeunload', leave);
-  const up = new tus.Upload(file, {
-    endpoint: STORAGE_TUS, retryDelays: [0, 2000, 5000, 10000, 20000, 30000],
-    headers: { authorization: `Bearer ${state.session.access_token}`, apikey: SUPABASE_KEY, 'x-upsert': 'true' },
-    uploadDataDuringCreation: true, removeFingerprintOnSuccess: true, chunkSize: 6 * 1024 * 1024,
-    metadata: { bucketName: BUCKET, objectName, contentType: file.type || 'video/mp4', cacheControl: '31536000' },
-    onBeforeRequest: async (req) => { const { data } = await sb.auth.getSession(); req.setHeader('authorization', `Bearer ${data.session.access_token}`); },
-    onProgress: (a, b) => { bar.style.width = `${(a / b) * 100}%`; txt.textContent = `جاري الرفع… ${((a / b) * 100).toFixed(0)}% (${(a / 1048576).toFixed(0)}/${(b / 1048576).toFixed(0)}MB)`; },
-    onError: (err) => {
-      window.removeEventListener('beforeunload', leave); box.hidden = true;
-      toast(/413|too large|exceed|maximum/i.test(String(err)) ? `الفيديو أكبر من ${FREE_PLAN_MAX_MB}MB — حطه عيوتيوب Unlisted واستعمل "رابط يوتيوب"` : 'فشل الرفع: ' + (err.message || err), { err: true, ms: 6000 });
-    },
-    onSuccess: async () => {
-      window.removeEventListener('beforeunload', leave);
+  const xhr = new XMLHttpRequest();
+  const done = () => window.removeEventListener('beforeunload', leave);
+  const failUp = (msg, detail) => { done(); txt.textContent = 'ما انرفع: ' + msg; bar.style.width = '0'; $('[data-cancel]', box).textContent = 'سكّر'; logEvent('upload_error', { ex: ex.name, mb: +mb.toFixed(1), type, msg, ...detail }); };
+  sb.auth.getSession().then(({ data }) => {
+    xhr.open('POST', `${SUPABASE_URL}/storage/v1/object/${BUCKET}/${objectName}`);
+    xhr.setRequestHeader('authorization', `Bearer ${data.session.access_token}`);
+    xhr.setRequestHeader('apikey', SUPABASE_KEY);
+    xhr.setRequestHeader('x-upsert', 'true');
+    xhr.setRequestHeader('cache-control', 'max-age=31536000');
+    xhr.setRequestHeader('content-type', type);
+    xhr.upload.onprogress = (e) => { if (!e.lengthComputable) return; const p = (e.loaded / e.total) * 100; bar.style.width = `${p}%`; txt.textContent = `جاري الرفع… ${p.toFixed(0)}% (${(e.loaded / 1048576).toFixed(0)}/${mb.toFixed(0)}MB) — خلّي الصفحة مفتوحة`; };
+    xhr.onerror = () => failUp('النت انقطع، جرّب كمان مرة', { status: 0 });
+    xhr.onload = async () => {
+      if (xhr.status < 200 || xhr.status >= 300) {
+        let m = xhr.responseText; try { m = JSON.parse(xhr.responseText).message || m; } catch {}
+        return failUp(/size|large|exceed/i.test(m) ? `الفيديو أكبر من المسموح (${FREE_PLAN_MAX_MB}MB)` : m, { status: xhr.status, body: String(xhr.responseText).slice(0, 300) });
+      }
+      done();
       const old = ex.video_path;
       const { error } = await sb.from('exercises').update({ video_path: objectName, video_url: null }).eq('id', ex.id);
-      if (error) return fail(error);
-      if (old) await sb.storage.from(BUCKET).remove([old]);
+      if (error) return failUp(error.message, { step: 'save_path' });
+      if (old) sb.storage.from(BUCKET).remove([old]);
+      logEvent('upload_ok', { ex: ex.name, mb: +mb.toFixed(1) });
       state.program = null; toast('انرفع الفيديو بجودته الأصلية'); viewLibrary();
-    },
+    };
+    xhr.send(file);
   });
-  $('[data-cancel]', box).onclick = () => { up.abort(true); box.hidden = true; window.removeEventListener('beforeunload', leave); };
-  up.findPreviousUploads().then((p) => { if (p.length) up.resumeFromPreviousUpload(p[0]); up.start(); });
+  $('[data-cancel]', box).textContent = 'إلغاء';
+  $('[data-cancel]', box).onclick = () => { xhr.abort(); done(); box.hidden = true; };
+}
+
+// Re-encode a video in the browser (plays it into a canvas and records it) so it fits under maxBytes.
+// Runs in real time: a 60s clip takes about 60s. Keeps the sound when the browser allows it.
+async function fitVideo(file, maxBytes, onProgress, cancelled) {
+  const v = document.createElement('video');
+  v.src = URL.createObjectURL(file); v.playsInline = true; v.preload = 'auto';
+  v.style.cssText = 'position:fixed;left:0;top:0;width:2px;height:2px;opacity:0;pointer-events:none';
+  document.body.appendChild(v); // iOS decodes frames only for attached videos
+  await new Promise((res, rej) => { v.onloadedmetadata = res; v.onerror = () => rej(new Error('ما قدرت افتح الفيديو')); });
+  if (!isFinite(v.duration)) { // some recordings don't carry a duration until you seek to the end
+    v.currentTime = 1e9; await new Promise((res) => (v.ondurationchange = () => isFinite(v.duration) && res())); v.currentTime = 0;
+    await new Promise((res) => (v.onseeked = res));
+  }
+  const dur = v.duration;
+  if (!isFinite(dur) || dur <= 0) throw new Error('ما قدرت اعرف طول الفيديو');
+  const kbps = Math.min(8000, Math.floor(((maxBytes * 8) / dur) / 1000) - 160);
+  if (kbps < 1500) throw new Error(`الفيديو طويل (${Math.round(dur)} ثانية) — قصّه لأقل من دقيقتين أو حطه رابط يوتيوب`);
+  const k = Math.min(1, 1920 / Math.max(v.videoWidth, v.videoHeight));
+  const c = document.createElement('canvas'); c.width = Math.round((v.videoWidth * k) / 2) * 2; c.height = Math.round((v.videoHeight * k) / 2) * 2;
+  const g = c.getContext('2d');
+  const stream = c.captureStream(30);
+  try {
+    const ac = audio();
+    const src = ac.createMediaElementSource(v), dst = ac.createMediaStreamDestination();
+    src.connect(dst); dst.stream.getAudioTracks().forEach((t) => stream.addTrack(t));
+  } catch { v.muted = true; }
+  const mime = ['video/mp4;codecs=avc1.640028,mp4a.40.2', 'video/mp4;codecs=avc1', 'video/mp4', 'video/webm;codecs=vp9,opus', 'video/webm'].find((m) => window.MediaRecorder?.isTypeSupported?.(m));
+  if (!mime) throw new Error('المتصفح ما بيدعم تجهيز الفيديو — حطه رابط يوتيوب');
+  const rec = new MediaRecorder(stream, { mimeType: mime, videoBitsPerSecond: kbps * 1000, audioBitsPerSecond: 128000 });
+  const chunks = []; rec.ondataavailable = (e) => e.data.size && chunks.push(e.data);
+  const finished = new Promise((res) => (rec.onstop = res));
+  const draw = () => { g.drawImage(v, 0, 0, c.width, c.height); onProgress(Math.min(1, v.currentTime / dur)); if (cancelled()) { v.pause(); rec.state !== 'inactive' && rec.stop(); return; } if (!v.ended) v.requestVideoFrameCallback ? v.requestVideoFrameCallback(draw) : requestAnimationFrame(draw); };
+  rec.start(1000);
+  try { await v.play(); } catch { v.muted = true; await v.play(); }
+  draw();
+  await new Promise((res) => (v.onended = res));
+  g.drawImage(v, 0, 0, c.width, c.height);
+  rec.stop(); await finished;
+  URL.revokeObjectURL(v.src); v.remove();
+  const blob = new Blob(chunks, { type: mime.split(';')[0] });
+  return { blob, kbps, ext: mime.includes('mp4') ? 'mp4' : 'webm' };
 }
 
 /* ================= coach: program editor ================= */
@@ -1011,6 +1110,7 @@ async function viewPrograms(openId) {
       <div class="row wrap-ok mt"><button class="btn sm w" id="dup">${ico('copy', 's')} نسخة</button><button class="btn sm w" id="arch">${prog.archived ? 'رجّعه' : 'حذف البرنامج'}</button></div></div>
     ${prog.program_days.map((d) => `<div class="card mt" data-day="${d.id}">
       <div class="row"><input class="input grow b" data-dname value="${esc(d.name)}" aria-label="اسم اليوم" /><button class="icon-btn" data-delday aria-label="حذف اليوم">${ico('trash', 's')}</button></div>
+      <select class="input mt1" data-dweek aria-label="يوم الأسبوع"><option value="">— بدون يوم محدد —</option>${WEEKDAYS.map((w, i) => `<option value="${i}" ${d.weekday === i ? 'selected' : ''}>${w}</option>`).join('')}</select>
       <input class="input mt1 sm" data-dnotes value="${esc(d.notes || '')}" placeholder="ملاحظة لليوم (اختياري)" aria-label="ملاحظة اليوم" />
       <div class="mt">${d.program_exercises.map((pe) => `<div class="pe" data-pe="${pe.id}">
         <div class="grow"><div class="ex-name sm">${esc(pe.exercise.name)}</div><div class="xs muted">${esc(pe.reps || '')}${pe.rest_seconds ? ` · راحة ${restLabel(pe.rest_seconds)}` : ''}</div></div>
@@ -1045,6 +1145,7 @@ async function viewPrograms(openId) {
   app.onchange = (e) => {
     const day = e.target.closest('[data-day]'); if (!day) return;
     if (e.target.matches('[data-dname]')) save(sb.from('program_days').update({ name: e.target.value }).eq('id', day.dataset.day)).then((ok) => ok && toast('انحفظ'));
+    if (e.target.matches('[data-dweek]')) save(sb.from('program_days').update({ weekday: e.target.value === '' ? null : +e.target.value }).eq('id', day.dataset.day)).then((ok) => ok && toast('انحفظ'));
     if (e.target.matches('[data-dnotes]')) save(sb.from('program_days').update({ notes: e.target.value || null }).eq('id', day.dataset.day)).then((ok) => ok && toast('انحفظ'));
   };
   app.onclick = async (e) => {
@@ -1106,7 +1207,7 @@ async function viewPeople() {
     <div id="cred"></div>
     ${people.map((p) => `<div class="card mt" data-id="${p.id}">
       <div class="row"><span class="mark">${esc(firstName(p.full_name).slice(0, 1) || '?')}</span>
-        <div class="grow"><div class="b">${esc(p.full_name || '')} ${p.role === 'coach' ? '<span class="tag k">مدرب</span>' : ''}</div><div class="xs muted en">${esc(p.username || '')}</div></div>
+        <div class="grow"><div class="b">${esc(p.full_name || '')} ${p.role === 'coach' ? '<span class="tag k">مدرب</span>' : ''}</div></div>
         <a class="btn sm w" href="#/coach/person/${p.id}">التقدّم</a></div>
       <div class="row wrap-ok mt"><span class="tag">آخر حصة: ${last[p.id] ? fmtShort(last[p.id]) : '—'}</span><span class="tag">${wk7[p.id] || 0} هالأسبوع</span><span class="tag">${cnt[p.id] || 0} حصة</span></div>
       <label class="field mt"><span>البرنامج</span><select data-assign>${opts(p.program_id)}</select></label>
@@ -1117,12 +1218,14 @@ async function viewPeople() {
     const { data, error: er } = await sb.functions.invoke('manage-trainee', { body });
     if (!er) return data;
     let m = er.message; try { m = (await er.context.json()).error || m; } catch {}
-    throw new Error(m === 'username taken' ? 'اسم المستخدم مأخوذ' : m);
+    const err = new Error(m); err.taken = m === 'pin taken'; throw err;
   };
-  const showCred = (name, username, pin) => {
-    const msg = `أهلاً ${name} 💪\nهاد حسابك على موقع التمارين:\n${PAGE_URL}\nاسم المستخدم: ${username}\nالرقم السري: ${pin}`;
+  // PINs must be unique: retry with a fresh one if the server says it's taken
+  const withPin = async (body) => { for (let i = 0; i < 6; i++) { const pin = newPin(); try { await manage({ ...body, pin }); return pin; } catch (e) { if (!e.taken) throw e; } } throw new Error('ما لقيت رقم فاضي، جرّب كمان مرة'); };
+  const showCred = (name, _u, pin) => {
+    const msg = `أهلاً ${name} 💪\nهاد رابط موقع التمارين:\n${PAGE_URL}\nرقمك السري للدخول: ${pin}`;
     $('#cred').innerHTML = `<div class="card cred mt"><div class="b">معلومات الدخول لـ${esc(name)}</div>
-      <div class="row between mt"><div><div class="xs muted">اسم المستخدم</div><div class="b en">${esc(username)}</div></div><div><div class="xs muted">الرقم السري</div><div class="pin num">${esc(pin)}</div></div></div>
+      <div class="mt"><div class="xs muted">الرقم السري للدخول</div><div class="pin num">${esc(pin)}</div></div>
       <p class="xs muted mt1">الرقم ما رح ينعرض مرة تانية — ابعته هلق.</p>
       <div class="row mt"><a class="btn grow" target="_blank" rel="noopener" href="https://wa.me/?text=${encodeURIComponent(msg)}">ابعت عالواتساب</a><button class="btn w" id="cp">${ico('copy', 's')} نسخ</button></div></div>`;
     $('#cp').onclick = () => navigator.clipboard.writeText(msg).then(() => toast('انتسخ'), () => toast('ما زبط النسخ', { err: true }));
@@ -1131,13 +1234,12 @@ async function viewPeople() {
   $('#add').onclick = () => {
     const sh = sheet(`<div class="h2">متدرب جديد</div><form id="nf">
       <label class="field mt"><span>الاسم الكامل</span><input name="full_name" required /></label>
-      <label class="field mt"><span>اسم المستخدم (إنجليزي، بدون مسافات)</span><input name="username" required pattern="[a-zA-Z0-9._\\-]{3,30}" autocapitalize="none" dir="ltr" /></label>
       <label class="field mt"><span>البرنامج</span><select name="program_id">${opts(programs.filter((p) => !p.archived).at(-1)?.id)}</select></label>
       <button class="btn block mt">اعمل الحساب</button></form>`);
     $('#nf', sh).onsubmit = async (e) => {
-      e.preventDefault(); const b = Object.fromEntries(new FormData(e.target)); b.username = b.username.trim().toLowerCase();
-      const pin = newPin(); const btn = $('button', e.target); btn.disabled = true;
-      try { await manage({ action: 'create', ...b, pin }); closeSheet(); await viewPeople(); showCred(b.full_name, b.username, pin); }
+      e.preventDefault(); const b = Object.fromEntries(new FormData(e.target));
+      const btn = $('button', e.target); btn.disabled = true;
+      try { const pin = await withPin({ action: 'create', ...b }); closeSheet(); await viewPeople(); showCred(b.full_name, '', pin); }
       catch (err) { fail(err); btn.disabled = false; }
     };
   };
@@ -1152,8 +1254,7 @@ async function viewPeople() {
     const b = e.target.closest('[data-pin]'); if (!b) return;
     const p = people.find((x) => x.id === b.closest('[data-id]').dataset.id);
     if (!confirm(`تعطي ${p.full_name} رقم سري جديد؟`)) return;
-    const pin = newPin();
-    try { await manage({ action: 'reset_pin', user_id: p.id, pin }); showCred(p.full_name, p.username, pin); } catch (err) { fail(err); }
+    try { const pin = await withPin({ action: 'reset_pin', user_id: p.id }); showCred(p.full_name, '', pin); } catch (err) { fail(err); }
   };
 }
 
