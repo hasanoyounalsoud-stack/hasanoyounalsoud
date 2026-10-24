@@ -95,3 +95,13 @@ i as (
   select u.id::text, u.id, jsonb_build_object('sub', u.id::text, 'email', u.email, 'email_verified', true), 'email', now(), now(), now() from u)
 insert into public.profiles (id, email, username, full_name, role, program_id)
 select u.id, u.email, 'wassim', 'وسيم قباني', 'trainee', (select id from public.programs where not archived limit 1) from u;
+
+-- 2026-10-24: weekday per program day (0 = Sunday), client diagnostics log
+alter table public.program_days add column if not exists weekday int check (weekday between 0 and 6);
+create table if not exists public.client_events (
+  id bigint generated always as identity primary key, user_id uuid default auth.uid(),
+  kind text not null, detail jsonb not null default '{}'::jsonb, created_at timestamptz not null default now()
+);
+alter table public.client_events enable row level security;
+create policy "members write events" on public.client_events for insert to authenticated with check (user_id = (select auth.uid()));
+create policy "coach reads events" on public.client_events for select to authenticated using ((select private.is_coach()));
