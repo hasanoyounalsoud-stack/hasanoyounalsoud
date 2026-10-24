@@ -405,7 +405,15 @@ function viewAccount() {
     if (error) return fail(error);
     toast('تغيّر الرقم السري'); e.target.reset();
   };
-  $('#out').onclick = () => sb.auth.signOut();
+  $('#out').onclick = logout;
+}
+
+// Sign out on this device right away; the server call is best effort (it can answer 403 for a stale session)
+async function logout() {
+  try { await Promise.race([sb.auth.signOut({ scope: 'local' }), new Promise((r) => setTimeout(r, 1500))]); } catch {}
+  Object.keys(localStorage).filter((k) => k.startsWith('sb-')).forEach((k) => store.del(k));
+  Object.assign(state, { session: null, profile: null, program: null, logs: null, exercises: null });
+  location.hash = '#/'; location.reload();
 }
 
 /* ================= home ================= */
@@ -1007,6 +1015,7 @@ async function viewLibrary() {
       if (error) return fail(error); closeSheet(); state.program = null; viewLibrary();
     };
     const rmv = $('#rmv', sh); if (rmv) rmv.onclick = async () => {
+      if (!confirm('أكيد بدك تشيل الفيديو عن هالتمرين؟')) return;
       if (ex.video_path) await sb.storage.from(BUCKET).remove(videoObjects(ex.video_path));
       const { error } = await sb.from('exercises').update({ video_path: null, video_url: null }).eq('id', ex.id);
       if (error) return fail(error); closeSheet(); state.program = null; viewLibrary();
@@ -1268,7 +1277,7 @@ async function route() {
   try {
     if (!state.profile) await loadProfile();
     renderChrome();
-    if (!state.profile) { app.innerHTML = '<div class="empty"><div class="h2">حسابك مش مفعّل</div><p class="mt1">تواصل مع المدرب.</p><button class="btn w mt" id="out">خروج</button></div>'; $('#out').onclick = () => sb.auth.signOut(); return; }
+    if (!state.profile) { app.innerHTML = '<div class="empty"><div class="h2">حسابك مش مفعّل</div><p class="mt1">تواصل مع المدرب.</p><button class="btn w mt" id="out">خروج</button></div>'; $('#out').onclick = logout; return; }
     window.scrollTo(0, 0);
     if (!introShown) { introShown = true; letsGo({ sound: !!loginTapped }); }
     let m;
