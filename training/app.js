@@ -405,13 +405,13 @@ async function viewHome() {
     hero = `<div class="hero"><div class="kicker">تمرين مفتوح</div><div class="h1" style="margin-top:4px">${esc(active.day_name)}</div>
       <div class="muted sm mt1">${did} من ${total} جولة · ${fmtShort(active.performed_on)}</div>
       <div class="bar on-dark mt"><i style="width:${Math.min(100, (did / total) * 100)}%"></i></div>
-      <a class="btn y lg block mt" href="#/w/${active.id}">كمّل التمرين</a></div>`;
+      <a class="btn lt lg block mt" href="#/w/${active.id}">كمّل التمرين</a></div>`;
   } else if (program) {
     const nd = nextDay(program, logs);
     hero = `<div class="hero"><div class="kicker">التمرين الجاي</div><div class="h1" style="margin-top:4px">${esc(nd.name)}</div>
       <div class="muted sm mt1">${nd.program_exercises.length} تمارين · ${nd.program_exercises.reduce((a, p) => a + p.sets, 0)} جولات</div>
       <div class="chips mt">${nd.program_exercises.map((pe) => `<span class="chip"><span class="en">${esc(pe.exercise.name)}</span><span class="n num">${pe.sets}</span></span>`).join('')}</div>
-      <button class="btn y lg block mt" data-start="${nd.id}">ابدأ التمرين</button></div>`;
+      <button class="btn lt lg block mt" data-start="${nd.id}">ابدأ التمرين</button></div>`;
   } else {
     hero = `<div class="hero"><div class="h2">ما في برنامج معيّن إلك لسا</div><p class="muted sm mt1">${isCoach() ? 'عيّن برنامج من صفحة المتدربين.' : 'المدرب رح يعيّنلك برنامجك قريباً.'}</p></div>`;
   }
