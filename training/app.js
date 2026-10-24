@@ -105,12 +105,18 @@ async function myProgram(force) {
 }
 async function loadLogs(traineeId, limit = 300) {
   const { data, error } = await sb.from('workout_logs')
-    .select('id,performed_on,day_id,day_name,status,rpe,notes,plan,started_at,finished_at,updated_at,created_at,set_logs(exercise_id,set_number,weight,reps,done)')
+    .select('id,performed_on,day_id,day_name,status,rpe,notes,plan,sets,started_at,finished_at,updated_at,created_at')
     .eq('trainee_id', traineeId)
     .order('performed_on', { ascending: false }).order('created_at', { ascending: false }).limit(limit);
   if (error) throw error;
-  data.forEach((l) => l.set_logs.sort((a, b) => a.set_number - b.set_number));
+  data.forEach(normSets);
   return data;
+}
+// a session's sets live in workout_logs.sets (jsonb); views read them as l.set_logs
+function normSets(l) {
+  l.set_logs = (l.sets || []).map((x) => ({ exercise_id: x.exercise_id, set_number: +x.set_number, weight: x.weight == null || x.weight === '' ? null : +x.weight, reps: x.reps == null || x.reps === '' ? null : +x.reps, done: !!x.done }))
+    .sort((a, b) => a.set_number - b.set_number);
+  return l;
 }
 async function myLogs(force) { if (!state.logs || force) state.logs = await loadLogs(uid()); return state.logs; }
 async function allExercises(force) {
@@ -480,7 +486,10 @@ function fromServer(l) {
 }
 function payload(s) {
   const sets = [];
-  s.plan.forEach((p) => (s.sets[p.exercise_id] || []).forEach((x, i) => sets.push({ exercise_id: p.exercise_id, set_number: i + 1, weight: x.w, reps: x.r, done: x.done })));
+  s.plan.forEach((p) => (s.sets[p.exercise_id] || []).forEach((x, i) => {
+    if (x.w === '' && x.r === '') return;
+    sets.push({ exercise_id: p.exercise_id, set_number: i + 1, weight: x.w === '' ? null : +x.w, reps: x.r === '' ? null : parseInt(x.r, 10), done: x.done });
+  }));
   return { id: s.id, day_id: s.day_id, day_name: s.day_name, performed_on: s.performed_on, status: s.status, started_at: s.started_at, finished_at: s.finished_at, rpe: s.rpe, notes: s.notes, plan: s.plan, sets };
 }
 function touch() {
@@ -546,7 +555,8 @@ async function viewWorkout(id) {
   await allExercises();
   let s = store.get(wkKey(id));
   if (!s || !s.dirty) {
-    const { data, error } = await sb.from('workout_logs').select('*,set_logs(exercise_id,set_number,weight,reps,done)').eq('id', id).maybeSingle();
+    const { data, error } = await sb.from('workout_logs').select('*').eq('id', id).maybeSingle();
+    if (data) normSets(data);
     if (error && !s) throw error;
     if (data) { s = fromServer(data); s.owner = data.trainee_id; s.readonly = data.trainee_id !== uid(); if (!s.readonly) store.set(wkKey(id), s); }
   }
@@ -759,7 +769,7 @@ async function viewWorkout(id) {
 }
 
 async function pickExercise(title, onPick) {
-  const list = await allExercises();
+  const list = (await allExercises()).filter((x) => !x.archived);
   const sh = sheet(`<div class="h2">${esc(title)}</div><input class="input mt" id="q" placeholder="دوّر…" dir="auto" />
     <div class="pick">${list.map((x) => `<button data-id="${x.id}"><span><span class="ex-name">${esc(x.name)}</span><span class="xs muted" style="display:block">${esc(x.muscle_group || '')}</span></span>${hasVideo(x) ? ico('play', 's') : ''}</button>`).join('')}</div>`);
   $('#q', sh).oninput = (e) => { const q = e.target.value.toLowerCase(); $$('.pick button', sh).forEach((b) => (b.hidden = !b.textContent.toLowerCase().includes(q))); };
@@ -890,7 +900,7 @@ async function viewExerciseHistory(exId, traineeId = uid()) {
 
 /* ================= coach: library & videos ================= */
 async function viewLibrary() {
-  const exs = await allExercises(true);
+  const exs = (await allExercises(true)).filter((x) => !x.archived);
   app.innerHTML = `<div class="view">
     <div class="row between"><div class="h1">مكتبة التمارين</div><button class="btn sm" id="add">${ico('plus', 's')} تمرين</button></div>
     <div class="card mt info">

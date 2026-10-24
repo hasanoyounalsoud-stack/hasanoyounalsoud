@@ -1,40 +1,32 @@
--- v2: flexible logging, username+PIN accounts, machine photos, Hasan's 3-day program
+-- v2 (applied 2026-10-24; PINs replaced by placeholders): flexible logging, username+PIN accounts, machine photos, Hasan's 3-day program
 alter table public.profiles add column if not exists username text unique;
 alter table public.programs add column if not exists archived boolean not null default false;
 alter table public.exercises add column if not exists video_url text;
+alter table public.exercises add column if not exists archived boolean not null default false;
 alter table public.workout_logs add column if not exists status text not null default 'done' check (status in ('active','done'));
 alter table public.workout_logs add column if not exists started_at timestamptz;
 alter table public.workout_logs add column if not exists finished_at timestamptz;
 alter table public.workout_logs add column if not exists plan jsonb not null default '[]'::jsonb;
+alter table public.workout_logs add column if not exists sets jsonb not null default '[]'::jsonb;
 alter table public.workout_logs add column if not exists updated_at timestamptz not null default now();
-alter table public.set_logs add column if not exists done boolean not null default true;
-alter table public.set_logs add constraint set_logs_unique unique (log_id, exercise_id, set_number);
 
 -- one call saves a whole session (header + plan + every set): the client autosaves and works offline
 create or replace function public.save_workout(p jsonb) returns timestamptz
 language plpgsql security invoker set search_path = '' as $$
 declare
-  v_id uuid := (p->>'id')::uuid;
   v_now timestamptz := now();
 begin
-  insert into public.workout_logs as w (id, trainee_id, day_id, day_name, performed_on, status, started_at, finished_at, rpe, notes, plan, updated_at)
-  values (v_id, auth.uid(), nullif(p->>'day_id','')::uuid, p->>'day_name',
+  insert into public.workout_logs as w (id, trainee_id, day_id, day_name, performed_on, status, started_at, finished_at, rpe, notes, plan, sets, updated_at)
+  values ((p->>'id')::uuid, auth.uid(), nullif(p->>'day_id','')::uuid, p->>'day_name',
           coalesce(nullif(p->>'performed_on','')::date, current_date), coalesce(p->>'status','active'),
           nullif(p->>'started_at','')::timestamptz, nullif(p->>'finished_at','')::timestamptz,
-          nullif(p->>'rpe','')::int, nullif(p->>'notes',''), coalesce(p->'plan','[]'::jsonb), v_now)
+          nullif(p->>'rpe','')::int, nullif(p->>'notes',''), coalesce(p->'plan','[]'::jsonb), coalesce(p->'sets','[]'::jsonb), v_now)
   on conflict (id) do update set
     day_id = excluded.day_id, day_name = excluded.day_name, performed_on = excluded.performed_on,
     status = excluded.status, started_at = excluded.started_at, finished_at = excluded.finished_at,
-    rpe = excluded.rpe, notes = excluded.notes, plan = excluded.plan, updated_at = v_now
+    rpe = excluded.rpe, notes = excluded.notes, plan = excluded.plan, sets = excluded.sets, updated_at = v_now
   where w.trainee_id = auth.uid();
   if not found then raise exception 'not allowed'; end if;
-
-  delete from public.set_logs where log_id = v_id;
-  insert into public.set_logs (log_id, exercise_id, set_number, weight, reps, done)
-  select v_id, (s->>'exercise_id')::uuid, (s->>'set_number')::int,
-         nullif(s->>'weight','')::numeric, nullif(s->>'reps','')::int, coalesce((s->>'done')::boolean, false)
-  from jsonb_array_elements(coalesce(p->'sets','[]'::jsonb)) s
-  where nullif(s->>'weight','') is not null or nullif(s->>'reps','') is not null;
   return v_now;
 end;
 $$;
@@ -55,15 +47,13 @@ create policy "own machine photos write" on storage.objects for insert to authen
   with check (bucket_id = 'machine-photos' and (storage.foldername(name))[1] = (select auth.uid())::text and (select private.is_member()));
 create policy "own machine photos update" on storage.objects for update to authenticated
   using (bucket_id = 'machine-photos' and (storage.foldername(name))[1] = (select auth.uid())::text);
-create policy "own machine photos delete" on storage.objects for delete to authenticated
-  using (bucket_id = 'machine-photos' and (storage.foldername(name))[1] = (select auth.uid())::text);
 
 -- accounts: username + PIN (internal email user@users.hsnoals.com)
 insert into private.allowed_signups values ('hasan@users.hsnoals.com'), ('wassim@users.hsnoals.com') on conflict do nothing;
 
--- only Hasan's program: drop the old ones and the sample exercises (no workouts were logged yet)
-delete from public.programs;
-delete from public.exercises e where e.name ~ '[ء-ي]';
+-- only Hasan's program is visible: older programs and the sample exercises are archived (kept, hidden)
+update public.programs set archived = true;
+update public.exercises set archived = true where name ~ '[ء-ي]';
 
 with p as (
   insert into public.programs (name, description) values
@@ -82,7 +72,7 @@ plan(day, pos, ex, sets) as (values
   (3,5,'Leg Press',1),(3,6,'Leg Curls',2),(3,7,'Supported curl',2),(3,8,'Tri ext',2),(3,9,'Crunches',1))
 insert into public.program_exercises (day_id, exercise_id, position, sets, reps, rest_seconds)
 select d.id, e.id, plan.pos, plan.sets, 'للفشل', 120
-from plan join d on d.day_order = plan.day join public.exercises e on e.name = plan.ex;
+from plan join d on d.day_order = plan.day join public.exercises e on e.name = plan.ex and not e.archived;
 
 -- Hasan: username hasan, PIN-style password; profile gets the username and the program
 update auth.users set email = 'hasan@users.hsnoals.com', encrypted_password = extensions.crypt('hsn:__COACH_PIN__:train', extensions.gen_salt('bf'))
@@ -90,7 +80,7 @@ update auth.users set email = 'hasan@users.hsnoals.com', encrypted_password = ex
 update auth.identities set identity_data = identity_data || '{"email":"hasan@users.hsnoals.com"}'
   where provider = 'email' and identity_data->>'email' = 'hasanoyouna@gmail.com';
 update public.profiles set username = 'hasan', email = 'hasan@users.hsnoals.com', full_name = 'حسن عيون السود',
-  program_id = (select id from public.programs limit 1) where role = 'coach';
+  program_id = (select id from public.programs where not archived limit 1) where role = 'coach';
 
 -- Wassim Kabbani: username wassim
 with u as (
@@ -104,4 +94,4 @@ i as (
   insert into auth.identities (provider_id, user_id, identity_data, provider, last_sign_in_at, created_at, updated_at)
   select u.id::text, u.id, jsonb_build_object('sub', u.id::text, 'email', u.email, 'email_verified', true), 'email', now(), now(), now() from u)
 insert into public.profiles (id, email, username, full_name, role, program_id)
-select u.id, u.email, 'wassim', 'وسيم قباني', 'trainee', (select id from public.programs limit 1) from u;
+select u.id, u.email, 'wassim', 'وسيم قباني', 'trainee', (select id from public.programs where not archived limit 1) from u;
