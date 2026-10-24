@@ -6,7 +6,6 @@ const SUPABASE_KEY = 'sb_publishable_HxWnLtIFqNZRRg1O1QFWHg_Lkrw-TSv';
 const BUCKET = 'exercise-videos';
 const WEEKDAYS = ['الأحد', 'الاثنين', 'الثلاثاء', 'الأربعاء', 'الخميس', 'الجمعة', 'السبت'];
 const PHOTO_BUCKET = 'machine-photos';
-const FREE_PLAN_MAX_MB = 50;
 const PAGE_URL = location.origin + location.pathname;
 // accounts are a unique 4-digit PIN; it maps onto Supabase email/password auth (see the pin-login function)
 const toPassword = (pin) => `hsn:${pin}:train`;
@@ -147,11 +146,37 @@ function ytId(u) {
   const m = String(u).match(/(?:youtu\.be\/|youtube\.com\/(?:watch\?v=|shorts\/|embed\/|live\/))([\w-]{11})/);
   return m ? m[1] : null;
 }
-async function videoSrc(ex) {
+// Big originals are stored as several pieces (each under the free plan's per-file limit):
+// video_path = "<base>#parts=<n>", pieces at "<base>.part0" … "<base>.part<n-1>".
+const PART_MB = 45;
+function videoObjects(path) {
+  const [base, n] = String(path).split('#parts=');
+  return n ? Array.from({ length: +n }, (_, i) => `${base}.part${i}`) : [base];
+}
+const videoType = (path) => (/\.mov(#|$)/i.test(path) ? 'video/quicktime' : /\.webm(#|$)/i.test(path) ? 'video/webm' : 'video/mp4');
+const joined = new Map();
+async function videoSrc(ex, onProgress = () => {}) {
   if (ex.video_url) return { url: ex.video_url, youtube: ytId(ex.video_url) };
-  const { data, error } = await sb.storage.from(BUCKET).createSignedUrl(ex.video_path, 60 * 60 * 4);
+  const parts = videoObjects(ex.video_path);
+  const { data, error } = await sb.storage.from(BUCKET).createSignedUrls(parts, 60 * 60 * 4);
   if (error) throw error;
-  return { url: data.signedUrl };
+  if (parts.length === 1) return { url: data[0].signedUrl };
+  if (joined.has(ex.video_path)) return { url: joined.get(ex.video_path) };
+  const cache = await caches?.open?.('hsn-videos').catch(() => null);
+  const hit = cache && (await cache.match(ex.video_path).catch(() => null));
+  let blob = hit ? await hit.blob() : null;
+  if (!blob) {
+    const bufs = [];
+    for (let i = 0; i < parts.length; i++) {
+      const r = await fetch(data[i].signedUrl);
+      if (!r.ok) throw new Error('ما قدرت حمّل الفيديو');
+      bufs.push(await r.blob()); onProgress((i + 1) / parts.length);
+    }
+    blob = new Blob(bufs, { type: videoType(ex.video_path) });
+    cache?.put(ex.video_path, new Response(blob, { headers: { 'content-type': blob.type } })).catch(() => {});
+  }
+  const url = URL.createObjectURL(blob); joined.set(ex.video_path, url);
+  return { url };
 }
 const hasVideo = (ex) => !!(ex?.video_path || ex?.video_url);
 
@@ -202,8 +227,8 @@ async function openVideo(ex) {
     ${ex.description ? `<p class="sm muted mt" style="white-space:pre-line">${esc(ex.description)}</p>` : ''}`);
   $('[data-x]', sh).onclick = closeSheet;
   try {
-    const v = await videoSrc(ex);
     const p = $('.player', sh);
+    const v = await videoSrc(ex, (f) => { const e = $('.empty', p); if (e) e.textContent = `جاري تحميل الفيديو… ${Math.round(f * 100)}%`; });
     if (v.youtube) {
       p.classList.add('wide');
       p.innerHTML = `<iframe src="https://www.youtube-nocookie.com/embed/${v.youtube}?autoplay=1&playsinline=1&rel=0" allow="autoplay; encrypted-media; fullscreen" allowfullscreen></iframe>`;
@@ -937,7 +962,7 @@ async function viewLibrary() {
     <div class="row between"><div class="h1">مكتبة التمارين</div><button class="btn sm" id="add">${ico('plus', 's')} تمرين</button></div>
     <div class="card mt info">
       <div class="b">رفع الفيديوهات بجودة عالية</div>
-      <p class="sm mt1"><b>رفع ملف:</b> إذا الفيديو أقل من ${FREE_PLAN_MAX_MB}MB بينرفع متل ما هو. إذا أكبر، الموقع بيجهّزه لحاله على الموبايل بجودة 1080p عالية ليقدر يرفعه — خلّي الشاشة مفتوحة لحد ما يخلص.</p>
+      <p class="sm mt1"><b>رفع ملف:</b> بينرفع الفيديو الأصلي بجودته الكاملة بدون أي تعديل، مهما كان حجمه. خلّي الصفحة مفتوحة لحد ما يخلص.</p>
       <p class="sm mt1"><b>رابط يوتيوب (Unlisted):</b> للفيديوهات الطويلة أو 4K — بدون حد حجم، والجودة بتتظبط حسب نت المتدرب.</p>
     </div>
     ${exs.map((ex) => `<div class="card" data-id="${ex.id}">
@@ -982,133 +1007,88 @@ async function viewLibrary() {
       if (error) return fail(error); closeSheet(); state.program = null; viewLibrary();
     };
     const rmv = $('#rmv', sh); if (rmv) rmv.onclick = async () => {
-      if (ex.video_path) await sb.storage.from(BUCKET).remove([ex.video_path]);
+      if (ex.video_path) await sb.storage.from(BUCKET).remove(videoObjects(ex.video_path));
       const { error } = await sb.from('exercises').update({ video_path: null, video_url: null }).eq('id', ex.id);
       if (error) return fail(error); closeSheet(); state.program = null; viewLibrary();
     };
     const del = $('#del', sh); if (del) del.onclick = async () => {
       if (!confirm('حذف التمرين بيشيله من البرامج وبيحذف سجلّاته. متأكد؟')) return;
-      if (ex.video_path) await sb.storage.from(BUCKET).remove([ex.video_path]);
+      if (ex.video_path) await sb.storage.from(BUCKET).remove(videoObjects(ex.video_path));
       const { error } = await sb.from('exercises').delete().eq('id', ex.id);
       if (error) return fail(error); closeSheet(); state.program = null; viewLibrary();
     };
   }
 }
-function upload(ex, file, card) {
-  const mb = file.size / 1048576;
-  const box = $('.upbar', card), bar = $('.bar i', box), txt = $('.up-txt', box);
-  box.hidden = false; bar.style.width = '0';
-  const ext = (file.name.split('.').pop() || 'mp4').toLowerCase().replace(/[^a-z0-9]/g, '') || 'mp4';
-  const type = file.type || ({ mov: 'video/quicktime', m4v: 'video/x-m4v', webm: 'video/webm' }[ext] || 'video/mp4');
-  logEvent('upload_start', { ex: ex.name, mb: +mb.toFixed(1), type, name: file.name });
-  if (mb > FREE_PLAN_MAX_MB) {
-    // too big for the free plan: re-encode on the phone to 1080p at the highest bitrate that fits
-    let stop = false;
-    $('[data-cancel]', box).textContent = 'إلغاء'; $('[data-cancel]', box).onclick = () => { stop = true; box.hidden = true; };
-    txt.textContent = `الفيديو ${mb.toFixed(0)}MB — عم جهّزه ليصير أقل من ${FREE_PLAN_MAX_MB}MB… خلّي الشاشة مفتوحة`;
-    fitVideo(file, (FREE_PLAN_MAX_MB - 4) * 1048576, (p) => { bar.style.width = `${p * 100}%`; txt.textContent = `تجهيز الفيديو… ${(p * 100).toFixed(0)}% — خلّي الشاشة مفتوحة`; }, () => stop)
-      .then((out) => {
-        if (stop) return;
-        txt.textContent = 'خلص التجهيز، عم يرفع…';
-        logEvent('video_fit', { ex: ex.name, from: +mb.toFixed(1), to: +(out.blob.size / 1048576).toFixed(1), kbps: out.kbps, mime: out.blob.type });
-        if (out.blob.size / 1048576 > FREE_PLAN_MAX_MB) throw new Error('الفيديو طويل كتير — قصّه لأقل من دقيقتين أو حطه رابط يوتيوب');
-        const f2 = new File([out.blob], `v.${out.ext}`, { type: out.blob.type.split(';')[0] });
-        upload(ex, f2, card);
-      })
-      .catch((err) => { txt.textContent = 'ما زبط التجهيز: ' + (err.message || err); $('[data-cancel]', box).textContent = 'سكّر'; logEvent('video_fit_error', { ex: ex.name, mb: +mb.toFixed(1), msg: String(err.message || err) }); });
-    return;
-  }
-  const objectName = `${ex.id}/${Date.now()}.${ext}`;
-  txt.textContent = `جاري الرفع… 0% من ${mb.toFixed(0)}MB`;
-  const leave = (e) => { e.preventDefault(); e.returnValue = ''; };
-  window.addEventListener('beforeunload', leave);
-  const xhr = new XMLHttpRequest();
-  const done = () => window.removeEventListener('beforeunload', leave);
-  const failUp = (msg, detail) => { done(); txt.textContent = 'ما انرفع: ' + msg; bar.style.width = '0'; $('[data-cancel]', box).textContent = 'سكّر'; logEvent('upload_error', { ex: ex.name, mb: +mb.toFixed(1), type, msg, ...detail }); };
-  sb.auth.getSession().then(({ data }) => {
+function sendPart(blob, objectName, type, token, onProgress) {
+  return new Promise((resolve, reject) => {
+    const xhr = new XMLHttpRequest();
     xhr.open('POST', `${SUPABASE_URL}/storage/v1/object/${BUCKET}/${objectName}`);
-    xhr.setRequestHeader('authorization', `Bearer ${data.session.access_token}`);
+    xhr.setRequestHeader('authorization', `Bearer ${token}`);
     xhr.setRequestHeader('apikey', SUPABASE_KEY);
     xhr.setRequestHeader('x-upsert', 'true');
     xhr.setRequestHeader('cache-control', 'max-age=31536000');
     xhr.setRequestHeader('content-type', type);
-    xhr.upload.onprogress = (e) => { if (!e.lengthComputable) return; const p = (e.loaded / e.total) * 100; bar.style.width = `${p}%`; txt.textContent = `جاري الرفع… ${p.toFixed(0)}% (${(e.loaded / 1048576).toFixed(0)}/${mb.toFixed(0)}MB) — خلّي الصفحة مفتوحة`; };
-    xhr.onerror = () => failUp('النت انقطع، جرّب كمان مرة', { status: 0 });
-    xhr.onload = async () => {
-      if (xhr.status < 200 || xhr.status >= 300) {
-        let m = xhr.responseText; try { m = JSON.parse(xhr.responseText).message || m; } catch {}
-        return failUp(/size|large|exceed/i.test(m) ? `الفيديو أكبر من المسموح (${FREE_PLAN_MAX_MB}MB)` : m, { status: xhr.status, body: String(xhr.responseText).slice(0, 300) });
-      }
-      done();
-      const old = ex.video_path;
-      const { error } = await sb.from('exercises').update({ video_path: objectName, video_url: null }).eq('id', ex.id);
-      if (error) return failUp(error.message, { step: 'save_path' });
-      if (old) sb.storage.from(BUCKET).remove([old]);
-      logEvent('upload_ok', { ex: ex.name, mb: +mb.toFixed(1) });
-      state.program = null; toast('انرفع الفيديو بجودته الأصلية'); viewLibrary();
+    xhr.upload.onprogress = (e) => e.lengthComputable && onProgress(e.loaded);
+    xhr.onerror = () => reject(Object.assign(new Error('النت انقطع'), { status: 0 }));
+    xhr.onload = () => {
+      if (xhr.status >= 200 && xhr.status < 300) return resolve();
+      let m = xhr.responseText; try { m = JSON.parse(xhr.responseText).message || m; } catch {}
+      reject(Object.assign(new Error(m || `خطأ ${xhr.status}`), { status: xhr.status, body: String(xhr.responseText).slice(0, 300) }));
     };
-    xhr.send(file);
+    xhr.send(blob);
   });
-  $('[data-cancel]', box).textContent = 'إلغاء';
-  $('[data-cancel]', box).onclick = () => { xhr.abort(); done(); box.hidden = true; };
 }
-
-// Re-encode a video in the browser (plays it into a canvas and records it) so it fits under maxBytes.
-// Runs in real time: a 60s clip takes about 60s. Keeps the sound when the browser allows it.
-async function fitVideo(file, maxBytes, onProgress, cancelled) {
-  const v = document.createElement('video');
-  v.src = URL.createObjectURL(file); v.playsInline = true; v.preload = 'auto';
-  v.style.cssText = 'position:fixed;left:0;top:0;width:2px;height:2px;opacity:0;pointer-events:none';
-  document.body.appendChild(v); // iOS decodes frames only for attached videos
-  await new Promise((res, rej) => { v.onloadedmetadata = res; v.onerror = () => rej(new Error('ما قدرت افتح الفيديو')); });
-  if (!isFinite(v.duration)) { // some recordings don't carry a duration until you seek to the end
-    v.currentTime = 1e9; await new Promise((res) => (v.ondurationchange = () => isFinite(v.duration) && res())); v.currentTime = 0;
-    await new Promise((res) => (v.onseeked = res));
-  }
-  const dur = v.duration;
-  if (!isFinite(dur) || dur <= 0) throw new Error('ما قدرت اعرف طول الفيديو');
-  const kbps = Math.min(8000, Math.floor(((maxBytes * 8) / dur) / 1000) - 160);
-  if (kbps < 1500) throw new Error(`الفيديو طويل (${Math.round(dur)} ثانية) — قصّه لأقل من دقيقتين أو حطه رابط يوتيوب`);
-  const k = Math.min(1, 1920 / Math.max(v.videoWidth, v.videoHeight));
-  const c = document.createElement('canvas'); c.width = Math.round((v.videoWidth * k) / 2) * 2; c.height = Math.round((v.videoHeight * k) / 2) * 2;
-  const g = c.getContext('2d');
-  const stream = c.captureStream(30);
+async function upload(ex, file, card) {
+  const mb = file.size / 1048576;
+  const box = $('.upbar', card), bar = $('.bar i', box), txt = $('.up-txt', box), cancelBtn = $('[data-cancel]', box);
+  box.hidden = false; bar.style.width = '0';
+  const ext = (file.name.split('.').pop() || 'mp4').toLowerCase().replace(/[^a-z0-9]/g, '') || 'mp4';
+  const type = file.type || ({ mov: 'video/quicktime', m4v: 'video/x-m4v', webm: 'video/webm' }[ext] || 'video/mp4');
+  const n = mb > PART_MB + 3 ? Math.ceil(file.size / (PART_MB * 1048576)) : 1;
+  const base = `${ex.id}/${Date.now()}.${ext}`;
+  const path = n > 1 ? `${base}#parts=${n}` : base;
+  const objects = videoObjects(path);
+  logEvent('upload_start', { ex: ex.name, mb: +mb.toFixed(1), type, name: file.name, parts: n, v: 9 });
+  let stop = false;
+  cancelBtn.textContent = 'إلغاء'; cancelBtn.onclick = () => { stop = true; box.hidden = true; };
+  const leave = (e) => { e.preventDefault(); e.returnValue = ''; };
+  window.addEventListener('beforeunload', leave);
+  const partSize = Math.ceil(file.size / n);
+  let sent = 0;
   try {
-    const ac = audio();
-    const src = ac.createMediaElementSource(v), dst = ac.createMediaStreamDestination();
-    src.connect(dst); dst.stream.getAudioTracks().forEach((t) => stream.addTrack(t));
-  } catch { v.muted = true; }
-  const mime = ['video/mp4;codecs=avc1.640028,mp4a.40.2', 'video/mp4;codecs=avc1', 'video/mp4', 'video/webm;codecs=vp9,opus', 'video/webm'].find((m) => window.MediaRecorder?.isTypeSupported?.(m));
-  if (!mime) throw new Error('المتصفح ما بيدعم تجهيز الفيديو — حطه رابط يوتيوب');
-  const rec = new MediaRecorder(stream, { mimeType: mime, videoBitsPerSecond: kbps * 1000, audioBitsPerSecond: 128000 });
-  const chunks = []; rec.ondataavailable = (e) => e.data.size && chunks.push(e.data);
-  // iOS doesn't reliably fire 'ended' or 'stop', so the end is detected from the clock and every wait has a timeout
-  let finish; const reachedEnd = new Promise((res) => (finish = res));
-  const atEnd = () => v.ended || v.currentTime >= dur - 0.08;
-  const draw = () => {
-    g.drawImage(v, 0, 0, c.width, c.height); onProgress(Math.min(1, v.currentTime / dur));
-    if (cancelled() || atEnd()) return finish();
-    v.requestVideoFrameCallback ? v.requestVideoFrameCallback(draw) : requestAnimationFrame(draw);
-  };
-  v.onended = () => finish();
-  const watchdog = setInterval(() => { if (atEnd() || (v.paused && v.currentTime > 0)) finish(); }, 500);
-  const hardStop = setTimeout(() => finish(), (dur + 8) * 1000);
-  rec.start(1000);
-  try { await v.play(); } catch { v.muted = true; await v.play(); }
-  draw();
-  await reachedEnd;
-  clearInterval(watchdog); clearTimeout(hardStop);
-  v.pause();
-  const stopped = new Promise((res) => { rec.onstop = res; setTimeout(res, 4000); });
-  try { if (rec.state !== 'inactive') { rec.requestData?.(); rec.stop(); } } catch {}
-  await stopped;
-  await new Promise((r) => setTimeout(r, 300)); // let the last chunk land
-  stream.getTracks().forEach((t) => t.stop());
-  URL.revokeObjectURL(v.src); v.remove();
-  if (cancelled()) throw new Error('انلغى');
-  if (!chunks.length) throw new Error('التسجيل طلع فاضي — جرّب كمان مرة');
-  const blob = new Blob(chunks, { type: mime.split(';')[0] });
-  return { blob, kbps, ext: mime.includes('mp4') ? 'mp4' : 'webm' };
+    for (let i = 0; i < n; i++) {
+      if (stop) throw new Error('انلغى');
+      const piece = file.slice(i * partSize, Math.min(file.size, (i + 1) * partSize), type);
+      for (let attempt = 1; ; attempt++) {
+        try {
+          // the session kept by onAuthStateChange; getSession() can block on the auth lock on iOS
+          await sendPart(piece, objects[i], type, state.session.access_token, (loaded) => {
+            const p = (sent + loaded) / file.size;
+            bar.style.width = `${p * 100}%`;
+            txt.textContent = `جاري الرفع… ${Math.round(p * 100)}% (${((sent + loaded) / 1048576).toFixed(0)}/${mb.toFixed(0)}MB) — خلّي الصفحة مفتوحة`;
+          });
+          break;
+        } catch (err) {
+          if (attempt >= 3 || stop || (err.status && err.status < 500 && err.status !== 408)) throw err;
+          txt.textContent = 'النت تقطّع، عم جرّب كمان مرة…'; await new Promise((r) => setTimeout(r, 2000 * attempt));
+        }
+      }
+      sent += piece.size;
+    }
+    const old = ex.video_path;
+    const { error } = await sb.from('exercises').update({ video_path: path, video_url: null }).eq('id', ex.id);
+    if (error) throw error;
+    if (old) sb.storage.from(BUCKET).remove(videoObjects(old));
+    logEvent('upload_ok', { ex: ex.name, mb: +mb.toFixed(1), parts: n });
+    window.removeEventListener('beforeunload', leave);
+    state.program = null; toast('انرفع الفيديو بجودته الأصلية ✅'); viewLibrary();
+  } catch (err) {
+    window.removeEventListener('beforeunload', leave);
+    sb.storage.from(BUCKET).remove(objects).catch(() => {});
+    if (stop) return;
+    bar.style.width = '0'; txt.textContent = 'ما انرفع: ' + (err.message || err); cancelBtn.textContent = 'سكّر';
+    logEvent('upload_error', { ex: ex.name, mb: +mb.toFixed(1), parts: n, msg: String(err.message || err), status: err.status, body: err.body });
+  }
 }
 
 /* ================= coach: program editor ================= */
