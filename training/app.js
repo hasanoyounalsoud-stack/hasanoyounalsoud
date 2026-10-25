@@ -156,14 +156,12 @@ function videoObjects(path) {
   return n ? Array.from({ length: +n }, (_, i) => `${base}.part${i}`) : [base];
 }
 const videoType = (path) => (/\.mov(#|$)/i.test(path) ? 'video/quicktime' : /\.webm(#|$)/i.test(path) ? 'video/webm' : 'video/mp4');
-const joined = new Map();
 async function videoSrc(ex, onProgress = () => {}) {
   if (ex.video_url) return { url: ex.video_url, youtube: ytId(ex.video_url) };
   const parts = videoObjects(ex.video_path);
   const { data, error } = await sb.storage.from(BUCKET).createSignedUrls(parts, 60 * 60 * 4);
   if (error) throw error;
   if (parts.length === 1) return { url: data[0].signedUrl };
-  if (joined.has(ex.video_path)) return { url: joined.get(ex.video_path) };
   const cache = await caches?.open?.('hsn-videos').catch(() => null);
   const hit = cache && (await cache.match(ex.video_path).catch(() => null));
   let blob = hit ? await hit.blob() : null;
@@ -177,8 +175,7 @@ async function videoSrc(ex, onProgress = () => {}) {
     blob = new Blob(bufs, { type: videoType(ex.video_path) });
     cache?.put(ex.video_path, new Response(blob, { headers: { 'content-type': blob.type } })).catch(() => {});
   }
-  const url = URL.createObjectURL(blob); joined.set(ex.video_path, url);
-  return { url };
+  return { url: URL.createObjectURL(blob), revoke: true };
 }
 const hasVideo = (ex) => !!(ex?.video_path || ex?.video_url);
 
@@ -215,7 +212,7 @@ function sheet(html, { onClose } = {}) {
   const sh = document.createElement('div'); sh.className = 'sheet'; sh.setAttribute('role', 'dialog');
   sh.innerHTML = `<div class="grip"></div>${html}`;
   const key = (e) => e.key === 'Escape' && close();
-  function close() { bg.remove(); sh.remove(); document.removeEventListener('keydown', key); onClose?.(); }
+  function close() { sh.querySelector('video')?.pause(); bg.remove(); sh.remove(); document.removeEventListener('keydown', key); try { sh._onclose?.(); } catch {} onClose?.(); }
   bg.onclick = close; document.addEventListener('keydown', key);
   document.body.append(bg, sh);
   sh._close = close;
@@ -228,6 +225,8 @@ async function openVideo(ex) {
     <div class="player"><div class="empty" style="color:#999">جاري التحميل…</div></div>
     ${ex.description ? `<p class="sm muted mt" style="white-space:pre-line">${esc(ex.description)}</p>` : ''}`);
   $('[data-x]', sh).onclick = closeSheet;
+  let blobUrl = null;
+  sh._onclose = () => { if (blobUrl) URL.revokeObjectURL(blobUrl); };
   try {
     const p = $('.player', sh);
     const v = await videoSrc(ex, (f) => { const e = $('.empty', p); if (e) e.textContent = `جاري تحميل الفيديو… ${Math.round(f * 100)}%`; });
@@ -235,6 +234,7 @@ async function openVideo(ex) {
       p.classList.add('wide');
       p.innerHTML = `<iframe src="https://www.youtube-nocookie.com/embed/${v.youtube}?autoplay=1&playsinline=1&rel=0" allow="autoplay; encrypted-media; fullscreen" allowfullscreen></iframe>`;
     } else {
+      if (v.revoke) blobUrl = v.url;
       p.innerHTML = `<video src="${esc(v.url)}" controls playsinline autoplay preload="auto"></video>`;
       const vid = $('video', p);
       vid.onloadedmetadata = () => { if (vid.videoWidth > vid.videoHeight) p.classList.add('wide'); };
@@ -1093,7 +1093,7 @@ function enqueueUpload(ex, file) {
   const base = `${ex.id}/${Date.now()}.${ext}`;
   const it = { id: uuid(), uid: uid(), ex_id: ex.id, ex_name: ex.name, file, name: file.name, size: file.size, type, n, path: n > 1 ? `${base}#parts=${n}` : base, doneParts: 0, sent: 0, status: 'queued', err: '', retries: 0 };
   UP.items.push(it);
-  idbDo('readwrite', (st) => st.put({ id: it.id, uid: it.uid, ex_id: it.ex_id, ex_name: it.ex_name, file, name: it.name, size: it.size, type, n, path: it.path }));
+  if (file.size < 120 * 1048576) idbDo('readwrite', (st) => st.put({ id: it.id, uid: it.uid, ex_id: it.ex_id, ex_name: it.ex_name, file, name: it.name, size: it.size, type, n, path: it.path }));
   logEvent('queue_add', { ex: ex.name, mb: +(file.size / 1048576).toFixed(1), type, parts: n, queued: activeItems().length });
   upChanged(); pump();
 }
