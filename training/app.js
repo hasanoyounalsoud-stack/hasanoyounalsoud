@@ -966,16 +966,8 @@ async function viewExerciseHistory(exId, traineeId = uid()) {
 }
 
 /* ================= coach: library & videos ================= */
-async function viewLibrary() {
-  const exs = (await allExercises(true)).filter((x) => !x.archived);
-  app.innerHTML = `<div class="view">
-    <div class="row between"><div class="h1">مكتبة التمارين</div><button class="btn sm" id="add">${ico('plus', 's')} تمرين</button></div>
-    <div class="card mt info">
-      <div class="b">رفع الفيديوهات بجودة عالية</div>
-      <p class="sm mt1"><b>رفع ملف:</b> بينرفع الفيديو الأصلي بجودته الكاملة بدون أي تعديل، مهما كان حجمه. خلّي الصفحة مفتوحة لحد ما يخلص.</p>
-      <p class="sm mt1"><b>رابط يوتيوب (Unlisted):</b> للفيديوهات الطويلة أو 4K — بدون حد حجم، والجودة بتتظبط حسب نت المتدرب.</p>
-    </div>
-    ${exs.map((ex) => `<div class="card" data-id="${ex.id}">
+function libCard(ex) {
+  return `<div class="card" data-id="${ex.id}">
       <div class="row"><div class="vid-thumb ${hasVideo(ex) ? 'has' : ''}">${ico(hasVideo(ex) ? 'play' : 'video')}</div>
         <div class="grow"><div class="ex-name">${esc(ex.name)}</div><div class="sm muted">${esc(ex.muscle_group || '')}${ex.muscle_group ? ' · ' : ''}${ex.video_url ? 'يوتيوب' : ex.video_path ? 'فيديو مرفوع' : 'بدون فيديو'}</div></div>
         <button class="icon-btn" data-edit aria-label="تعديل">${ico('dots')}</button></div>
@@ -985,10 +977,24 @@ async function viewLibrary() {
         ${hasVideo(ex) ? `<button class="btn sm w" data-play>${ico('play', 's')} شوف</button>` : ''}
       </div>
       <div class="upbar" hidden><div class="row between xs b"><span class="up-txt"></span><button class="btn ghost sm" data-cancel>إلغاء</button></div><div class="bar"><i></i></div></div>
-    </div>`).join('')}</div>`;
+    </div>`;
+}
+async function viewLibrary() {
+  const exs = (await allExercises(true)).filter((x) => !x.archived);
+  app.innerHTML = `<div class="view">
+    <div class="row between"><div class="h1">مكتبة التمارين</div><button class="btn sm" id="add">${ico('plus', 's')} تمرين</button></div>
+    <div class="card mt info">
+      <div class="b">رفع الفيديوهات بجودة عالية</div>
+      <p class="sm mt1"><b>رفع ملف:</b> بينرفع الفيديو الأصلي بجودته الكاملة بدون أي تعديل، مهما كان حجمه. خلّي الصفحة مفتوحة لحد ما يخلص.</p>
+      <p class="sm mt1"><b>رابط يوتيوب (Unlisted):</b> للفيديوهات الطويلة أو 4K — بدون حد حجم، والجودة بتتظبط حسب نت المتدرب.</p>
+    </div>
+    ${exs.map(libCard).join('')}</div>`;
+  paintCards();
   const find = (el) => exs.find((x) => x.id === el.closest('[data-id]')?.dataset.id);
   $('#add').onclick = () => exForm();
   app.onclick = async (e) => {
+    const cb = e.target.closest('[data-cancel]');
+    if (cb) { const it = UP.items.find((i) => i.id === cb.dataset.upid); if (it?.status === 'error') { it.status = 'queued'; it.retries = 0; upChanged(); pump(); } else if (it && confirm('تلغي رفع هالفيديو؟')) cancelItem(it); return; }
     const ex = find(e.target); if (!ex) return;
     if (e.target.closest('[data-edit]')) exForm(ex);
     if (e.target.closest('[data-play]')) openVideo(ex);
@@ -1002,15 +1008,15 @@ async function viewLibrary() {
       state.program = null; toast(url ? 'انحفظ الرابط' : 'انشال الرابط'); viewLibrary();
     }
   };
-  app.onchange = async (e) => {
+  app.onchange = (e) => {
     const inp = e.target.closest('[data-file]'); if (!inp) return;
-    const ex = find(inp), f = inp.files?.[0], card = inp.closest('[data-id]');
-    logEvent('file_picked', { ex: ex?.name, name: f?.name, mb: f ? +(f.size / 1048576).toFixed(1) : null, type: f?.type, has_ex: !!ex, has_card: !!card });
-    if (!f) return;
-    const box = $('.upbar', card); box.hidden = false; $('.up-txt', box).textContent = 'اخترت الفيديو… عم جهّز الرفع';
-    if (!f.size) { $('.up-txt', box).textContent = 'الآيفون لسا عم يجهّز الفيديو (ممكن عم ينزّله من iCloud). استنى شوي وجرّب كمان مرة.'; return; }
-    try { await upload(ex, f, card); } catch (err) { $('.up-txt', box).textContent = 'ما انرفع: ' + (err.message || err); logEvent('upload_crash', { msg: String(err.message || err) }); }
-    inp.value = ''; // so picking the same file again fires a new change event
+    const ex = find(inp), f = inp.files?.[0];
+    logEvent('file_picked', { ex: ex?.name, name: f?.name, mb: f ? +(f.size / 1048576).toFixed(1) : null, type: f?.type });
+    if (!ex || !f) return;
+    if (!f.size) return toast('الآيفون لسا عم يجهّز الفيديو (ممكن عم ينزّله من iCloud). استنى شوي وجرّب كمان مرة.', { err: true });
+    enqueueUpload(ex, f);
+    toast(`انضاف للرفع: ${ex.name}`);
+    inp.value = ''; // so the same file can be picked again
   };
 
   function exForm(ex = {}) {
@@ -1039,18 +1045,91 @@ async function viewLibrary() {
     };
   }
 }
-function sendPart(blob, objectName, type, token, onProgress) {
+/* ================= video upload queue =================
+   Uploads live outside any page: they keep going while you move around the app, are written to
+   IndexedDB so a reload/kill resumes them, hold the screen awake, retry on bad network, and the
+   library never re-renders under you when one finishes. (iOS freezes web pages the moment the
+   screen locks, so the screen is kept awake; if it still locks, the upload resumes on return.) */
+const UP = { items: [], running: false, wake: null, hooks: new Set() };
+const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
+function idbOpen() {
+  return new Promise((res, rej) => {
+    try { const r = indexedDB.open('hsn-uploads', 1); r.onupgradeneeded = () => r.result.createObjectStore('q', { keyPath: 'id' }); r.onsuccess = () => res(r.result); r.onerror = () => rej(r.error); }
+    catch (e) { rej(e); }
+  });
+}
+async function idbDo(mode, fn) {
+  try {
+    const db = await idbOpen();
+    return await new Promise((res, rej) => { const tx = db.transaction('q', mode); const req = fn(tx.objectStore('q')); tx.oncomplete = () => res(req?.result); tx.onerror = tx.onabort = () => rej(tx.error); });
+  } catch { return null; }
+}
+const partSizeOf = (it) => Math.ceil(it.size / it.n);
+const itemPct = (it) => (it.size ? Math.min(1, it.sent / it.size) : 0);
+const activeItems = () => UP.items.filter((i) => i.status !== 'done');
+
+async function keepAwake() {
+  try {
+    if ('wakeLock' in navigator && !UP.wake) {
+      UP.wake = await navigator.wakeLock.request('screen');
+      UP.wake.addEventListener('release', () => (UP.wake = null));
+    }
+  } catch {}
+}
+function releaseAwake() { try { UP.wake?.release(); } catch {} UP.wake = null; }
+document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'visible' && activeItems().length) { keepAwake(); pump(); } });
+window.addEventListener('online', () => pump());
+window.addEventListener('beforeunload', (e) => { if (activeItems().length) { e.preventDefault(); e.returnValue = ''; } });
+
+function enqueueUpload(ex, file) {
+  const busy = UP.items.find((i) => i.ex_id === ex.id && i.status !== 'done');
+  if (busy) {
+    if (busy.status === 'uploading') return toast('هالتمرين عم يرفع هلق، استنى يخلص', { err: true });
+    cancelItem(busy, true);
+  }
+  const ext = (file.name.split('.').pop() || 'mp4').toLowerCase().replace(/[^a-z0-9]/g, '') || 'mp4';
+  const type = file.type || ({ mov: 'video/quicktime', m4v: 'video/x-m4v', webm: 'video/webm' }[ext] || 'video/mp4');
+  const n = file.size > (PART_MB + 3) * 1048576 ? Math.ceil(file.size / (PART_MB * 1048576)) : 1;
+  const base = `${ex.id}/${Date.now()}.${ext}`;
+  const it = { id: uuid(), uid: uid(), ex_id: ex.id, ex_name: ex.name, file, name: file.name, size: file.size, type, n, path: n > 1 ? `${base}#parts=${n}` : base, doneParts: 0, sent: 0, status: 'queued', err: '', retries: 0 };
+  UP.items.push(it);
+  idbDo('readwrite', (st) => st.put({ id: it.id, uid: it.uid, ex_id: it.ex_id, ex_name: it.ex_name, file, name: it.name, size: it.size, type, n, path: it.path }));
+  logEvent('queue_add', { ex: ex.name, mb: +(file.size / 1048576).toFixed(1), type, parts: n, queued: activeItems().length });
+  upChanged(); pump();
+}
+function cancelItem(it, silent = false) {
+  it.cancelled = true; it.status = 'done'; try { it.xhr?.abort(); } catch {}
+  UP.items = UP.items.filter((x) => x !== it);
+  idbDo('readwrite', (st) => st.delete(it.id)); try { localStorage.removeItem('up:' + it.id); } catch {}
+  sb.storage.from(BUCKET).remove(videoObjects(it.path)).catch(() => {});
+  if (!silent) logEvent('queue_cancel', { ex: it.ex_name });
+  upChanged();
+}
+async function freshToken() {
+  const ss = state.session;
+  if (ss && ss.expires_at * 1000 - Date.now() > 90000) return ss.access_token;
+  try {
+    const { data } = await Promise.race([sb.auth.refreshSession(), new Promise((_, rj) => setTimeout(() => rj(new Error('timeout')), 8000))]);
+    if (data?.session) { state.session = data.session; return data.session.access_token; }
+  } catch {}
+  return state.session?.access_token;
+}
+function sendPart(it, blob, objectName, token, onProgress) {
   return new Promise((resolve, reject) => {
-    const xhr = new XMLHttpRequest();
+    const xhr = new XMLHttpRequest(); it.xhr = xhr;
+    let last = Date.now();
+    const wd = setInterval(() => { if (Date.now() - last > 30000) { try { xhr.abort(); } catch {} } }, 5000); // stalled (e.g. after the screen slept)
+    const end = () => { clearInterval(wd); it.xhr = null; };
     xhr.open('POST', `${SUPABASE_URL}/storage/v1/object/${BUCKET}/${objectName}`);
     xhr.setRequestHeader('authorization', `Bearer ${token}`);
     xhr.setRequestHeader('apikey', SUPABASE_KEY);
     xhr.setRequestHeader('x-upsert', 'true');
     xhr.setRequestHeader('cache-control', 'max-age=31536000');
-    xhr.setRequestHeader('content-type', type);
-    xhr.upload.onprogress = (e) => e.lengthComputable && onProgress(e.loaded);
-    xhr.onerror = () => reject(Object.assign(new Error('النت انقطع'), { status: 0 }));
+    xhr.setRequestHeader('content-type', it.type);
+    xhr.upload.onprogress = (e) => { last = Date.now(); if (e.lengthComputable) onProgress(e.loaded); };
+    xhr.onerror = xhr.onabort = xhr.ontimeout = () => { end(); reject(Object.assign(new Error('النت تقطّع'), { status: 0 })); };
     xhr.onload = () => {
+      end();
       if (xhr.status >= 200 && xhr.status < 300) return resolve();
       let m = xhr.responseText; try { m = JSON.parse(xhr.responseText).message || m; } catch {}
       reject(Object.assign(new Error(m || `خطأ ${xhr.status}`), { status: xhr.status, body: String(xhr.responseText).slice(0, 300) }));
@@ -1058,57 +1137,132 @@ function sendPart(blob, objectName, type, token, onProgress) {
     xhr.send(blob);
   });
 }
-async function upload(ex, file, card) {
-  const mb = file.size / 1048576;
-  const box = $('.upbar', card), bar = $('.bar i', box), txt = $('.up-txt', box), cancelBtn = $('[data-cancel]', box);
-  box.hidden = false; bar.style.width = '0';
-  const ext = (file.name.split('.').pop() || 'mp4').toLowerCase().replace(/[^a-z0-9]/g, '') || 'mp4';
-  const type = file.type || ({ mov: 'video/quicktime', m4v: 'video/x-m4v', webm: 'video/webm' }[ext] || 'video/mp4');
-  const n = mb > PART_MB + 3 ? Math.ceil(file.size / (PART_MB * 1048576)) : 1;
-  const base = `${ex.id}/${Date.now()}.${ext}`;
-  const path = n > 1 ? `${base}#parts=${n}` : base;
-  const objects = videoObjects(path);
-  logEvent('upload_start', { ex: ex.name, mb: +mb.toFixed(1), type, name: file.name, parts: n, v: 9 });
-  let stop = false;
-  cancelBtn.textContent = 'إلغاء'; cancelBtn.onclick = () => { stop = true; box.hidden = true; };
-  const leave = (e) => { e.preventDefault(); e.returnValue = ''; };
-  window.addEventListener('beforeunload', leave);
-  const partSize = Math.ceil(file.size / n);
-  let sent = 0;
+async function onceOnline() { while (!navigator.onLine) await sleep(1000); }
+
+async function runItem(it) {
+  it.status = 'uploading'; it.err = ''; upChanged();
+  const objects = videoObjects(it.path), ps = partSizeOf(it);
   try {
-    for (let i = 0; i < n; i++) {
-      if (stop) throw new Error('انلغى');
-      const piece = file.slice(i * partSize, Math.min(file.size, (i + 1) * partSize), type);
-      for (let attempt = 1; ; attempt++) {
+    for (let i = it.doneParts; i < it.n; i++) {
+      const piece = it.file.slice(i * ps, Math.min(it.size, (i + 1) * ps), it.type);
+      let delay = 1500; const base = i * ps;
+      for (;;) {
+        if (it.cancelled) throw new Error('cancelled');
+        if (!navigator.onLine) { it.status = 'waiting'; upChanged(); await onceOnline(); }
+        it.status = 'uploading'; upChanged();
         try {
-          // the session kept by onAuthStateChange; getSession() can block on the auth lock on iOS
-          await sendPart(piece, objects[i], type, state.session.access_token, (loaded) => {
-            const p = (sent + loaded) / file.size;
-            bar.style.width = `${p * 100}%`;
-            txt.textContent = `جاري الرفع… ${Math.round(p * 100)}% (${((sent + loaded) / 1048576).toFixed(0)}/${mb.toFixed(0)}MB) — خلّي الصفحة مفتوحة`;
-          });
+          await sendPart(it, piece, objects[i], await freshToken(), (loaded) => { it.sent = base + loaded; upChanged(true); });
           break;
         } catch (err) {
-          if (attempt >= 3 || stop || (err.status && err.status < 500 && err.status !== 408)) throw err;
-          txt.textContent = 'النت تقطّع، عم جرّب كمان مرة…'; await new Promise((r) => setTimeout(r, 2000 * attempt));
+          if (it.cancelled) throw err;
+          if (err.status === 413) throw new Error('الفيديو أكبر من المسموح للقطعة');
+          it.retries++; it.sent = base;
+          if (it.retries > 30) throw err;
+          it.status = 'retry'; it.err = err.message; upChanged();
+          if (it.retries === 1 || it.retries % 5 === 0) logEvent('upload_retry', { ex: it.ex_name, part: i, status: err.status, msg: err.message, n: it.retries });
+          await sleep(delay); delay = Math.min(delay * 2, 15000);
         }
       }
-      sent += piece.size;
+      it.doneParts = i + 1; it.sent = Math.min(it.size, (i + 1) * ps); it.retries = 0;
+      try { localStorage.setItem('up:' + it.id, String(it.doneParts)); } catch {}
+      upChanged();
     }
-    const old = ex.video_path;
-    const { error } = await sb.from('exercises').update({ video_path: path, video_url: null }).eq('id', ex.id);
-    if (error) throw error;
-    if (old) sb.storage.from(BUCKET).remove(videoObjects(old));
-    logEvent('upload_ok', { ex: ex.name, mb: +mb.toFixed(1), parts: n });
-    window.removeEventListener('beforeunload', leave);
-    state.program = null; toast('انرفع الفيديو بجودته الأصلية ✅'); viewLibrary();
+    // all parts are in storage: attach them to the exercise
+    for (let a = 1; ; a++) {
+      const { error } = await sb.from('exercises').update({ video_path: it.path, video_url: null }).eq('id', it.ex_id);
+      if (!error) break;
+      if (a >= 6) throw error;
+      await sleep(2000 * a);
+    }
+    const ex = exById(it.ex_id);
+    const old = ex?.video_path;
+    if (ex) { ex.video_path = it.path; ex.video_url = null; }
+    if (old && old !== it.path) sb.storage.from(BUCKET).remove(videoObjects(old)).catch(() => {});
+    state.program = null;
+    it.status = 'done'; UP.items = UP.items.filter((x) => x !== it);
+    idbDo('readwrite', (st) => st.delete(it.id)); try { localStorage.removeItem('up:' + it.id); } catch {}
+    logEvent('upload_ok', { ex: it.ex_name, mb: +(it.size / 1048576).toFixed(1), parts: it.n });
+    repaintCard(it.ex_id);
+    toast(`انرفع: ${it.ex_name} ✅`);
   } catch (err) {
-    window.removeEventListener('beforeunload', leave);
-    sb.storage.from(BUCKET).remove(objects).catch(() => {});
-    if (stop) return;
-    bar.style.width = '0'; txt.textContent = 'ما انرفع: ' + (err.message || err); cancelBtn.textContent = 'سكّر';
-    logEvent('upload_error', { ex: ex.name, mb: +mb.toFixed(1), parts: n, msg: String(err.message || err), status: err.status, body: err.body });
+    if (it.cancelled) return;
+    it.status = 'error'; it.err = String(err.message || err);
+    logEvent('upload_error', { ex: it.ex_name, mb: +(it.size / 1048576).toFixed(1), parts: it.n, msg: it.err, status: err.status, body: err.body });
   }
+  upChanged();
+}
+async function pump() {
+  if (UP.running) return;
+  UP.running = true; await keepAwake();
+  try {
+    for (;;) {
+      const it = UP.items.find((i) => i.status === 'queued');
+      if (!it) break;
+      await runItem(it);
+    }
+  } finally { UP.running = false; if (!activeItems().some((i) => i.status !== 'error')) releaseAwake(); upChanged(); }
+}
+async function resumeUploads() {
+  const rows = (await idbDo('readonly', (st) => st.getAll())) || [];
+  let n = 0;
+  for (const r of rows) {
+    if (r.uid !== uid() || UP.items.some((i) => i.id === r.id)) continue;
+    if (!r.file?.size) { idbDo('readwrite', (st) => st.delete(r.id)); continue; }
+    let dp = 0; try { dp = +localStorage.getItem('up:' + r.id) || 0; } catch {}
+    UP.items.push({ ...r, doneParts: dp, sent: Math.min(r.size, dp * partSizeOf(r)), status: 'queued', err: '', retries: 0 }); n++;
+  }
+  if (n) { logEvent('queue_resume', { n }); toast(`كمّلت رفع ${n} فيديو من قبل`); upChanged(); pump(); }
+}
+
+// floating status: visible on every page
+function upChanged() {
+  const act = activeItems();
+  let el = document.getElementById('upq');
+  if (!act.length) { el?.remove(); } else {
+    if (!el) { el = document.createElement('button'); el.id = 'upq'; el.className = 'upq'; el.onclick = openQueue; document.body.appendChild(el); }
+    const total = act.reduce((a, i) => a + i.size, 0), sent = act.reduce((a, i) => a + i.sent, 0);
+    const cur = act.find((i) => i.status === 'uploading' || i.status === 'retry' || i.status === 'waiting' || i.status === 'error') || act[0];
+    const pct = total ? Math.round((sent / total) * 100) : 0;
+    const msg = cur.status === 'waiting' ? 'ما في نت — رح يكمّل لحاله' : cur.status === 'retry' ? 'النت ضعيف، عم يعيد…' : cur.status === 'error' ? 'تعطّل — اكبس للتفاصيل' : `عم يرفع ${act.length} فيديو`;
+    el.innerHTML = `<span class="b">${msg}</span><span class="num">${pct}%</span><i style="width:${pct}%"></i>`;
+    el.classList.toggle('bad', cur.status === 'error' || cur.status === 'retry' || cur.status === 'waiting');
+  }
+  UP.hooks.forEach((f) => f());
+  paintCards();
+}
+function paintCards() {
+  $$('.card[data-id]').forEach((card) => {
+    const box = $('.upbar', card); if (!box) return;
+    const it = UP.items.find((i) => i.ex_id === card.dataset.id && i.status !== 'done');
+    box.hidden = !it;
+    if (!it) return;
+    $('.bar i', box).style.width = `${itemPct(it) * 100}%`;
+    $('.up-txt', box).textContent = it.status === 'queued' ? 'بالدور للرفع…' : it.status === 'waiting' ? 'ما في نت — رح يكمّل لحاله' : it.status === 'retry' ? 'النت ضعيف، عم يعيد المحاولة…' : it.status === 'error' ? 'ما انرفع: ' + it.err : `جاري الرفع… ${Math.round(itemPct(it) * 100)}% (${(it.sent / 1048576).toFixed(0)}/${(it.size / 1048576).toFixed(0)}MB)`;
+    const btn = $('[data-cancel]', box); btn.textContent = it.status === 'error' ? 'إعادة' : 'إلغاء'; btn.dataset.upid = it.id;
+  });
+}
+function repaintCard(exId) {
+  const card = document.querySelector(`.card[data-id="${exId}"]`), ex = exById(exId);
+  if (card && ex) { card.outerHTML = libCard(ex); paintCards(); }
+}
+function openQueue() {
+  const draw = () => {
+    const box = $('#upList'); if (!box) return;
+    const act = activeItems();
+    box.innerHTML = act.length ? act.map((i) => `<div class="card flat mt1" data-upid="${i.id}">
+      <div class="row between"><div class="b ex-name sm">${esc(i.ex_name)}</div><span class="xs muted num">${(i.size / 1048576).toFixed(0)}MB</span></div>
+      <div class="xs muted mt1">${i.status === 'queued' ? 'بالدور' : i.status === 'error' ? 'ما انرفع: ' + esc(i.err) : i.status === 'waiting' ? 'ما في نت' : i.status === 'retry' ? 'عم يعيد المحاولة…' : `${Math.round(itemPct(i) * 100)}%`}</div>
+      <div class="bar mt1"><i style="width:${itemPct(i) * 100}%"></i></div>
+      <div class="row mt1">${i.status === 'error' ? '<button class="btn sm" data-retry>إعادة</button>' : ''}<button class="btn sm w" data-drop>إلغاء</button></div></div>`).join('') : '<div class="empty">خلصوا كلهم ✅</div>';
+  };
+  const hook = () => draw();
+  const sh = sheet(`<div class="h2">الفيديوهات عم ترتفع</div><p class="xs muted mt1">الرفع بيكمّل وإنت بتتنقل بالموقع. خلّي الشاشة مفتوحة — إذا انطفت الشاشة بيكمّل أول ما ترجع.</p><div id="upList"></div>`, { onClose: () => UP.hooks.delete(hook) });
+  UP.hooks.add(hook); draw();
+  sh.onclick = (e) => {
+    const id = e.target.closest('[data-upid]')?.dataset.upid, it = UP.items.find((i) => i.id === id); if (!it) return;
+    if (e.target.closest('[data-drop]') && confirm('تلغي رفع هالفيديو؟')) cancelItem(it);
+    if (e.target.closest('[data-retry]')) { it.status = 'queued'; it.retries = 0; upChanged(); pump(); }
+  };
 }
 
 /* ================= coach: program editor ================= */
@@ -1315,10 +1469,10 @@ window.addEventListener('hashchange', route);
 sb.auth.onAuthStateChange((event, session) => {
   const had = !!state.session; state.session = session;
   if (event === 'SIGNED_OUT') { Object.assign(state, { profile: null, program: null, logs: null, exercises: null }); setTimeout(route, 0); }
-  if (event === 'SIGNED_IN' && !had) setTimeout(() => { route(); flushPending(); }, 0);
+  if (event === 'SIGNED_IN' && !had) setTimeout(() => { route(); flushPending(); resumeUploads(); }, 0);
 });
 const { data: { session } } = await sb.auth.getSession();
 state.session = session;
 if (!/^#\//.test(location.hash)) history.replaceState(null, '', PAGE_URL + '#/');
 await route();
-if (session) { flushPending(); logEvent('page_load', { v: 11 }); }
+if (session) { flushPending(); resumeUploads(); logEvent('page_load', { v: 12 }); }
