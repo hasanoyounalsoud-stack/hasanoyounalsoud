@@ -94,7 +94,7 @@ async function loadProfile() {
 async function loadProgram(id) {
   if (!id) return null;
   const { data, error } = await sb.from('programs')
-    .select('id,name,description,archived,program_days(id,day_order,weekday,name,notes,program_exercises(id,position,sets,reps,rest_seconds,notes,exercise:exercises(id,name,muscle_group,description,video_path,video_url)))')
+    .select('id,name,description,archived,program_days(id,day_order,weekday,name,notes,program_exercises(id,position,sets,reps,rest_seconds,notes,exercise:exercises(id,name,muscle_group,description,video_path,video_url,thumb)))')
     .eq('id', id).maybeSingle();
   if (error) throw error;
   if (!data) return null;
@@ -109,7 +109,7 @@ async function myProgram(force) {
 async function loadLogs(traineeId, limit = 300) {
   const { data, error } = await sb.from('workout_logs')
     .select('id,performed_on,day_id,day_name,status,rpe,notes,plan,sets,started_at,finished_at,updated_at,created_at')
-    .eq('trainee_id', traineeId)
+    .eq('trainee_id', traineeId).eq('hidden', false)
     .order('performed_on', { ascending: false }).order('created_at', { ascending: false }).limit(limit);
   if (error) throw error;
   data.forEach(normSets);
@@ -178,6 +178,61 @@ async function videoSrc(ex, onProgress = () => {}) {
   return { url: URL.createObjectURL(blob), revoke: true };
 }
 const hasVideo = (ex) => !!(ex?.video_path || ex?.video_url);
+// small square preview of the clip: stored frame, or YouTube's own thumbnail
+const thumbOf = (ex) => ex?.thumb || (ex?.video_url && ytId(ex.video_url) ? `https://i.ytimg.com/vi/${ytId(ex.video_url)}/mqdefault.jpg` : null);
+const tsq = (ex, cls = '') => { const t = thumbOf(ex); return `<span class="tsq ${cls}">${t ? `<img src="${esc(t)}" alt="" loading="lazy" />` : ''}<i>${ico('play', 's')}</i></span>`; };
+function waitFor(el, ev, ms) {
+  return new Promise((res, rej) => {
+    const t = setTimeout(() => rej(new Error(ev + ' timeout')), ms);
+    el.addEventListener(ev, () => { clearTimeout(t); res(); }, { once: true });
+    el.addEventListener('error', () => { clearTimeout(t); rej(new Error('video error')); }, { once: true });
+  });
+}
+// grab one frame (a bit into the clip), centre-crop to a square, return a tiny JPEG data URL
+async function makeThumb(src) {
+  const v = document.createElement('video');
+  v.muted = true; v.playsInline = true; v.preload = 'auto';
+  v.style.cssText = 'position:fixed;left:0;top:0;width:2px;height:2px;opacity:0;pointer-events:none';
+  document.body.appendChild(v);
+  const url = typeof src === 'string' ? src : URL.createObjectURL(src);
+  try {
+    v.src = url;
+    await waitFor(v, 'loadedmetadata', 25000);
+    try { await v.play(); v.pause(); } catch {} // iOS only decodes frames after a play()
+    const t = Math.min(1.2, (v.duration || 2) * 0.25);
+    if (t > 0.05) { v.currentTime = t; await waitFor(v, 'seeked', 20000); }
+    const side = Math.min(v.videoWidth, v.videoHeight); if (!side) throw new Error('no frame');
+    const c = document.createElement('canvas'); c.width = c.height = 192;
+    c.getContext('2d').drawImage(v, (v.videoWidth - side) / 2, (v.videoHeight - side) / 2, side, side, 0, 0, 192, 192);
+    return c.toDataURL('image/jpeg', 0.72);
+  } finally {
+    try { v.pause(); v.removeAttribute('src'); v.load(); } catch {}
+    v.remove(); if (typeof src !== 'string') URL.revokeObjectURL(url);
+  }
+}
+async function saveThumb(exId, thumb) {
+  const { error } = await sb.from('exercises').update({ thumb }).eq('id', exId);
+  if (error) return false;
+  const ex = exById(exId); if (ex) ex.thumb = thumb;
+  state.program = null; return true;
+}
+let thumbBusy = false;
+// coach only: fill in previews for clips that don't have one (single files stream cheaply; multi-part ones download first)
+async function backfillThumbs(includeParts) {
+  if (thumbBusy || !isCoach()) return 0;
+  thumbBusy = true; let made = 0;
+  try {
+    await allExercises();
+    const todo = state.exercises.filter((x) => !x.archived && x.video_path && !x.thumb && (includeParts || !String(x.video_path).includes('#parts=')));
+    for (const ex of todo) {
+      try {
+        const v = await videoSrc(ex);
+        try { if (await saveThumb(ex.id, await makeThumb(v.url))) { made++; repaintCard(ex.id); } } finally { if (v.revoke) URL.revokeObjectURL(v.url); }
+      } catch (e) { logEvent('thumb_fail', { ex: ex.name, msg: String(e.message || e) }); }
+    }
+  } finally { thumbBusy = false; }
+  return made;
+}
 
 /* machine photos: shrunk on the phone, stored privately per trainee */
 async function shrinkImage(file, max = 1600) {
@@ -498,7 +553,7 @@ async function viewHome() {
           <div class="row between"><div><div class="b">${esc(d.name)}${d.weekday != null ? ` <span class="tag g">${WEEKDAYS[d.weekday]}</span>` : ''}</div><div class="xs muted">${last ? `آخر مرة: ${wd(last.performed_on)} ${fmtShort(last.performed_on)}` : 'لسا ما انعمل'}</div></div>
           <button class="btn sm" data-start="${d.id}">ابدأ</button></div>
           ${d.notes ? `<p class="sm muted mt1">${esc(d.notes)}</p>` : ''}
-          <ul class="plist">${d.program_exercises.map((pe, i) => `<li><span class="i num">${i + 1}</span><span class="ex-name grow">${esc(pe.exercise.name)}</span>${hasVideo(pe.exercise) ? `<button class="icon-btn" style="width:30px;height:30px" data-vid="${pe.exercise.id}" aria-label="فيديو">${ico('play', 's')}</button>` : ''}<span class="sets">${setsWord(pe.sets)}</span></li>`).join('')}</ul>
+          <ul class="plist">${d.program_exercises.map((pe, i) => `<li>${hasVideo(pe.exercise) ? `<button class="tbtn" data-vid="${pe.exercise.id}" aria-label="شوف فيديو ${esc(pe.exercise.name)}">${tsq(pe.exercise, 'sm')}</button>` : `<span class="i num">${i + 1}</span>`}<span class="grow"><span class="ex-name">${esc(pe.exercise.name)}</span>${hasVideo(pe.exercise) ? `<button class="lnk" data-vid="${pe.exercise.id}">${ico('play', 's')} شوف الفيديو</button>` : ''}</span><span class="sets">${setsWord(pe.sets)}</span></li>`).join('')}</ul>
         </div>`;
       }).join('')}` : ''}
     <div class="sec"><div class="h2">آخر الحصص</div>${done.length ? '<a class="sm b" href="#/progress">الكل</a>' : ''}</div>
@@ -657,9 +712,9 @@ async function viewWorkout(id) {
         <div class="ex-idx num">${idx + 1}</div>
         <div class="grow"><div class="ex-name">${esc(ex.name)}</div>
           <div class="ex-meta">${esc(ex.muscle_group || '')}${ex.muscle_group ? ' · ' : ''}${setsWord(p.sets)}${p.reps ? ` · ${esc(p.reps)}` : ''}${p.rest ? ` · راحة ${restLabel(p.rest)}` : ''}</div></div>
-        ${hasVideo(ex) ? `<button class="icon-btn dark" data-vid aria-label="فيديو">${ico('play', 's')}</button>` : ''}
         ${ro ? '' : `<button class="icon-btn" data-menu aria-label="خيارات">${ico('dots')}</button>`}
       </div>
+      ${hasVideo(ex) ? `<button type="button" class="vrow" data-vid>${tsq(ex)}<span class="grow"><b>شوف فيديو التمرين</b><small>اضغط لتشوف طريقة الأداء الصح</small></span>${ico('play')}</button>` : ''}
       ${p.cnote || p.note ? `<div class="ex-note">${esc([p.cnote, p.note].filter(Boolean).join('\n'))}</div>` : ''}
       <div class="prev">${lp ? `آخر مرة ${fmtShort(lp.date)}: ${lp.sets.map((x) => `<b class="num">${fmtSet(x.weight, x.reps)}</b>`).join(' · ')}${ro ? '' : '<button class="copy" data-copy>نفس آخر مرة</button>'}` : 'أول مرة — سجّل وزنك لنبلّش نتابع'}</div>
       <div class="sets"><div class="set-h"><span>#</span><span>الوزن kg</span><span>العدّات</span><span></span></div>${rows.map((x, i) => setRow(p.exercise_id, x, i)).join('')}</div>
@@ -950,7 +1005,7 @@ async function viewExerciseHistory(exId, traineeId = uid()) {
   const bestPt = pts.reduce((a, p) => (!a || e1rm(p.y, p.reps) > e1rm(a.y, a.reps) ? p : a), null);
   app.innerHTML = `<div class="view">
     <a href="javascript:history.back()" class="sm b">→ رجوع</a>
-    <div class="row between mt1"><div class="h1 ex-name" style="font-size:1.35rem">${esc(ex?.name || '')}</div>${hasVideo(ex) ? `<button class="icon-btn dark" id="pv" aria-label="فيديو">${ico('play', 's')}</button>` : ''}</div>
+    <div class="row between mt1"><div class="h1 ex-name" style="font-size:1.35rem">${esc(ex?.name || '')}</div>${hasVideo(ex) ? `<button class="btn sm" id="pv">${ico('play', 's')} شوف الفيديو</button>` : ''}</div>
     <div class="stats mt">
       <div class="stat"><div class="v num">${bestPt ? +bestPt.y : '—'}</div><div class="l">أفضل وزن kg${bestPt?.reps ? ` · ${bestPt.reps} عدّة` : ''}</div></div>
       <div class="stat"><div class="v num">${pts.length ? +pts.at(-1).y : '—'}</div><div class="l">آخر وزن kg</div></div>
@@ -968,7 +1023,7 @@ async function viewExerciseHistory(exId, traineeId = uid()) {
 /* ================= coach: library & videos ================= */
 function libCard(ex) {
   return `<div class="card" data-id="${ex.id}">
-      <div class="row"><div class="vid-thumb ${hasVideo(ex) ? 'has' : ''}">${ico(hasVideo(ex) ? 'play' : 'video')}</div>
+      <div class="row">${hasVideo(ex) ? `<button class="tbtn" data-play aria-label="شوف الفيديو">${tsq(ex)}</button>` : `<div class="vid-thumb">${ico('video')}</div>`}
         <div class="grow"><div class="ex-name">${esc(ex.name)}</div><div class="sm muted">${esc(ex.muscle_group || '')}${ex.muscle_group ? ' · ' : ''}${ex.video_url ? 'يوتيوب' : ex.video_path ? 'فيديو مرفوع' : 'بدون فيديو'}</div></div>
         <button class="icon-btn" data-edit aria-label="تعديل">${ico('dots')}</button></div>
       <div class="row wrap-ok mt">
@@ -988,8 +1043,11 @@ async function viewLibrary() {
       <p class="sm mt1"><b>رفع ملف:</b> بينرفع الفيديو الأصلي بجودته الكاملة بدون أي تعديل، مهما كان حجمه. خلّي الصفحة مفتوحة لحد ما يخلص.</p>
       <p class="sm mt1"><b>رابط يوتيوب (Unlisted):</b> للفيديوهات الطويلة أو 4K — بدون حد حجم، والجودة بتتظبط حسب نت المتدرب.</p>
     </div>
+    ${exs.some((x) => x.video_path && !x.thumb && String(x.video_path).includes('#parts=')) ? `<button class="btn w block mt" id="bigThumbs">${ico('video', 's')} جهّز صور الفيديوهات الكبيرة (بيحمّلها مرة وحدة)</button>` : ''}
     ${exs.map(libCard).join('')}</div>`;
   paintCards();
+  const bt = $('#bigThumbs'); if (bt) bt.onclick = async () => { bt.disabled = true; bt.textContent = 'عم يجهّز الصور… خلّي الصفحة مفتوحة'; const n = await backfillThumbs(true); toast(`جهّزت ${n} صورة`); viewLibrary(); };
+  backfillThumbs(false);
   const find = (el) => exs.find((x) => x.id === el.closest('[data-id]')?.dataset.id);
   $('#add').onclick = () => exForm();
   app.onclick = async (e) => {
@@ -1184,6 +1242,7 @@ async function runItem(it) {
     logEvent('upload_ok', { ex: it.ex_name, mb: +(it.size / 1048576).toFixed(1), parts: it.n });
     repaintCard(it.ex_id);
     toast(`انرفع: ${it.ex_name} ✅`);
+    makeThumb(it.file).then((t) => saveThumb(it.ex_id, t)).then((ok) => ok && repaintCard(it.ex_id)).catch((e) => logEvent('thumb_fail', { ex: it.ex_name, msg: String(e.message || e) }));
   } catch (err) {
     if (it.cancelled) return;
     it.status = 'error'; it.err = String(err.message || err);
@@ -1377,7 +1436,7 @@ async function viewPeople() {
   const [{ data: people, error }, { data: programs }, { data: recent }] = await Promise.all([
     sb.from('profiles').select('*').order('created_at'),
     sb.from('programs').select('id,name,archived').order('created_at'),
-    sb.from('workout_logs').select('trainee_id,performed_on,status').order('performed_on', { ascending: false }).limit(1000),
+    sb.from('workout_logs').select('trainee_id,performed_on,status').eq('hidden', false).order('performed_on', { ascending: false }).limit(1000),
   ]);
   if (error) return fail(error);
   const last = {}, cnt = {}, wk7 = {}; const weekAgo = iso(new Date(Date.now() - 6 * 864e5));
@@ -1478,6 +1537,31 @@ async function route() {
   }
 }
 let introShown = false, loginTapped = false;
+async function refreshApp() {
+  state.program = null; state.logs = null; state.exercises = null; photoUrls.clear();
+  await route();
+}
+function initPullToRefresh() {
+  const ind = document.createElement('div'); ind.className = 'ptr'; ind.innerHTML = '<i class="spin"></i><span>اسحب للتحديث</span>';
+  document.body.appendChild(ind);
+  const label = ind.querySelector('span'); let y0 = null, dist = 0, busy = false;
+  const paint = (d, txt) => { ind.style.transition = 'none'; ind.style.opacity = Math.min(1, d / 50); ind.style.transform = `translate(-50%, ${Math.min(d, 90) - 80}px)`; ind.querySelector('.spin').style.transform = `rotate(${d * 5}deg)`; if (txt) label.textContent = txt; };
+  const hide = () => { ind.style.transition = 'transform .25s, opacity .25s'; ind.style.opacity = 0; ind.style.transform = 'translate(-50%, -80px)'; ind.classList.remove('go', 'busy'); };
+  document.addEventListener('touchstart', (e) => { y0 = !busy && window.scrollY <= 0 && e.touches.length === 1 && !document.querySelector('.sheet') ? e.touches[0].clientY : null; dist = 0; }, { passive: true });
+  document.addEventListener('touchmove', (e) => {
+    if (y0 == null) return;
+    const dy = e.touches[0].clientY - y0;
+    if (dy <= 0 || window.scrollY > 0) { dist = 0; hide(); return; }
+    dist = Math.min(dy * 0.55, 120); paint(dist, dist >= 70 ? 'سيّب للتحديث' : 'اسحب للتحديث'); ind.classList.toggle('go', dist >= 70);
+  }, { passive: true });
+  document.addEventListener('touchend', async () => {
+    if (y0 == null) return; const d = dist; y0 = null; dist = 0;
+    if (d < 70) return hide();
+    busy = true; ind.classList.add('busy'); ind.style.transition = 'transform .2s'; ind.style.transform = 'translate(-50%, 6px)'; label.textContent = 'عم يحدّث…';
+    try { await Promise.all([refreshApp(), new Promise((r) => setTimeout(r, 700))]); toast('تحدّثت الصفحة'); } catch (e) { fail(e); }
+    busy = false; hide();
+  }, { passive: true });
+}
 window.addEventListener('hashchange', route);
 sb.auth.onAuthStateChange((event, session) => {
   const had = !!state.session; state.session = session;
@@ -1487,6 +1571,7 @@ sb.auth.onAuthStateChange((event, session) => {
 const { data: { session } } = await sb.auth.getSession();
 state.session = session;
 if (!/^#\//.test(location.hash)) history.replaceState(null, '', PAGE_URL + '#/');
+initPullToRefresh();
 await route();
 try {
   if (sessionStorage.getItem('softReset')) {
