@@ -1179,7 +1179,7 @@ async function runItem(it) {
     if (ex) { ex.video_path = it.path; ex.video_url = null; }
     if (old && old !== it.path) sb.storage.from(BUCKET).remove(videoObjects(old)).catch(() => {});
     state.program = null;
-    it.status = 'done'; UP.items = UP.items.filter((x) => x !== it);
+    it.status = 'done'; UP.items = UP.items.filter((x) => x !== it); if (it.size > 20 * 1048576) UP.bigDone = true;
     idbDo('readwrite', (st) => st.delete(it.id)); try { localStorage.removeItem('up:' + it.id); } catch {}
     logEvent('upload_ok', { ex: it.ex_name, mb: +(it.size / 1048576).toFixed(1), parts: it.n });
     repaintCard(it.ex_id);
@@ -1200,7 +1200,20 @@ async function pump() {
       if (!it) break;
       await runItem(it);
     }
-  } finally { UP.running = false; if (!activeItems().some((i) => i.status !== 'error')) releaseAwake(); upChanged(); }
+  } finally {
+    UP.running = false; if (!activeItems().some((i) => i.status !== 'error')) releaseAwake(); upChanged();
+    if (UP.bigDone && !activeItems().length) softReset();
+  }
+}
+// iOS Safari keeps the memory of big picked files until the page reloads; a reload once the queue is empty
+// (same page, same scroll) is what makes the next pick work instead of the tab restarting under you.
+function softReset() {
+  UP.bigDone = false;
+  setTimeout(() => {
+    if (activeItems().length || document.querySelector('.sheet') || document.visibilityState !== 'visible') return;
+    try { sessionStorage.setItem('scrollY', String(window.scrollY)); sessionStorage.setItem('softReset', '1'); } catch {}
+    location.reload();
+  }, 2500);
 }
 async function resumeUploads() {
   const rows = (await idbDo('readonly', (st) => st.getAll())) || [];
@@ -1475,4 +1488,10 @@ const { data: { session } } = await sb.auth.getSession();
 state.session = session;
 if (!/^#\//.test(location.hash)) history.replaceState(null, '', PAGE_URL + '#/');
 await route();
+try {
+  if (sessionStorage.getItem('softReset')) {
+    const y = +sessionStorage.getItem('scrollY') || 0; sessionStorage.removeItem('softReset'); sessionStorage.removeItem('scrollY');
+    setTimeout(() => window.scrollTo(0, y), 150); setTimeout(() => window.scrollTo(0, y), 600);
+  }
+} catch {}
 if (session) { flushPending(); resumeUploads(); logEvent('page_load', { v: 12 }); }
