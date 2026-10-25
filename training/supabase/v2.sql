@@ -105,3 +105,7 @@ create table if not exists public.client_events (
 alter table public.client_events enable row level security;
 create policy "members write events" on public.client_events for insert to authenticated with check (user_id = (select auth.uid()));
 create policy "coach reads events" on public.client_events for select to authenticated using ((select private.is_coach()));
+
+-- 2026-10-25: program = 51 sets/week, every exercise on exactly two days (3 = 2 + 1); soft-hidden sessions; clip previews
+alter table public.workout_logs add column if not exists hidden boolean not null default false;
+alter table public.exercises add column if not exists thumb text;
