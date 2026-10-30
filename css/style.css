@@ -817,3 +817,19 @@ a { color: inherit; }
   .cta { flex-direction: column; }
   .btn { width: 100%; }
 }
+
+/* ===== معاينة مؤقتة: أخضر فاتح للصفحة الأولى فقط — احذف هذه الكتلة للرجوع ===== */
+#preloader { background: linear-gradient(180deg, #D8F5E6 0%, #E9FAF1 100%); }
+#preloader .pre-word { color: var(--accent-deep); }
+#preloader .pre-caret { background: var(--accent); }
+#preloader .pre-avatar {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 8px rgb(16 185 129 / .16), 0 18px 40px -14px rgb(6 78 70 / .35);
+}
+.hero {
+  background:
+    radial-gradient(60% 80% at 85% 0%, rgba(16,185,129,.22), transparent 70%),
+    linear-gradient(180deg, #D8F5E6 0%, #E9FAF1 100%);
+  border-bottom: 1px solid #BFE8D2;
+}
+/* ===== نهاية المعاينة المؤقتة ===== */
