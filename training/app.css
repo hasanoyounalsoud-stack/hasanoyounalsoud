@@ -474,3 +474,11 @@ body { overscroll-behavior-y: none; }
 .ptr .spin { width: 18px; height: 18px; border-radius: 50%; border: 3px solid #CDE8DF; border-top-color: var(--g); }
 .ptr.busy .spin { animation: ptrspin .7s linear infinite; }
 @keyframes ptrspin { to { transform: rotate(360deg); } }
+
+/* target muscle next to the previews */
+.tsq.lg { width: 76px; height: 76px; border-radius: 15px; }
+.tsq em { position: absolute; left: 0; right: 0; bottom: 0; padding: 10px 3px 3px; font-style: normal; font-size: .64rem; font-weight: 800; line-height: 1.15; text-align: center; color: #fff; background: linear-gradient(transparent, rgba(0,0,0,.78)); }
+.mchip { display: inline-flex; align-items: center; gap: 4px; margin-top: 5px; font-size: .74rem; font-weight: 800; color: var(--g-deep); background: var(--g-soft); border: 1px solid #BFE3D6; border-radius: 999px; padding: 2px 10px; }
+.mchip.sm { margin-top: 0; font-size: .7rem; padding: 0 8px; }
+.vrow.plain { cursor: default; padding: 4px 4px; background: none; box-shadow: none; }
+.vrow.plain .mchip { margin-top: 0; }
