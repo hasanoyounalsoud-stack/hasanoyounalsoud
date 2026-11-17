@@ -180,7 +180,8 @@ async function videoSrc(ex, onProgress = () => {}) {
 const hasVideo = (ex) => !!(ex?.video_path || ex?.video_url);
 // small square preview of the clip: stored frame, or YouTube's own thumbnail
 const thumbOf = (ex) => ex?.thumb || (ex?.video_url && ytId(ex.video_url) ? `https://i.ytimg.com/vi/${ytId(ex.video_url)}/mqdefault.jpg` : null);
-const tsq = (ex, cls = '') => { const t = thumbOf(ex); return `<span class="tsq ${cls}">${t ? `<img src="${esc(t)}" alt="" loading="lazy" />` : ''}<i>${ico('play', 's')}</i></span>`; };
+const muscleOf = (ex) => String(ex?.muscle_group || '').trim();
+const tsq = (ex, cls = '') => { const t = thumbOf(ex), m = muscleOf(ex).split('/')[0].trim(); return `<span class="tsq ${cls}">${t ? `<img src="${esc(t)}" alt="" loading="lazy" />` : ''}<i>${ico('play', 's')}</i>${cls.includes('lg') && m ? `<em>${esc(m)}</em>` : ''}</span>`; };
 function waitFor(el, ev, ms) {
   return new Promise((res, rej) => {
     const t = setTimeout(() => rej(new Error(ev + ' timeout')), ms);
@@ -514,7 +515,9 @@ function sessionRow(l, href) {
 }
 
 async function viewHome() {
-  const [program, logs] = await Promise.all([myProgram(), myLogs()]);
+  let [program, logs] = await Promise.all([myProgram(), myLogs()]);
+  const leftovers = logs.filter((l) => l.status === 'active' && l.performed_on < today() && !(wk && wk.id === l.id));
+  if (leftovers.length && (await settleLogs(leftovers))) logs = await myLogs(true);
   const ids = new Set(logs.map((l) => l.id));
   for (let i = localStorage.length - 1; i >= 0; i--) { const k = localStorage.key(i); if (k?.startsWith('wk:') && !ids.has(k.slice(3)) && !store.get(k)?.dirty) store.del(k); }
   const active = logs.find((l) => l.status === 'active');
@@ -553,7 +556,7 @@ async function viewHome() {
           <div class="row between"><div><div class="b">${esc(d.name)}${d.weekday != null ? ` <span class="tag g">${WEEKDAYS[d.weekday]}</span>` : ''}</div><div class="xs muted">${last ? `آخر مرة: ${wd(last.performed_on)} ${fmtShort(last.performed_on)}` : 'لسا ما انعمل'}</div></div>
           <button class="btn sm" data-start="${d.id}">ابدأ</button></div>
           ${d.notes ? `<p class="sm muted mt1">${esc(d.notes)}</p>` : ''}
-          <ul class="plist">${d.program_exercises.map((pe, i) => `<li>${hasVideo(pe.exercise) ? `<button class="tbtn" data-vid="${pe.exercise.id}" aria-label="شوف فيديو ${esc(pe.exercise.name)}">${tsq(pe.exercise, 'sm')}</button>` : `<span class="i num">${i + 1}</span>`}<span class="grow"><span class="ex-name">${esc(pe.exercise.name)}</span>${hasVideo(pe.exercise) ? `<button class="lnk" data-vid="${pe.exercise.id}">${ico('play', 's')} شوف الفيديو</button>` : ''}</span><span class="sets">${setsWord(pe.sets)}</span></li>`).join('')}</ul>
+          <ul class="plist">${d.program_exercises.map((pe, i) => `<li>${hasVideo(pe.exercise) ? `<button class="tbtn" data-vid="${pe.exercise.id}" aria-label="شوف فيديو ${esc(pe.exercise.name)}">${tsq(pe.exercise, 'sm')}</button>` : `<span class="i num">${i + 1}</span>`}<span class="grow"><span class="ex-name">${esc(pe.exercise.name)}</span><span class="row" style="gap:8px;flex-wrap:wrap">${muscleOf(pe.exercise) ? `<span class="mchip sm">${esc(muscleOf(pe.exercise))}</span>` : ''}${hasVideo(pe.exercise) ? `<button class="lnk" data-vid="${pe.exercise.id}">${ico('play', 's')} شوف الفيديو</button>` : ''}</span></span><span class="sets">${setsWord(pe.sets)}</span></li>`).join('')}</ul>
         </div>`;
       }).join('')}` : ''}
     <div class="sec"><div class="h2">آخر الحصص</div>${done.length ? '<a class="sm b" href="#/progress">الكل</a>' : ''}</div>
@@ -563,7 +566,6 @@ async function viewHome() {
   app.onclick = (e) => {
     const st = e.target.closest('[data-start]');
     if (st) {
-      if (active && !confirm('عندك تمرين مفتوح. بدك تبلّش واحد جديد؟ (المفتوح بيضل محفوظ)')) return;
       return startWorkout(program.program_days.find((d) => d.id === st.dataset.start));
     }
     const v = e.target.closest('[data-vid]');
@@ -576,7 +578,42 @@ const wkKey = (id) => `wk:${id}`;
 let wk = null; // the open session
 let syncTimer = null, syncing = false;
 
-function startWorkout(day) {
+// Close whatever was left open: empty or duplicate leftovers are hidden, real ones are finished. No questions asked.
+let settling = false;
+async function settleLogs(list) {
+  if (settling) return 0;
+  settling = true;
+  try { return await settleLogsRun(list); } finally { settling = false; }
+}
+async function settleLogsRun(list) {
+  let n = 0;
+  const all = state.logs || [];
+  for (const l of list) {
+    const filled = (l.sets || []).some((x) => x.weight != null || x.reps != null);
+    const dup = all.some((d) => d.id !== l.id && d.status === 'done' && d.performed_on === l.performed_on && d.day_id === l.day_id);
+    if (!filled || dup) {
+      const { error } = await sb.from('workout_logs').update({ hidden: true }).eq('id', l.id);
+      if (!error) { store.del(wkKey(l.id)); n++; }
+      continue;
+    }
+    const { error } = await sb.rpc('save_workout', { p: { id: l.id, day_id: l.day_id, day_name: l.day_name, performed_on: l.performed_on, status: 'done', started_at: l.started_at, finished_at: l.finished_at || l.updated_at || new Date().toISOString(), rpe: l.rpe, notes: l.notes, plan: l.plan, sets: l.sets } });
+    if (!error) { store.del(wkKey(l.id)); n++; }
+  }
+  if (n) state.logs = null;
+  return n;
+}
+async function settleOpen(exceptId) {
+  const logs = await myLogs(true);
+  return settleLogs(logs.filter((l) => l.status === 'active' && l.id !== exceptId));
+}
+
+async function startWorkout(day) {
+  try {
+    const logs = await myLogs(true);
+    const same = logs.find((l) => l.status === 'active' && l.day_id === day.id && l.performed_on === today());
+    if (same) { location.hash = `#/w/${same.id}`; return; } // it is already open today: just continue it
+    await settleOpen(null);
+  } catch (e) { logEvent('settle_fail', { msg: String(e.message || e) }); }
   const s = {
     id: uuid(), day_id: day.id, day_name: day.name, performed_on: today(), status: 'active', started_at: new Date().toISOString(),
     finished_at: null, rpe: null, notes: '', dirty: true, savedAt: null, sets: {},
@@ -714,7 +751,7 @@ async function viewWorkout(id) {
           <div class="ex-meta">${esc(ex.muscle_group || '')}${ex.muscle_group ? ' · ' : ''}${setsWord(p.sets)}${p.reps ? ` · ${esc(p.reps)}` : ''}${p.rest ? ` · راحة ${restLabel(p.rest)}` : ''}</div></div>
         ${ro ? '' : `<button class="icon-btn" data-menu aria-label="خيارات">${ico('dots')}</button>`}
       </div>
-      ${hasVideo(ex) ? `<button type="button" class="vrow" data-vid>${tsq(ex)}<span class="grow"><b>شوف فيديو التمرين</b><small>اضغط لتشوف طريقة الأداء الصح</small></span>${ico('play')}</button>` : ''}
+      ${hasVideo(ex) ? `<button type="button" class="vrow" data-vid>${tsq(ex, 'lg')}<span class="grow"><b>شوف فيديو التمرين</b><small>اضغط لتشوف طريقة الأداء الصح</small>${muscleOf(ex) ? `<span class="mchip">🎯 العضلة المستهدفة: ${esc(muscleOf(ex))}</span>` : ''}</span>${ico('play')}</button>` : (muscleOf(ex) ? `<div class="vrow plain"><span class="mchip">🎯 العضلة المستهدفة: ${esc(muscleOf(ex))}</span></div>` : '')}
       ${p.cnote || p.note ? `<div class="ex-note">${esc([p.cnote, p.note].filter(Boolean).join('\n'))}</div>` : ''}
       <div class="prev">${lp ? `آخر مرة ${fmtShort(lp.date)}: ${lp.sets.map((x) => `<b class="num">${fmtSet(x.weight, x.reps)}</b>`).join(' · ')}${ro ? '' : '<button class="copy" data-copy>نفس آخر مرة</button>'}` : 'أول مرة — سجّل وزنك لنبلّش نتابع'}</div>
       <div class="sets"><div class="set-h"><span>#</span><span>الوزن kg</span><span>العدّات</span><span></span></div>${rows.map((x, i) => setRow(p.exercise_id, x, i)).join('')}</div>
@@ -749,7 +786,12 @@ async function viewWorkout(id) {
       ${ro ? (s.notes ? `<div class="card mt"><div class="b">ملاحظات</div><p class="sm mt1">${esc(s.notes)}</p></div>` : '') + (isCoach() ? `<button class="btn danger block mt" data-delete>${ico('trash', 's')} حذف هالحصة</button>` : '') : `
       <button class="btn w block mt" data-addex>${ico('plus', 's')} زيد تمرين لهالحصة</button>
       <div class="card mt"><label class="field"><span>تاريخ الحصة</span><input type="date" id="date" value="${esc(s.performed_on)}" max="${today()}" /></label></div>
-      <div class="finish-bar"><button class="btn y lg block" data-finish>${s.status === 'done' ? 'حفظ التعديلات' : 'إنهاء التمرين'}</button></div>
+      <div class="card mt"><div class="b">كيف كان التمرين؟ <span class="xs muted">(اختياري)</span></div>
+        <div class="xs muted mt1">الصعوبة (10 = فشل كامل)</div>
+        <div class="rpe mt1">${Array.from({ length: 10 }, (_, i) => `<button type="button" data-rpe="${i + 1}" class="${s.rpe === i + 1 ? 'on' : ''}">${i + 1}</button>`).join('')}</div>
+        <div class="grid2 mt"><label class="field"><span>وزن الجسم اليوم</span><input id="bw" inputmode="decimal" dir="ltr" placeholder="kg" value="${esc(s.bw || '')}" /></label></div>
+        <label class="field mt"><span>ملاحظات</span><textarea id="nt" placeholder="نوم، أكل، ألم، طاقة…">${esc(s.notes)}</textarea></label></div>
+      <div class="finish-bar"><button class="btn y lg block" data-finish>${s.status === 'done' ? 'حفظ التعديلات' : 'إنهاء التمرين ✓'}</button></div>
       <button class="btn danger block mt" data-delete>${ico('trash', 's')} ${s.status === 'done' ? 'حذف الحصة' : 'إلغاء التمرين وحذفه'}</button>`}
     </div>`;
     window.scrollTo(0, y);
@@ -783,6 +825,8 @@ async function viewWorkout(id) {
       s.sets[row.dataset.ex][+row.dataset.i][e.target.dataset.f] = v; touch(); prs();
     }
     if (e.target.id === 'date') { s.performed_on = e.target.value || today(); touch(); }
+    if (e.target.id === 'nt') { s.notes = e.target.value; touch(); }
+    if (e.target.id === 'bw') { s.bw = e.target.value.replace(',', '.').replace(/[^\d.]/g, ''); touch(); }
   };
   app.onclick = (e) => {
     if (photoClick(e)) return;
@@ -822,7 +866,9 @@ async function viewWorkout(id) {
       s.plan.push({ exercise_id: nid, sets: 1, reps: '', rest: 120, cnote: '', note: '' }); s.sets[nid] = [{ w: '', r: '', done: false }];
       refreshRefs(); touch(); render(); setTimeout(() => $(`[data-card="${nid}"]`)?.scrollIntoView({ behavior: 'smooth', block: 'center' }), 50);
     });
-    if (t.closest('[data-finish]')) return finishSheet();
+    const rp = t.closest('[data-rpe]');
+    if (rp) { s.rpe = s.rpe === +rp.dataset.rpe ? null : +rp.dataset.rpe; $$('[data-rpe]').forEach((x) => x.classList.toggle('on', +x.dataset.rpe === s.rpe)); touch(); return; }
+    if (t.closest('[data-finish]')) return finishNow(t.closest('[data-finish]'));
     if (t.closest('[data-delete]')) return deleteSession();
   };
 
@@ -856,28 +902,20 @@ async function viewWorkout(id) {
       });
     };
   }
-  function finishSheet() {
-    const sh = sheet(`<div class="h2">${s.status === 'done' ? 'حفظ التعديلات' : 'خلصت التمرين'}</div>
-      <div class="field mt"><span>الصعوبة (10 = فشل كامل)</span><div class="rpe">${Array.from({ length: 10 }, (_, i) => `<button type="button" data-rpe="${i + 1}" class="${s.rpe === i + 1 ? 'on' : ''}">${i + 1}</button>`).join('')}</div></div>
-      <label class="field mt"><span>وزن الجسم اليوم (اختياري)</span><input id="bw" inputmode="decimal" dir="ltr" placeholder="kg" /></label>
-      <label class="field mt"><span>ملاحظات</span><textarea id="nt" placeholder="نوم، أكل، ألم، طاقة…">${esc(s.notes)}</textarea></label>
-      <button class="btn y lg block mt" id="fin">حفظ</button>`);
-    sh.onclick = (e) => { const b = e.target.closest('[data-rpe]'); if (b) { s.rpe = +b.dataset.rpe; $$('[data-rpe]', sh).forEach((x) => x.classList.toggle('on', x === b)); } };
-    $('#fin', sh).onclick = async () => {
-      const filled = s.plan.some((p) => (s.sets[p.exercise_id] || []).some((x) => x.w !== '' || x.r !== ''));
-      if (!filled) return toast('سجّل جولة وحدة على الأقل', { err: true });
-      s.notes = $('#nt', sh).value.trim(); s.status = 'done'; s.finished_at ||= new Date().toISOString();
-      const bw = +($('#bw', sh).value || '').replace(',', '.');
-      $('#fin', sh).disabled = true;
-      touch(); clearTimeout(syncTimer); await syncNow();
-      closeSheet(); stopRest();
-      if (bw > 0) await sb.from('body_weights').upsert({ trainee_id: uid(), measured_on: s.performed_on, weight: bw }, { onConflict: 'trainee_id,measured_on' });
-      const pending = s.dirty;
-      if (!pending) store.del(wkKey(s.id));
-      wk = null; state.logs = null;
-      toast(pending ? 'انحفظ عالجهاز — رح يترفع لحاله لما يرجع النت' : 'انحفظ التمرين — عاش');
-      location.hash = '#/';
-    };
+  async function finishNow(btn) {
+    const filled = s.plan.some((p) => (s.sets[p.exercise_id] || []).some((x) => x.w !== '' || x.r !== ''));
+    if (!filled) return toast('سجّل جولة وحدة على الأقل', { err: true });
+    btn.disabled = true; btn.textContent = 'عم يحفظ…';
+    s.status = 'done'; s.finished_at ||= new Date().toISOString();
+    touch(); clearTimeout(syncTimer); await syncNow();
+    stopRest();
+    const bw = +String(s.bw || '').replace(',', '.');
+    if (bw > 0) await sb.from('body_weights').upsert({ trainee_id: uid(), measured_on: s.performed_on, weight: bw }, { onConflict: 'trainee_id,measured_on' });
+    const pending = s.dirty;
+    if (!pending) { store.del(wkKey(s.id)); settleOpen(s.id).catch(() => {}); } // close any other leftovers too
+    wk = null; state.logs = null;
+    toast(pending ? 'انحفظ عالجهاز — رح يترفع لحاله لما يرجع النت' : 'خلص التمرين — عاش 💪');
+    location.hash = '#/';
   }
   async function deleteSession() {
     if (!confirm('تحذف هالحصة نهائياً؟ كل الأوزان اللي فيها رح تنمسح.')) return;
