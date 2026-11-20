@@ -299,6 +299,8 @@ async function openVideo(ex) {
 }
 
 /* ================= LET'S GO intro: animation + sound ================= */
+// the intro sound is a per-device setting and stays OFF unless it is switched on in "حسابي"
+const soundOn = () => store.get('introSound') === true;
 let actx;
 // iOS: Web Audio must be started inside the tap itself, and is silenced by the ring/silent switch
 // unless the page asks for the "playback" audio session.
@@ -351,6 +353,7 @@ function sayLetsGo(name) {
 }
 const ARM = '<div class="go-arm" aria-hidden="true"><span class="bi">💪</span></div>';
 function letsGo({ sound = false } = {}) {
+  const allow = soundOn();
   if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
   document.querySelector('.intro')?.remove();
   const un = state.profile?.username || '';
@@ -359,14 +362,14 @@ function letsGo({ sound = false } = {}) {
   const sparks = Array.from({ length: 14 }, (_, i) => { const a = (i / 14) * Math.PI * 2, r = 130 + (i % 3) * 30; return `<i class="go-spark" style="--x:${Math.cos(a) * r}px;--y:${Math.sin(a) * r}px;animation-delay:${0.9 + (i % 4) * 0.04}s"></i>`; }).join('');
   el.innerHTML = `<div class="go-stage"><div class="go-halo"></div><div class="go-halo h2"></div><div class="go-blob"></div>${ARM}${sparks}</div>
     <div class="go-text"><div class="go-word">LET'S GO</div><div class="go-name">MR. <b>${esc(name)}</b></div></div>
-    <div class="go-bar"><span></span></div><div class="go-tap">${sound ? '' : 'اضغط لتشغيل الصوت'}</div>`;
+    <div class="go-bar"><span></span></div><div class="go-tap">${allow && !sound ? 'اضغط لتشغيل الصوت' : ''}</div>`;
   document.body.appendChild(el);
   let played = false;
   const play = () => { if (played) return; played = hypeSound(); if (played) sayLetsGo(name.charAt(0) + name.slice(1).toLowerCase()); };
-  if (sound) play();
+  if (allow && sound) play();
   const close = () => { el.classList.add('out'); setTimeout(() => el.remove(), 520); };
   let timer = setTimeout(close, 2600);
-  el.onclick = () => { if (!played) { play(); if (played) { clearTimeout(timer); $('.go-tap', el).textContent = ''; timer = setTimeout(close, 1900); return; } } clearTimeout(timer); close(); };
+  el.onclick = () => { if (allow && !played) { play(); if (played) { clearTimeout(timer); $('.go-tap', el).textContent = ''; timer = setTimeout(close, 1900); return; } } clearTimeout(timer); close(); };
 }
 
 /* ================= layout ================= */
@@ -416,7 +419,7 @@ function viewLogin() {
     if (busy) return;
     if (pinEl.value.length < 4) { $('#err').textContent = 'الرقم السري 4 أرقام'; pinEl.focus(); return; }
     busy = true; $('#err').textContent = ''; $('#go').disabled = true; $('#go').textContent = 'جاري الدخول…';
-    audio();
+    if (soundOn()) audio();
     let ok = false;
     try {
       const t = await pinLogin(pinEl.value);
@@ -449,6 +452,8 @@ function viewAccount() {
       </div>
       <button class="btn block mt">حفظ</button>
     </form>
+    <div class="card mt"><div class="row between"><div><div class="b">صوت شاشة LET'S GO</div><div class="xs muted" id="sndTxt"></div></div>
+      <button class="btn sm" id="snd"></button></div></div>
     <button class="btn w block mt" id="out">تسجيل خروج</button>
   </div>`;
   $('#pinF').onsubmit = async (e) => {
@@ -463,6 +468,9 @@ function viewAccount() {
     if (error) return fail(error);
     toast('تغيّر الرقم السري'); e.target.reset();
   };
+  const paintSnd = () => { const on = soundOn(); $('#snd').textContent = on ? 'طفّي الصوت' : 'شغّل الصوت'; $('#snd').classList.toggle('w', on); $('#sndTxt').textContent = on ? 'شغّال 🔊 — بيطلع صوت لما تبلّش التمرين' : 'مطفي 🔇 — بدون أي صوت'; };
+  paintSnd();
+  $('#snd').onclick = () => { const on = !soundOn(); store.set('introSound', on); paintSnd(); if (on) { audio(); hypeSound(); toast('تشغّل الصوت'); } else toast('انطفى الصوت'); };
   $('#out').onclick = logout;
 }
 
