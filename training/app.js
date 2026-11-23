@@ -524,7 +524,9 @@ function sessionRow(l, href) {
 
 async function viewHome() {
   let [program, logs] = await Promise.all([myProgram(), myLogs()]);
-  const leftovers = logs.filter((l) => l.status === 'active' && l.performed_on < today() && !(wk && wk.id === l.id));
+  const isEmpty = (l) => !(l.sets || []).some((x) => x.weight != null || x.reps != null);
+  const idle = (l) => Date.now() - new Date(l.updated_at || l.created_at || 0) > 90 * 60 * 1000;
+  const leftovers = logs.filter((l) => l.status === 'active' && !(wk && wk.id === l.id) && (l.performed_on < today() || (isEmpty(l) && idle(l))));
   if (leftovers.length && (await settleLogs(leftovers))) logs = await myLogs(true);
   const ids = new Set(logs.map((l) => l.id));
   for (let i = localStorage.length - 1; i >= 0; i--) { const k = localStorage.key(i); if (k?.startsWith('wk:') && !ids.has(k.slice(3)) && !store.get(k)?.dirty) store.del(k); }
@@ -541,7 +543,7 @@ async function viewHome() {
     hero = `<div class="hero"><div class="kicker">تمرين مفتوح</div><div class="h1" style="margin-top:4px">${esc(active.day_name)}</div>
       <div class="muted sm mt1">${did} من ${total} جولة · ${fmtShort(active.performed_on)}</div>
       <div class="bar on-dark mt"><i style="width:${Math.min(100, (did / total) * 100)}%"></i></div>
-      <a class="btn lt lg block mt" href="#/w/${active.id}">كمّل التمرين</a></div>`;
+      <div class="row mt"><a class="btn lt lg grow" href="#/w/${active.id}">كمّل التمرين</a><button class="btn ghost" style="color:#fff" data-closeopen="${active.id}">إغلاق</button></div></div>`;
   } else if (program) {
     const nx = nextDay(program, logs); const nd = nx.day;
     hero = `<div class="hero"><div class="kicker">${nx.when === 'اليوم' ? 'تمرين اليوم' : nx.when === 'بكرا' ? `تمرين بكرا · ${WEEKDAYS[nd.weekday]}` : nx.when ? `التمرين الجاي · ${nx.when}` : 'التمرين الجاي'}</div><div class="h1" style="margin-top:4px">${esc(nd.name)}</div>
@@ -571,9 +573,20 @@ async function viewHome() {
     <div class="card">${logs.length ? logs.slice(0, 5).map((l) => sessionRow(l, `#/w/${l.id}`)).join('') : '<div class="empty">ما في حصص لسا. ابدأ أول تمرين من فوق.</div>'}</div>
   </div>`;
 
-  app.onclick = (e) => {
+  app.onclick = async (e) => {
+    const co = e.target.closest('[data-closeopen]');
+    if (co) {
+      const l = logs.find((x) => x.id === co.dataset.closeopen); if (!l) return;
+      co.disabled = true;
+      const filled = (l.sets || []).some((x) => x.weight != null || x.reps != null);
+      if (filled) await sb.rpc('save_workout', { p: { id: l.id, day_id: l.day_id, day_name: l.day_name, performed_on: l.performed_on, status: 'done', started_at: l.started_at, finished_at: new Date().toISOString(), rpe: l.rpe, notes: l.notes, plan: l.plan, sets: l.sets } });
+      else await sb.from('workout_logs').update({ hidden: true }).eq('id', l.id);
+      store.del(wkKey(l.id)); state.logs = null; toast(filled ? 'انسكّرت الحصة' : 'انلغت الحصة الفاضية');
+      return viewHome();
+    }
     const st = e.target.closest('[data-start]');
     if (st) {
+      st.disabled = true;
       return startWorkout(program.program_days.find((d) => d.id === st.dataset.start));
     }
     const v = e.target.closest('[data-vid]');
@@ -615,7 +628,10 @@ async function settleOpen(exceptId) {
   return settleLogs(logs.filter((l) => l.status === 'active' && l.id !== exceptId));
 }
 
+let starting = false;
 async function startWorkout(day) {
+  if (starting) return;
+  starting = true; setTimeout(() => (starting = false), 6000);
   try {
     const logs = await myLogs(true);
     const same = logs.find((l) => l.status === 'active' && l.day_id === day.id && l.performed_on === today());
@@ -683,6 +699,8 @@ async function flushPending() {
   for (const k of keys) {
     const s = store.get(k); if (!s || (wk && wk.id === s.id)) continue;
     if (!s.dirty) { if (s.status === 'done') store.del(k); continue; }
+    const hasData = s.plan.some((p) => (s.sets[p.exercise_id] || []).some((x) => x.w !== '' || x.r !== ''));
+    if (!hasData) { store.del(k); continue; } // an unopened, empty session is never worth saving
     const { error } = await sb.rpc('save_workout', { p: payload(s) });
     if (!error) { if (s.status === 'done') store.del(k); else { s.dirty = false; store.set(k, s); } state.logs = null; }
   }
@@ -912,7 +930,12 @@ async function viewWorkout(id) {
   }
   async function finishNow(btn) {
     const filled = s.plan.some((p) => (s.sets[p.exercise_id] || []).some((x) => x.w !== '' || x.r !== ''));
-    if (!filled) return toast('سجّل جولة وحدة على الأقل', { err: true });
+    if (!filled) {
+      btn.disabled = true; clearTimeout(syncTimer); s.dirty = false; stopRest();
+      await sb.from('workout_logs').update({ hidden: true }).eq('id', s.id);
+      store.del(wkKey(s.id)); wk = null; state.logs = null;
+      toast('الحصة كانت فاضية فانلغت'); location.hash = '#/'; return;
+    }
     btn.disabled = true; btn.textContent = 'عم يحفظ…';
     s.status = 'done'; s.finished_at ||= new Date().toISOString();
     touch(); clearTimeout(syncTimer); await syncNow();
@@ -952,6 +975,17 @@ function volumes(logs) {
   return v;
 }
 const fmtKg = (n) => `${Math.round(n).toLocaleString('en-US')}kg`;
+// every finished session of one exercise: its sets, total reps and total weight lifted that day
+function perSession(logs) {
+  const m = {};
+  [...logs].filter((l) => l.status === 'done').sort((a, b) => (a.performed_on < b.performed_on ? 1 : -1)).forEach((l) => {
+    const by = {};
+    l.set_logs.forEach((x) => { if (x.weight == null && x.reps == null) return; (by[x.exercise_id] ||= []).push(x); });
+    Object.entries(by).forEach(([id, ss]) => (m[id] ||= []).push({ date: l.performed_on, sets: ss, reps: ss.reduce((a, x) => a + (x.reps || 0), 0), kg: ss.reduce((a, x) => a + (x.weight || 0) * (x.reps || 0), 0) }));
+  });
+  return m;
+}
+const sessLine = (t) => `<b>${fmtShort(t.date)}</b>: <span class="num">${t.sets.map((x) => fmtSet(x.weight, x.reps)).join(' + ')}</span> — عدّات <b class="num">${t.reps}</b> · وزن <b class="num">${fmtKg(t.kg)}</b>`;
 function series(logs) {
   const map = new Map();
   [...logs].filter((l) => l.status === 'done').reverse().forEach((l) => {
@@ -1017,7 +1051,7 @@ async function viewProgress(traineeId = uid()) {
   const month = iso(new Date(Date.now() - 29 * 864e5));
   const rpeL = done.filter((l) => l.rpe).slice(0, 10);
   const base = self ? '#/progress' : `#/coach/person/${traineeId}`;
-  const vol = volumes(logs);
+  const vol = volumes(logs), per = perSession(logs);
   const rows = [...map.entries()].map(([id, pts]) => ({ id, pts, ex: exById(id), last: pts.at(-1), first: pts[0], vol: vol[id] || 0 }))
     .sort((a, b) => (b.last.x > a.last.x ? 1 : b.last.x < a.last.x ? -1 : 0));
 
@@ -1029,13 +1063,12 @@ async function viewProgress(traineeId = uid()) {
       <div class="stat"><div class="v num">${bw.length ? +bw.at(-1).weight : '—'}</div><div class="l">وزن الجسم kg</div></div>
       <div class="stat"><div class="v num">${rpeL.length ? (rpeL.reduce((a, l) => a + l.rpe, 0) / rpeL.length).toFixed(1) : '—'}</div><div class="l">معدّل الصعوبة</div></div>
     </div>
-    <div class="card mt flat" style="background:linear-gradient(180deg,var(--g-tint),#fff)"><div class="row between"><div class="b">مجموع كل الأوزان اللي شلتها</div><div class="h2 num" style="color:var(--g-deep)">${fmtKg(Object.values(vol).reduce((a, b) => a + b, 0))}</div></div><div class="xs muted mt1">= الوزن × العدّات لكل جولة، مجموعة على كل التمارين</div></div>
+    <div class="card mt flat" style="background:linear-gradient(180deg,var(--g-tint),#fff)"><div class="row between"><div class="b">مجموع الأوزان من كل الحصص</div><div class="h2 num" style="color:var(--g-deep)">${fmtKg(Object.values(vol).reduce((a, b) => a + b, 0))}</div></div><div class="xs muted mt1">= الوزن × العدّات لكل جولة، من كل الحصص مع بعض</div></div>
     <div class="sec"><div class="h2">التمارين</div><span class="sm muted">أفضل جولة بكل حصة</span></div>
     <div class="card">${rows.length ? rows.map((r) => {
       const dlt = r.last.y - r.first.y;
       return `<a class="ex-row" href="${base}/ex/${r.id}"><div class="grow"><div class="ex-name">${esc(r.ex?.name || '؟')}</div>
-        <div class="sm muted"><span class="num">${fmtSet(r.last.y, r.last.reps)}</span> · ${fmtShort(r.last.x)}</div>
-        <div class="xs b" style="color:var(--g-deep)">مجموع اللي شلته: <span class="num">${fmtKg(r.vol)}</span></div></div>
+        ${(per[r.id] || []).slice(0, 2).map((t) => `<div class="xs muted" style="margin-top:2px">${sessLine(t)}</div>`).join('')}</div>
         ${r.pts.length > 1 ? `<span class="delta num ${dlt > 0 ? 'up' : dlt < 0 ? 'down' : ''}">${dlt > 0 ? '+' : ''}${+dlt.toFixed(2)}kg</span>` : ''}${spark(r.pts)}</a>`;
     }).join('') : '<div class="empty">لما تسجّل أول تمرين، بيطلع هون تقدّمك بكل تمرين.</div>'}</div>
     <div class="sec"><div class="h2">وزن الجسم</div></div>
@@ -1065,11 +1098,11 @@ async function viewExerciseHistory(exId, traineeId = uid()) {
     <div class="stats mt">
       <div class="stat"><div class="v num">${bestPt ? +bestPt.y : '—'}</div><div class="l">أفضل وزن kg${bestPt?.reps ? ` · ${bestPt.reps} عدّة` : ''}</div></div>
       <div class="stat"><div class="v num">${pts.length ? +pts.at(-1).y : '—'}</div><div class="l">آخر وزن kg</div></div>
-      <div class="stat"><div class="v num" style="font-size:1.15rem">${fmtKg(volumes(logs)[exId] || 0)}</div><div class="l">مجموع اللي شلته (${sessions.length} حصص)</div></div>
+      <div class="stat"><div class="v num" style="font-size:1.15rem">${fmtKg(volumes(logs)[exId] || 0)}</div><div class="l">مجموع كل الحصص (${sessions.length})</div></div>
     </div>
     <div class="card mt"><div class="b">تطوّر الوزن</div>${lineChart(pts, (p) => fmtSet(p.y, p.reps))}</div>
     <div class="card mt"><table class="t"><thead><tr><th>التاريخ</th><th>الجولات</th><th>الجهاز</th></tr></thead><tbody>
-      ${sessions.map((l) => { const ph = (l.plan || []).find((q) => q.exercise_id === exId)?.photo; return `<tr><td>${fmtShort(l.performed_on)}<div class="xs muted">${wd(l.performed_on)}</div></td><td class="num">${l.set_logs.filter((x) => x.exercise_id === exId).map((x) => fmtSet(x.weight, x.reps)).join('<br>')}</td><td>${ph ? `<img class="thumb" data-photo="${esc(ph)}" data-ph alt="صورة الجهاز" />` : ''}</td></tr>`; }).join('') || '<tr><td colspan="3" class="muted">ما في سجل لسا</td></tr>'}
+      ${sessions.map((l) => { const ph = (l.plan || []).find((q) => q.exercise_id === exId)?.photo; return `<tr><td>${fmtShort(l.performed_on)}<div class="xs muted">${wd(l.performed_on)}</div></td><td class="num">${l.set_logs.filter((x) => x.exercise_id === exId).map((x) => fmtSet(x.weight, x.reps)).join('<br>')}<div class="xs b" style="color:var(--g-deep)">${(() => { const ss = l.set_logs.filter((x) => x.exercise_id === exId); return `عدّات ${ss.reduce((a, x) => a + (x.reps || 0), 0)} · وزن ${fmtKg(ss.reduce((a, x) => a + (x.weight || 0) * (x.reps || 0), 0))}`; })()}</div></td><td>${ph ? `<img class="thumb" data-photo="${esc(ph)}" data-ph alt="صورة الجهاز" />` : ''}</td></tr>`; }).join('') || '<tr><td colspan="3" class="muted">ما في سجل لسا</td></tr>'}
     </tbody></table></div></div>`;
   const pv = $('#pv'); if (pv) pv.onclick = () => openVideo(ex);
   fillPhotos(app);
