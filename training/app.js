@@ -945,6 +945,13 @@ async function pickExercise(title, onPick) {
 }
 
 /* ================= progress ================= */
+// total weight lifted per exercise = sum of weight x reps over every finished session
+function volumes(logs) {
+  const v = {};
+  logs.filter((l) => l.status === 'done').forEach((l) => l.set_logs.forEach((x) => { if (x.weight != null && x.reps != null) v[x.exercise_id] = (v[x.exercise_id] || 0) + x.weight * x.reps; }));
+  return v;
+}
+const fmtKg = (n) => `${Math.round(n).toLocaleString('en-US')}kg`;
 function series(logs) {
   const map = new Map();
   [...logs].filter((l) => l.status === 'done').reverse().forEach((l) => {
@@ -1010,7 +1017,8 @@ async function viewProgress(traineeId = uid()) {
   const month = iso(new Date(Date.now() - 29 * 864e5));
   const rpeL = done.filter((l) => l.rpe).slice(0, 10);
   const base = self ? '#/progress' : `#/coach/person/${traineeId}`;
-  const rows = [...map.entries()].map(([id, pts]) => ({ id, pts, ex: exById(id), last: pts.at(-1), first: pts[0] }))
+  const vol = volumes(logs);
+  const rows = [...map.entries()].map(([id, pts]) => ({ id, pts, ex: exById(id), last: pts.at(-1), first: pts[0], vol: vol[id] || 0 }))
     .sort((a, b) => (b.last.x > a.last.x ? 1 : b.last.x < a.last.x ? -1 : 0));
 
   app.innerHTML = `<div class="view">
@@ -1021,11 +1029,13 @@ async function viewProgress(traineeId = uid()) {
       <div class="stat"><div class="v num">${bw.length ? +bw.at(-1).weight : '—'}</div><div class="l">وزن الجسم kg</div></div>
       <div class="stat"><div class="v num">${rpeL.length ? (rpeL.reduce((a, l) => a + l.rpe, 0) / rpeL.length).toFixed(1) : '—'}</div><div class="l">معدّل الصعوبة</div></div>
     </div>
+    <div class="card mt flat" style="background:linear-gradient(180deg,var(--g-tint),#fff)"><div class="row between"><div class="b">مجموع كل الأوزان اللي شلتها</div><div class="h2 num" style="color:var(--g-deep)">${fmtKg(Object.values(vol).reduce((a, b) => a + b, 0))}</div></div><div class="xs muted mt1">= الوزن × العدّات لكل جولة، مجموعة على كل التمارين</div></div>
     <div class="sec"><div class="h2">التمارين</div><span class="sm muted">أفضل جولة بكل حصة</span></div>
     <div class="card">${rows.length ? rows.map((r) => {
       const dlt = r.last.y - r.first.y;
       return `<a class="ex-row" href="${base}/ex/${r.id}"><div class="grow"><div class="ex-name">${esc(r.ex?.name || '؟')}</div>
-        <div class="sm muted"><span class="num">${fmtSet(r.last.y, r.last.reps)}</span> · ${fmtShort(r.last.x)}</div></div>
+        <div class="sm muted"><span class="num">${fmtSet(r.last.y, r.last.reps)}</span> · ${fmtShort(r.last.x)}</div>
+        <div class="xs b" style="color:var(--g-deep)">مجموع اللي شلته: <span class="num">${fmtKg(r.vol)}</span></div></div>
         ${r.pts.length > 1 ? `<span class="delta num ${dlt > 0 ? 'up' : dlt < 0 ? 'down' : ''}">${dlt > 0 ? '+' : ''}${+dlt.toFixed(2)}kg</span>` : ''}${spark(r.pts)}</a>`;
     }).join('') : '<div class="empty">لما تسجّل أول تمرين، بيطلع هون تقدّمك بكل تمرين.</div>'}</div>
     <div class="sec"><div class="h2">وزن الجسم</div></div>
@@ -1055,7 +1065,7 @@ async function viewExerciseHistory(exId, traineeId = uid()) {
     <div class="stats mt">
       <div class="stat"><div class="v num">${bestPt ? +bestPt.y : '—'}</div><div class="l">أفضل وزن kg${bestPt?.reps ? ` · ${bestPt.reps} عدّة` : ''}</div></div>
       <div class="stat"><div class="v num">${pts.length ? +pts.at(-1).y : '—'}</div><div class="l">آخر وزن kg</div></div>
-      <div class="stat"><div class="v">${sessions.length}</div><div class="l">حصص</div></div>
+      <div class="stat"><div class="v num" style="font-size:1.15rem">${fmtKg(volumes(logs)[exId] || 0)}</div><div class="l">مجموع اللي شلته (${sessions.length} حصص)</div></div>
     </div>
     <div class="card mt"><div class="b">تطوّر الوزن</div>${lineChart(pts, (p) => fmtSet(p.y, p.reps))}</div>
     <div class="card mt"><table class="t"><thead><tr><th>التاريخ</th><th>الجولات</th><th>الجهاز</th></tr></thead><tbody>
